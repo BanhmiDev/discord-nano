@@ -1,0 +1,10 @@
+out/
+target/
+config.json
+ffmpeg
+ffmpeg-10bit
+ffprobe
+ffserver
+music_library.json
+qt-faststart
+youtube-dl
