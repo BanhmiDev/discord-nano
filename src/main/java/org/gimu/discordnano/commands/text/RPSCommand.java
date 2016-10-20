@@ -24,10 +24,9 @@ public class RPSCommand extends AbstractCommand {
     public String description = "Play rock-paper-scissors";
     public String usage = "<rock|paper|scissors>";
 
-    public void respond(NanoMessage message, String[] args) {
+    public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
         if (args.length == 0 || (!args[0].equalsIgnoreCase("rock") && !args[0].equalsIgnoreCase("paper") && !args[0].equalsIgnoreCase("scissors"))) {
-            message.reply(getUsageText());
-            return;
+            throw new IllegalArgumentException();
         }
 
         int choice = (int)Math.floor(Math.random() * 3);

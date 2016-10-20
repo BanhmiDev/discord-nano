@@ -28,10 +28,9 @@ public class MathCommand extends AbstractCommand {
     private final DecimalFormat formatter = new DecimalFormat() {{setDecimalSeparatorAlwaysShown(false);}};
 
     @Override
-    public void respond(NanoMessage message, String[] args) {
+    public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
         if (args.length == 0) {
-            message.reply(getUsageText());
-            return;
+            throw new IllegalArgumentException();
         }
 
         String exp = StringUtils.join(args, " ");
@@ -55,8 +54,7 @@ public class MathCommand extends AbstractCommand {
             ch = (++pos < exp.length()) ? exp.charAt(pos) : -1;
         }
 
-        boolean eat(int charToEat)
-        {
+        boolean eat(int charToEat) {
             while (ch == ' ') nextChar();
             if (ch == charToEat)
             {
@@ -66,8 +64,7 @@ public class MathCommand extends AbstractCommand {
             return false;
         }
 
-        double eval()
-        {
+        double eval() {
             nextChar();
             double x = parseExpression();
             if (pos < exp.length()) throw new RuntimeException("Unexpected: " + (char) ch);
@@ -79,9 +76,7 @@ public class MathCommand extends AbstractCommand {
         // term = factor | term `*` factor | term `/` factor
         // factor = `+` factor | `-` factor | `(` expression `)`
         //        | number | functionName factor | factor `^` factor
-
-        double parseExpression()
-        {
+        double parseExpression() {
             double x = parseTerm();
             for (; ; )
             {
@@ -91,41 +86,32 @@ public class MathCommand extends AbstractCommand {
             }
         }
 
-        double parseTerm()
-        {
+        double parseTerm() {
             double x = parseFactor();
-            for (; ; )
-            {
+            for (; ; ) {
                 if (eat('*')) x *= parseFactor(); // multiplication
                 else if (eat('/')) x /= parseFactor(); // division
                 else return x;
             }
         }
 
-        double parseFactor()
-        {
+        double parseFactor() {
             if (eat('+')) return parseFactor(); // unary plus
             if (eat('-')) return -parseFactor(); // unary minus
 
             double x;
             int startPos = this.pos;
-            if (eat('('))
-            { // parentheses
+            if (eat('(')) { // parentheses
                 x = parseExpression();
                 eat(')');
-            }
-            else if ((ch >= '0' && ch <= '9') || ch == '.')
-            { // numbers
+            } else if ((ch >= '0' && ch <= '9') || ch == '.') { // numbers
                 while ((ch >= '0' && ch <= '9') || ch == '.') nextChar();
                 x = Double.parseDouble(exp.substring(startPos, this.pos));
-            }
-            else if (ch >= 'a' && ch <= 'z')
-            { // functions
+            } else if (ch >= 'a' && ch <= 'z') { // functions
                 while (ch >= 'a' && ch <= 'z') nextChar();
                 String func = exp.substring(startPos, this.pos);
                 x = parseFactor();
-                switch (func)
-                {
+                switch (func) {
                     case "sqrt":
                         x = Math.sqrt(x);
                         break;
@@ -156,9 +142,7 @@ public class MathCommand extends AbstractCommand {
                     default:
                         throw new RuntimeException("Unknown function: " + func);
                 }
-            }
-            else
-            {
+            } else {
                 throw new RuntimeException("Unexpected: " + (char) ch);
             }
 

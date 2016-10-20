@@ -40,10 +40,9 @@ public class LeetCommand extends AbstractCommand {
     }};
 
     @Override
-    public void respond(NanoMessage message, String[] args) {
+    public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
         if (args.length == 0) {
-            message.reply(getUsageText());
-            return;
+            throw new IllegalArgumentException();
         }
 
         String str = StringUtils.join(args, " ");

@@ -25,19 +25,17 @@ public class ChooseCommand extends AbstractCommand {
     public String description = "Let Nano choose from a minimum of 2 options";
     public String usage = "<option1|option2...>";
 
-    public void respond(NanoMessage message, String[] args) {
+    public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
         if (args.length == 0) {
-            message.reply(getUsageText());
-            return;
+            throw new IllegalArgumentException();
         }
         String[] choices = args[0].split("\\|");
         if (choices.length < 2) {
-            message.reply(getUsageText());
+            throw new IllegalArgumentException();
         } else {
             for (int i = 0; i < choices.length; i++) {
                 if (choices[i].equals("")) {
-                    message.reply("Usage: `" + DiscordNano.prefix + "choose <option1|option 2 ...>`");
-                    return;
+                    throw new IllegalArgumentException();
                 }
             }
 

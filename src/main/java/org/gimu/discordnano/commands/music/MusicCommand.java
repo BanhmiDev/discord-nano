@@ -205,10 +205,9 @@ public class MusicCommand extends AbstractCommand {
 
 
 
-    public void respond(NanoMessage message, String[] args) {
+    public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
         if (args.length == 0) {
-            message.reply(getUsageText());
-            return;
+            throw new IllegalArgumentException();
         }
 
         JDA jda = message.getJDA();

@@ -101,6 +101,8 @@ public class CommandListener extends ListenerAdapter {
                 instance = cls.newInstance();
                 method = cls.getMethod("respond", NanoMessage.class, String[].class);
                 method.invoke(instance, new NanoMessage(event.getMessage()), args);
+            } catch (IllegalArgumentException e) {
+                // TODO: print out usage text
             } catch (Exception e) {
                 e.printStackTrace();
             }

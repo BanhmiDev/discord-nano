@@ -26,10 +26,9 @@ public class PoopCommand extends AbstractCommand {
     public String[] triggers = {"poop"};
 
     @Override
-    public void respond(NanoMessage message, String[] args) {
+    public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
         if (args.length == 0) {
-            message.reply(getUsageText());
-            return;
+            throw new IllegalArgumentException();
         }
 
         String poop = StringUtils.join(args, " ");

@@ -30,10 +30,9 @@ public class Rule34Command extends AbstractCommand {
 
     public String[] triggers = {"rule34"};
 
-    public void respond(NanoMessage message, String[] args) {
+    public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
         if (args.length == 0) {
-            message.reply(getUsageText());
-            return;
+            throw new IllegalArgumentException();
         }
 
         String tag = "";

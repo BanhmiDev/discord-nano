@@ -15,6 +15,7 @@
  */
 package org.gimu.discordnano.commands;
 
+import net.dv8tion.jda.entities.MessageChannel;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.util.NanoMessage;
 
@@ -54,5 +55,9 @@ public abstract class AbstractCommand {
 
     public String[] getTriggers() {
         return triggers;
+    }
+
+    public void sendUsageText(MessageChannel channel) {
+        channel.sendMessage(getUsageText());
     }
 }

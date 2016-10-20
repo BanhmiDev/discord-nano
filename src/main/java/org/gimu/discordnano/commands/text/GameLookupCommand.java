@@ -34,10 +34,12 @@ public class GameLookupCommand extends AbstractCommand {
     public String usage = "";
 
     @Override
-    public void respond(NanoMessage message, String[] args)
-    {
-        try
-        {
+    public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
+        if (args.length == 0) {
+           throw new IllegalArgumentException();
+        }
+
+        try {
             String query = StringUtils.join(args, "+");
 
             HttpResponse<JsonNode> response = Unirest.get("https://videogamesrating.p.mashape.com/get.php?count=5&game=" + query)
@@ -72,9 +74,7 @@ public class GameLookupCommand extends AbstractCommand {
             joiner.add("\n**" + jso.getString("thumb") + "**");
 
             message.getChannel().sendMessage(joiner.toString());
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
