@@ -15,6 +15,10 @@
  */
 package org.gimu.discordnano.listeners;
 
+import com.google.code.chatterbotapi.ChatterBot;
+import com.google.code.chatterbotapi.ChatterBotFactory;
+import com.google.code.chatterbotapi.ChatterBotSession;
+import com.google.code.chatterbotapi.ChatterBotType;
 import net.dv8tion.jda.JDA;
 import net.dv8tion.jda.entities.*;
 import net.dv8tion.jda.events.ReadyEvent;
@@ -39,6 +43,9 @@ public class CommandListener extends ListenerAdapter {
 
     private Set<String> whitelist = new HashSet<String>();
 
+    private ChatterBotFactory factory = new ChatterBotFactory();
+    private ChatterBot bot = null;
+
     @Override
     public void onReady(ReadyEvent event) {
         DiscordNano.jda.getAccountManager().setGame(DiscordNano.DEFAULT_STATUS);
@@ -46,10 +53,10 @@ public class CommandListener extends ListenerAdapter {
         // Register commands
         // TODO: refactor
         Reflections reflections = new Reflections("org.gimu.discordnano.commands");
-        Set<Class<? extends AbstractCommand>> allCommands = reflections.getSubTypesOf(AbstractCommand.class);
+        Set<Class<? extends NanoExecutor>> allCommands = reflections.getSubTypesOf(NanoExecutor.class);
 
 
-        for (Class<? extends AbstractCommand> command : allCommands) {
+        for (Class<? extends NanoExecutor> command : allCommands) {
             Class cls = null;
             Object instance = null;
             String[] triggers = null;
@@ -87,6 +94,24 @@ public class CommandListener extends ListenerAdapter {
             return;*/
         }
 
+        // Conversation (CleverBot)
+        if (message.isMentioned(DiscordNano.jda.getSelfInfo())) {
+            try {
+                bot = factory.create(ChatterBotType.CLEVERBOT);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            ChatterBotSession bot1session = bot.createSession();
+
+            String response = "";
+            try {
+                response = bot1session.think(message.getRawContent());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            message.getChannel().sendMessage(response);
+        }
+
         if (!messageContent.startsWith(DiscordNano.prefix) || author.isBot() || author == jda.getSelfInfo()) return;
 
         String[] sections = messageContent.split(" ");
@@ -100,7 +125,7 @@ public class CommandListener extends ListenerAdapter {
             try {
                 instance = cls.newInstance();
                 method = cls.getMethod("respond", NanoMessage.class, String[].class);
-                method.invoke(instance, new NanoMessage(event.getMessage()), args);
+                method.invoke(instance, new NanoMessage(event.getMessage(), event.getGuild()), args);
             } catch (IllegalArgumentException e) {
                 // TODO: print out usage text
             } catch (Exception e) {

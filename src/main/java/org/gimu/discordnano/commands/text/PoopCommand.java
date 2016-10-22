@@ -16,14 +16,16 @@
 package org.gimu.discordnano.commands.text;
 
 import org.apache.commons.lang3.StringUtils;
-import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.NanoExecutor;
 import org.gimu.discordnano.util.NanoMessage;
 
 import java.util.StringJoiner;
 
-public class PoopCommand extends AbstractCommand {
+public class PoopCommand extends NanoExecutor {
 
     public String[] triggers = {"poop"};
+    public String description = "Poops out a text with ASCII art";
+    public String usage = "<text>";
 
     @Override
     public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {

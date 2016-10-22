@@ -13,31 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.commands.text;
+package org.gimu.discordnano.commands.media;
 
-import org.apache.commons.lang3.StringUtils;
 import org.gimu.discordnano.commands.NanoExecutor;
+import org.gimu.discordnano.units.MALUnit;
 import org.gimu.discordnano.util.NanoMessage;
 
-import java.util.HashMap;
-import java.util.Map;
+public class MALCommand extends NanoExecutor {
 
-public class LeetCommand extends NanoExecutor {
-
-    public String[] triggers = {"leet"};
-    public String description = "Translates text into 1337speak";
-    public String usage = "<text>";
-
-    private static final Map<String, String> dictionary = new HashMap<String, String>() {{
-        put("a", "@");
-        put("e", "3");
-        put("f", "ph");
-        put("g", "9");
-        put("i", "1");
-        put("o", "0");
-        put("s", "z");
-        put("t", "7");
-    }};
+    private String[] triggers = {"mal"};
+    private String description = "Search and display anime/manga from MyAnimeList";
+    private String usage = "<anime|manga> <query|view <index>>";
 
     @Override
     public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
@@ -45,11 +31,20 @@ public class LeetCommand extends NanoExecutor {
             throw new IllegalArgumentException();
         }
 
-        String str = StringUtils.join(args, " ");
-
-        for (Map.Entry<String, String> entry : dictionary.entrySet()) {
-            str = str.replaceAll(entry.getKey(), entry.getValue());
+        String query = args.length >= 2 ? args[1] : "";
+        if (args[0].toLowerCase().equals("anime")) {
+            if (query.length() == 0) {
+                throw new IllegalArgumentException();
+            }
+            MALUnit.search(message, query);
         }
-        message.reply("`" + str + "`");
+
+        String index = args.length >= 2 ? args[1] : "";
+        if (args[0].toLowerCase().equals("view")) {
+            if (index.length() == 0) {
+                MALUnit.viewRecent(message, true);
+            }
+            MALUnit.view(message, index);
+        }
     }
 }

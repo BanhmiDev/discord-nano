@@ -13,19 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.commands.bot;
 
-import net.dv8tion.jda.Permission;
-import org.gimu.discordnano.commands.AbstractCommand;
+package org.gimu.discordnano.commands.single;
+
+import org.gimu.discordnano.DiscordNano;
+import org.gimu.discordnano.commands.NanoExecutor;
 import org.gimu.discordnano.util.NanoMessage;
 
-public class InviteCommand extends AbstractCommand {
+public class AboutExecutor extends NanoExecutor {
 
-    public String[] triggers = {"invite"};
-    public String description = "Invite Nano to another server";
+    public String[] triggers = {"about"};
+    public String description = "Get information about Nano";
     public String usage = "";
 
     public void respond(NanoMessage message, String[] args) {
-        message.reply("M-me!? On another server?\n" + message.getJDA().getSelfInfo().getAuthUrl(Permission.ADMINISTRATOR));
+        message.reply("I was made by " + message.getJDA().getUserById(DiscordNano.AUTHOR_ID).getAsMention());
     }
 }

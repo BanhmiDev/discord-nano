@@ -15,18 +15,18 @@
  */
 package org.gimu.discordnano.commands.music;
 
+import net.dv8tion.jda.player.source.AudioSource;
 import org.gimu.discordnano.util.Hastebin;
 import org.gimu.discordnano.util.NanoMessage;
+import org.gimu.discordnano.util.SongInfo;
 import org.json.JSONObject;
 
 import java.util.Map;
 
-public class ListCommand extends MusicCommand {
+public class ListCommand {
 
-    public String[] triggers = {"todo"};
-
-    public static void respond(NanoMessage message) {
-        if (musicLibrary.length() == 0) {
+    public static void respond(NanoMessage message, Map<String, JSONObject> musicLibraryMap) {
+        if (musicLibraryMap.size() == 0) {
             message.reply("The music library empty ｢(ﾟﾍﾟ)");
         }
         StringBuilder stringBuilder = new StringBuilder("__Music Library Status__ (Entries: " + musicLibraryMap.size() + ")\n\n");
@@ -46,6 +46,5 @@ public class ListCommand extends MusicCommand {
             stringBuilder.append(Hastebin.post(body.deleteCharAt(body.length()-1).toString()));
         }
         message.reply(stringBuilder.toString());
-
     }
 }

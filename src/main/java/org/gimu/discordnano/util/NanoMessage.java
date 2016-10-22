@@ -25,10 +25,12 @@ import java.util.function.Consumer;
 public class NanoMessage implements Message
 {
     private final Message message;
+    private final Guild guild;
 
-    public NanoMessage(Message message)
+    public NanoMessage(Message message, Guild guild)
     {
         this.message = message;
+        this.guild = guild;
     }
 
     public Message reply(String str)
@@ -190,5 +192,9 @@ public class NanoMessage implements Message
     public boolean unpin()
     {
         return message.unpin();
+    }
+
+    public Guild getGuild() {
+        return guild;
     }
 }

@@ -19,7 +19,8 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import org.apache.commons.lang3.StringUtils;
-import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.DiscordNano;
+import org.gimu.discordnano.commands.NanoExecutor;
 import org.gimu.discordnano.util.NanoMessage;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,10 +28,10 @@ import org.json.JSONObject;
 
 import java.util.StringJoiner;
 
-public class GameLookupCommand extends AbstractCommand {
+public class GameLookupCommand extends NanoExecutor {
 
     public String[] triggers = {"gamelookup"};
-    public String description = "Game lookup";
+    public String description = "Looks up a video game";
     public String usage = "";
 
     @Override
@@ -43,7 +44,7 @@ public class GameLookupCommand extends AbstractCommand {
             String query = StringUtils.join(args, "+");
 
             HttpResponse<JsonNode> response = Unirest.get("https://videogamesrating.p.mashape.com/get.php?count=5&game=" + query)
-                    .header("X-Mashape-Key", "1bSpd9CITBmshHVd5zHUbuPmQTHfp1wWagJjsnb6T6ajeUWOzI")
+                    .header("X-Mashape-Key", DiscordNano.config.getString("x_mashape_key"))
                     .header("Accept", "application/json")
                     .asJson();
 

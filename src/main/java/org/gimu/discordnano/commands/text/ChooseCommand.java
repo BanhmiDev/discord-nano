@@ -15,21 +15,20 @@
  */
 package org.gimu.discordnano.commands.text;
 
-import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.NanoExecutor;
 import org.gimu.discordnano.util.NanoMessage;
 
-public class ChooseCommand extends AbstractCommand {
+public class ChooseCommand extends NanoExecutor {
 
     public String[] triggers = {"choose"};
-    public String description = "Let Nano choose from a minimum of 2 options";
-    public String usage = "<option1|option2...>";
+    public String description = "Chooses an option from a list of options";
+    public String usage = "<option1;option2...>";
 
     public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
         if (args.length == 0) {
             throw new IllegalArgumentException();
         }
-        String[] choices = args[0].split("\\|");
+        String[] choices = args[0].split("\\;");
         if (choices.length < 2) {
             throw new IllegalArgumentException();
         } else {

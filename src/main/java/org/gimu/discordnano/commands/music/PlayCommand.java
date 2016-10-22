@@ -18,14 +18,12 @@ package org.gimu.discordnano.commands.music;
 import net.dv8tion.jda.player.source.RemoteSource;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.gimu.discordnano.DiscordNano;
+import org.gimu.discordnano.util.CustomMusicPlayer;
 import org.gimu.discordnano.util.NanoMessage;
 
-public class PlayCommand extends MusicCommand {
+public class PlayCommand {
 
-
-    private String[] triggers = {"todo"};
-
-    public static void respond(NanoMessage message, String input) {
+    public static void respond(NanoMessage message, String input, CustomMusicPlayer player) {
         if (input.length() == 0) {
             if (player.isPlaying()) {
                 message.reply("Usage: `" + DiscordNano.prefix + "music play <url>|<index>|<searchquery>`");
@@ -45,12 +43,12 @@ public class PlayCommand extends MusicCommand {
 
             if (NumberUtils.isNumber(input) || !input.contains("http")) {
                 // Fetch from library
-                String urlFromLibrary = getSrcFromLibrary(input);
+                String urlFromLibrary = MusicExecutor.getSrcFromLibrary(input);
                 if (urlFromLibrary.equals("-1")) {
                     message.reply("Couldn't find music from the library.");
                 } else {
                     message.getChannel().sendTyping();
-                    addSingleSource(new RemoteSource(urlFromLibrary), player, message);
+                    MusicExecutor.addSingleSource(new RemoteSource(urlFromLibrary), player, message);
                 }
             } else {
                 // Direct playback
@@ -65,8 +63,8 @@ public class PlayCommand extends MusicCommand {
                 } else if (src.getInfo().isLive()) {
                     message.reply("I don't play livestreams.");
                 } else {
-                    threadPool.submit(() -> {
-                        addSingleSource(src, player, message);
+                    MusicExecutor.threadPool.submit(() -> {
+                        MusicExecutor.addSingleSource(src, player, message);
                     });
                 }
             }

@@ -13,15 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.commands.bot;
+
+package org.gimu.discordnano.commands.single;
 
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.NanoExecutor;
 import org.gimu.discordnano.util.NanoMessage;
 
 import java.util.concurrent.TimeUnit;
 
-public class UptimeCommand extends AbstractCommand {
+public class UptimeCommand extends NanoExecutor {
 
     public String[] triggers = {"uptime"};
     public String description = "Show Nano's uptime";

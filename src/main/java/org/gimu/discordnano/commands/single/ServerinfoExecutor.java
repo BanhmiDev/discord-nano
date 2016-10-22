@@ -13,19 +13,27 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.commands.bot;
+package org.gimu.discordnano.commands.single;
 
-import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.commands.AbstractCommand;
+import net.dv8tion.jda.entities.Guild;
+import org.gimu.discordnano.commands.NanoExecutor;
 import org.gimu.discordnano.util.NanoMessage;
 
-public class AboutCommand extends AbstractCommand {
+public class ServerinfoExecutor extends NanoExecutor {
 
-    public String[] triggers = {"about"};
-    public String description = "Get information about Nano";
+    public String[] triggers = {"serverinfo"};
+    public String description = "Get information about the server";
     public String usage = "";
 
     public void respond(NanoMessage message, String[] args) {
-        message.reply("I was made by " + message.getJDA().getUserById(DiscordNano.AUTHOR_ID).getAsMention());
+        Guild guild = message.getGuild();
+        StringBuilder sb = new StringBuilder();
+        sb.append("```");
+        sb.append("Server: " + guild.getName() + "\n");
+        sb.append("ID: " + guild.getId() + "\n");
+        sb.append("Owner: " + guild.getOwner().getUsername() + "#" + guild.getOwner().getDiscriminator() + "\n");
+        sb.append("Region: " + guild.getRegion());
+        sb.append("```");
+        message.reply(sb.toString());
     }
 }

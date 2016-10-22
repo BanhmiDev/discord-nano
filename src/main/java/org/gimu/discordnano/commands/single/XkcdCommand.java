@@ -13,15 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.commands.media;
 
-import org.gimu.discordnano.commands.AbstractCommand;
+package org.gimu.discordnano.commands.single;
+
+import org.gimu.discordnano.commands.NanoExecutor;
 import org.gimu.discordnano.util.JSON;
 import org.gimu.discordnano.util.NanoMessage;
 import org.json.JSONObject;
 import java.util.Random;
 
-public class XkcdCommand extends AbstractCommand {
+public class XkcdCommand extends NanoExecutor {
 
     private String[] triggers = {"xkcd"};
     private String description = "Display xkcd comic";

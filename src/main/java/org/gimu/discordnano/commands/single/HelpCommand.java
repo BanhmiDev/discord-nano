@@ -13,13 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.commands.bot;
+
+package org.gimu.discordnano.commands.single;
 
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.NanoExecutor;
 import org.gimu.discordnano.util.NanoMessage;
 
-public class HelpCommand extends AbstractCommand {
+public class HelpCommand extends NanoExecutor {
 
     public String[] triggers = {"help"};
     public String description = "Display the help page";
@@ -27,7 +28,7 @@ public class HelpCommand extends AbstractCommand {
 
     public void respond(NanoMessage message, String[] args) {
         // TODO: automated processing
-        message.getAuthor().getPrivateChannel().sendMessage("__General Commands__\n"
+        /*message.getAuthor().getPrivateChannel().sendMessage("__General Commands__\n"
                 + "```\n"
                 + DiscordNano.prefix + "mal <anime|manga> <searchquery> - Search for specific anime or manga\n"
                 + DiscordNano.prefix + "mal <anime|manga> view <index> - View an entry from the recent search\n"
@@ -73,7 +74,7 @@ public class HelpCommand extends AbstractCommand {
                 + DiscordNano.prefix + "about - Let me introduce myself\n"
                 + DiscordNano.prefix + "invite - Get the authentication link to let Nano join another server\n"
                 + DiscordNano.prefix + "uptime - Display uptime\n\n```"
-        );
-        message.reply("Sent (ﾉ´ヮ´)ﾉ*:･ﾟ✧");
+        );*/
+        message.reply("Working on the help page (ﾉ´ヮ´)ﾉ*:･ﾟ✧");
     }
 }

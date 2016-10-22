@@ -16,15 +16,15 @@
 package org.gimu.discordnano.commands.text;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.NanoExecutor;
 import org.gimu.discordnano.util.NanoMessage;
 
 import java.util.Random;
 
-public class RollCommand extends AbstractCommand {
+public class RollCommand extends NanoExecutor {
 
     public String[] triggers = {"roll"};
-    public String description = "Roll the dice";
+    public String description = "Rolls a dice";
     public String usage = "[faces]";
 
     public void respond(NanoMessage message, String[] args) {

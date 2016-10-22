@@ -28,11 +28,12 @@ import org.gimu.discordnano.util.SongInfo;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PlaylistCommand extends MusicCommand {
+public class PlaylistCommand {
 
-    private String[] triggers = {"todo"};
     public static void respond(NanoMessage message, User author, String input) {
-        if (input.length() == 0) {
+        message.reply("Currently disabled.");
+
+        /*if (input.length() == 0) {
             message.reply("Please select a playlist using `" + DiscordNano.prefix + "music playlist <url>`");
             return;
         }
@@ -89,6 +90,6 @@ public class PlaylistCommand extends MusicCommand {
                 message.deleteMessage();
                 playlistStatus.updateMessage("Successfully loaded `" + input + "`!");
             });
-        }
+        }*/
     }
 }

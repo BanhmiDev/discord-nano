@@ -16,14 +16,16 @@
 package org.gimu.discordnano.commands.text;
 
 import org.apache.commons.lang3.StringUtils;
-import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.NanoExecutor;
 import org.gimu.discordnano.util.NanoMessage;
 
 import java.text.DecimalFormat;
 
-public class MathCommand extends AbstractCommand {
+public class MathCommand extends NanoExecutor {
 
     public String[] triggers = {"math"};
+    public String description = "Evaluates mathematical expressions";
+    public String usage = "<expression>";
 
     private final DecimalFormat formatter = new DecimalFormat() {{setDecimalSeparatorAlwaysShown(false);}};
 

@@ -17,14 +17,15 @@ package org.gimu.discordnano.commands.music;
 
 import net.dv8tion.jda.entities.User;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.gimu.discordnano.util.CustomMusicPlayer;
+import org.gimu.discordnano.util.MusicUtil;
 import org.gimu.discordnano.util.NanoMessage;
 
-public class VolumeCommand extends MusicCommand {
+public class VolumeCommand {
 
-    private String[] triggers = {"todo"};
-    public static void setVolume(NanoMessage message, User author, String input) {
-        if (isDJ(author)) {
-            message.reply(NO_DJ_REPLY);
+    public static void setVolume(NanoMessage message, CustomMusicPlayer player, User user, String input) {
+        if (MusicUtil.isDJ(player, user)) {
+            message.reply(MusicExecutor.NO_DJ_REPLY);
             return;
         }
 

@@ -34,9 +34,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.NanoExecutor;
 import org.gimu.discordnano.listeners.CommandListener;
 import org.gimu.discordnano.util.CustomMusicPlayer;
+import org.gimu.discordnano.util.MusicUtil;
 import org.gimu.discordnano.util.NanoMessage;
 import org.gimu.discordnano.util.SongInfo;
 import org.json.JSONObject;
@@ -47,10 +48,10 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class MusicCommand extends AbstractCommand {
+public class MusicExecutor extends NanoExecutor {
 
     public String[] triggers = {"music"};
-    public String description = "Play music";
+    public String description = "Plays music";
     public String usage = "";
 
     protected static CustomMusicPlayer player;
@@ -63,15 +64,11 @@ public class MusicCommand extends AbstractCommand {
     public static Map<AudioSource, SongInfo> musicQueue = new HashMap<>();
     public static LinkedHashMap<String, JSONObject> musicLibraryMap = new LinkedHashMap<>();
 
-    public MusicCommand() {
+    public MusicExecutor() {
         initMusicLibrary();
     }
 
-    protected static boolean isDJ(User author) {
-        return author.getId().equals(DiscordNano.AUTHOR_ID) || CommandListener.guild.getOwner() == author || (!musicQueue.isEmpty() && musicQueue.get(player.getCurrentAudioSource()).getAuthor() == author);
-    }
-
-    protected static void addSingleSource(AudioSource src, CustomMusicPlayer player, NanoMessage message) {
+    public static void addSingleSource(AudioSource src, CustomMusicPlayer player, NanoMessage message) {
         TextChannel channel = (TextChannel) message.getChannel();
         Guild guild = channel.getGuild();
         User author = message.getAuthor();
@@ -98,15 +95,6 @@ public class MusicCommand extends AbstractCommand {
             message.reply("I fucked up");
             System.err.println(err);
         }
-    }
-
-    protected static String buildQueue(AudioSource src) {
-        AudioInfo info = src.getInfo();
-        if (info != null) {
-            AudioTimestamp dur = info.getDuration();
-            return "`[" + (dur == null ? "N/A" : dur.getTimestamp()) + "]` " + info.getTitle() + "\n";
-        }
-        return null;
     }
 
     private static boolean isIdle(MusicPlayer player, NanoMessage message) {
@@ -203,8 +191,6 @@ public class MusicCommand extends AbstractCommand {
         }
     }
 
-
-
     public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
         if (args.length == 0) {
             throw new IllegalArgumentException();
@@ -231,7 +217,7 @@ public class MusicCommand extends AbstractCommand {
         StringBuilder sb;
         AudioSource src;
 
-        // Other
+        // Commands
         switch (args[0].toLowerCase()) {
             case "join":
                 if (am != null) am.openAudioConnection(vc);
@@ -243,11 +229,11 @@ public class MusicCommand extends AbstractCommand {
                 }
                 break;
             case "play":
-                PlayCommand.respond(message, inputArgs);
+                PlayCommand.respond(message, inputArgs, player);
                 break;
             case "library":
             case "list":
-                ListCommand.respond(message);
+                ListCommand.respond(message, musicLibraryMap);
                 break;
             case "add":
                 if (inputArgs.length() == 0) return;
@@ -278,14 +264,14 @@ public class MusicCommand extends AbstractCommand {
                 }
                 break;
             case "volume":
-                VolumeCommand.setVolume(message, author, inputArgs);
+                VolumeCommand.setVolume(message, player, author, inputArgs);
                 break;
 
             case "now":
             case "queue":
             case "status":
             case "current":
-                NowCommand.respond(message);
+                NowCommand.respond(message, player);
                 break;
 
             case "skip":
@@ -293,7 +279,7 @@ public class MusicCommand extends AbstractCommand {
                     return;
 
                 SongInfo s = musicQueue.get(player.getCurrentAudioSource());
-                if (isDJ(author)) {
+                if (MusicUtil.isDJ(player, author)) {
                     message.reply("DJ skipped the song!");
                     player.skipToNext();
                 } else {
@@ -315,7 +301,7 @@ public class MusicCommand extends AbstractCommand {
 
             case "clear":
             case "reset":
-                if (!isDJ(author)) {
+                if (!MusicUtil.isDJ(player, author)) {
                     message.reply("I don't think so, " + author.getUsername().replace("`", "\\`") + " (ノಠ益ಠ)ノ");
                     return;
                 }
@@ -327,7 +313,7 @@ public class MusicCommand extends AbstractCommand {
                 break;
 
             case "shuffle":
-                if (!isDJ(author)) {
+                if (!MusicUtil.isDJ(player, author)) {
                     message.reply(NO_DJ_REPLY);
                     return;
                 }
@@ -346,7 +332,7 @@ public class MusicCommand extends AbstractCommand {
                 if (isIdle(player, message))
                     return;
 
-                if (!isDJ(author)) {
+                if (!MusicUtil.isDJ(player, author)) {
                     message.reply(NO_DJ_REPLY);
                     return;
                 }
@@ -361,7 +347,7 @@ public class MusicCommand extends AbstractCommand {
                 if (isIdle(player, message))
                     return;
 
-                if (!isDJ(author)) {
+                if (!MusicUtil.isDJ(player, author)) {
                     message.reply(NO_DJ_REPLY);
                     return;
                 }

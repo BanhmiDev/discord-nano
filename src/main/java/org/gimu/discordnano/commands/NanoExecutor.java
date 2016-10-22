@@ -19,13 +19,13 @@ import net.dv8tion.jda.entities.MessageChannel;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.util.NanoMessage;
 
-public abstract class AbstractCommand {
+public abstract class NanoExecutor {
 
     public String[] triggers = {};
     public String description = "No descriptions provided.";
     public String usage = "";
 
-    protected AbstractCommand() {}
+    protected NanoExecutor() {}
 
     public abstract void respond(NanoMessage message, String[] args);
 

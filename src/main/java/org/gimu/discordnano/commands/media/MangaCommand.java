@@ -19,7 +19,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.NanoExecutor;
 import org.gimu.discordnano.util.MALInfo;
 import org.gimu.discordnano.util.NanoMessage;
 import org.w3c.dom.Document;
@@ -35,7 +35,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MangaCommand extends AbstractCommand {
+public class MangaCommand extends NanoExecutor {
 
 	private String[] triggers = {"manga"};
 	private String description = "Search and display manga information";

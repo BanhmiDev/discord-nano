@@ -19,7 +19,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.NanoExecutor;
 import org.gimu.discordnano.util.MALInfo;
 import org.gimu.discordnano.util.NanoMessage;
 import org.w3c.dom.Document;
@@ -35,7 +35,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AnimeCommand extends AbstractCommand {
+public class AnimeCommand extends NanoExecutor {
 
 	private String[] triggers = {"anime"};
 	private String description = "Search and display anime information";
@@ -46,6 +46,7 @@ public class AnimeCommand extends AbstractCommand {
 	private static final String MAL_PASS = DiscordNano.config.getString("mal_pass");
 
 	private HashMap<Integer, MALInfo> animeMap = new HashMap<>();
+	private HashMap<Integer, MALInfo> mangaMap = new HashMap<>();
 
 	NanoMessage message;
 
@@ -57,6 +58,12 @@ public class AnimeCommand extends AbstractCommand {
 		}
 
 		this.message = message;
+
+		if (args[0].toLowerCase().equals("anime")) {
+
+		} else if (args[0].toLowerCase().equals("manga")) {
+
+		}
 
 		String index = args.length >= 2 ? args[1] : "";
 

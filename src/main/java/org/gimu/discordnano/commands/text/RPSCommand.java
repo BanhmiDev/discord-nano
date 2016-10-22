@@ -15,13 +15,13 @@
  */
 package org.gimu.discordnano.commands.text;
 
-import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.NanoExecutor;
 import org.gimu.discordnano.util.NanoMessage;
 
-public class RPSCommand extends AbstractCommand {
+public class RPSCommand extends NanoExecutor {
 
     public String[] triggers = {"rps"};
-    public String description = "Play rock-paper-scissors";
+    public String description = "Plays rock-paper-scissors";
     public String usage = "<rock|paper|scissors>";
 
     public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {

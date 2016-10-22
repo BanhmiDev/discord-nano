@@ -15,6 +15,7 @@
  */
 package org.gimu.discordnano.util;
 
+import net.dv8tion.jda.entities.User;
 import net.dv8tion.jda.entities.VoiceChannel;
 import net.dv8tion.jda.managers.AudioManager;
 import net.dv8tion.jda.player.MusicPlayer;
@@ -22,19 +23,22 @@ import net.dv8tion.jda.player.source.AudioInfo;
 import net.dv8tion.jda.player.source.AudioSource;
 import net.dv8tion.jda.player.source.RemoteSource;
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.commands.music.MusicCommand;
+import org.gimu.discordnano.commands.music.MusicExecutor;
 
 public class CustomMusicPlayer extends MusicPlayer {
+
     private boolean idle = false;
     private AudioManager am;
     private VoiceChannel vc;
     private NanoMessage message;
+    private User author;
 
     public CustomMusicPlayer(AudioManager am, VoiceChannel vc, NanoMessage message) {
         super();
         this.am = am;
         this.vc = vc;
         this.message = message;
+        this.author = message.getAuthor();
         setVolume(DiscordNano.DEFAULT_VOLUME);
     }
 
@@ -46,9 +50,13 @@ public class CustomMusicPlayer extends MusicPlayer {
         return idle;
     }
 
+    public User getAuthor() {
+        return author;
+    }
+
     @Override
     public void stop() {
-        MusicCommand.musicQueue.remove(super.getPreviousAudioSource());
+        MusicExecutor.musicQueue.remove(super.getPreviousAudioSource());
         DiscordNano.jda.getAccountManager().setGame(DiscordNano.DEFAULT_STATUS);
         super.stop();
         am.closeAudioConnection();
@@ -58,17 +66,17 @@ public class CustomMusicPlayer extends MusicPlayer {
     public void playNext(boolean b) {
         super.playNext(b);
         SongInfo.skips.clear();
-        MusicCommand.musicQueue.remove(super.getPreviousAudioSource());
+        MusicExecutor.musicQueue.remove(super.getPreviousAudioSource());
         AudioSource src = super.getCurrentAudioSource();
         if (src == null) {
             if (DiscordNano.RANDOM_MUSIC && vc.getUsers().size() > 1) { // Random music whenever someone is listening
                 setIdle(true);
-                src = new RemoteSource(MusicCommand.getSrcFromLibrary(String.valueOf((int) (Math.random() * MusicCommand.musicLibraryMap.size()))));
+                src = new RemoteSource(MusicExecutor.getSrcFromLibrary(String.valueOf((int) (Math.random() * MusicExecutor.musicLibraryMap.size()))));
                 AudioInfo srcInfo = src.getInfo();
                 if (srcInfo.getError() == null) {
 
                     this.getAudioQueue().add(src);
-                    MusicCommand.musicQueue.put(src, new SongInfo(null, null));
+                    MusicExecutor.musicQueue.put(src, new SongInfo(null, null));
 
                     message.reply("**Now playing**: `" + srcInfo.getTitle() + "` \\(ﾉ´ヮ´)ﾉ*:･ﾟ");
                     DiscordNano.jda.getAccountManager().setGame(src.getInfo().getTitle());

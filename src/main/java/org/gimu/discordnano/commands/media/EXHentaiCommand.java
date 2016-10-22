@@ -15,10 +15,10 @@
  */
 package org.gimu.discordnano.commands.media;
 
-import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.NanoExecutor;
 import org.gimu.discordnano.util.NanoMessage;
 
-public class EXHentaiCommand extends AbstractCommand {
+public class EXHentaiCommand extends NanoExecutor {
 
     private String[] triggers = {"exhentai"};
     private String description = "Display ex-hentai entry";

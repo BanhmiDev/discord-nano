@@ -20,18 +20,19 @@ import net.dv8tion.jda.player.source.AudioInfo;
 import net.dv8tion.jda.player.source.AudioSource;
 import net.dv8tion.jda.player.source.AudioTimestamp;
 import org.gimu.discordnano.DiscordNano;
+import org.gimu.discordnano.util.CustomMusicPlayer;
 import org.gimu.discordnano.util.Hastebin;
+import org.gimu.discordnano.util.MusicUtil;
 import org.gimu.discordnano.util.NanoMessage;
 
 import java.util.List;
 import java.util.StringJoiner;
 
-public class NowCommand extends MusicCommand {
+public class NowCommand {
 
-    private String[] triggers = {"todo"};
-    public static void respond(NanoMessage message) {
+    public static void respond(NanoMessage message, CustomMusicPlayer player) {
         if (!player.isPlaying()) {
-            message.reply("I'm not playing anything");
+            message.reply("I'm not playing anything.");
             return;
         }
 
@@ -41,7 +42,7 @@ public class NowCommand extends MusicCommand {
         AudioTimestamp currentTime = player.getCurrentTimestamp();
         AudioSource currentSource = player.getCurrentAudioSource();
         AudioInfo info = currentSource.getInfo();
-        User currentDJ = musicQueue.get(currentSource).getAuthor();
+        User currentDJ = player.getAuthor();
 
         // Current song information string
         stringJoiner.add("**Song**: " + info.getTitle());
@@ -58,21 +59,21 @@ public class NowCommand extends MusicCommand {
             stringJoiner.add("\nCurrently in **IDLE** mode and playing songs from the library.");
         } else if (queue.isEmpty()) {
             if (DiscordNano.RANDOM_MUSIC) {
-                stringJoiner.add("\nNo more songs in the queue. Seems like I have to play from the library soon. ｢(ﾟﾍﾟ)");
+                stringJoiner.add("\nNo more songs in the queue. Seems like I have to play from the library soon!");
             } else {
-                stringJoiner.add("\nNo more songs in the queue. Seems like I have to stop soon. ｢(ﾟﾍﾟ)");
+                stringJoiner.add("\nNo more songs in the queue. Seems like I have to stop soon!");
             }
         } else {
             StringBuilder queueString = new StringBuilder("\n\n**Queue Status** (Entries: " + queue.size() + ")\n");
             queueString.append("**Shuffle**: " + player.isShuffle() + "\n\n");
             if (queue.size() <= 5) {
                 for (int i = 0; i < queue.size(); i++) {
-                    queueString.append(buildQueue(queue.get(i)));
+                    queueString.append(MusicUtil.buildQueue(queue.get(i)));
                 }
             } else {
                 message.getChannel().sendTyping();
                 StringBuilder body = new StringBuilder();
-                queue.stream().map(MusicCommand::buildQueue).forEach(body::append);
+                queue.stream().map(MusicUtil::buildQueue).forEach(body::append);
                 queueString.append(Hastebin.post(body.deleteCharAt(body.length()-1).toString()));
             }
 

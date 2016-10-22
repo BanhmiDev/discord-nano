@@ -15,7 +15,7 @@
  */
 package org.gimu.discordnano.commands.text;
 
-import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.NanoExecutor;
 import org.gimu.discordnano.util.NanoMessage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attribute;
@@ -26,9 +26,11 @@ import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 import java.util.Random;
 
-public class Rule34Command extends AbstractCommand {
+public class Rule34Command extends NanoExecutor {
 
     public String[] triggers = {"rule34"};
+    public String description = "Fetches image from rule34.xxx";
+    public String usage = "<rock|paper|scissors>";
 
     public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
         if (args.length == 0) {
