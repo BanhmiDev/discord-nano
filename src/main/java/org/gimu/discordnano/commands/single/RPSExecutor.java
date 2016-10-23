@@ -25,6 +25,7 @@ public class RPSExecutor extends NanoExecutor {
     public String description = "Plays rock-paper-scissors";
     public String usage = "<rock|paper|scissors>";
 
+    @Override
     public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
         if (args.length == 0 || (!args[0].equalsIgnoreCase("rock") && !args[0].equalsIgnoreCase("paper") && !args[0].equalsIgnoreCase("scissors"))) {
             throw new IllegalArgumentException();

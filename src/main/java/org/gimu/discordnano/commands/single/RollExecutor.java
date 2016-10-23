@@ -28,7 +28,8 @@ public class RollExecutor extends NanoExecutor {
     public String description = "Rolls a dice";
     public String usage = "[faces]";
 
-    public void respond(NanoMessage message, String[] args) {
+    @Override
+    public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
         Random random = new Random();
         int rolled;
         if (args.length == 0) {

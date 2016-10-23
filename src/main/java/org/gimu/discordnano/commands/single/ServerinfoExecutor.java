@@ -25,6 +25,7 @@ public class ServerinfoExecutor extends NanoExecutor {
     public String description = "Get information about the server";
     public String usage = "";
 
+    @Override
     public void respond(NanoMessage message, String[] args) {
         Guild guild = message.getGuild();
         StringBuilder sb = new StringBuilder();

@@ -26,6 +26,7 @@ public class InviteExecutor extends NanoExecutor {
     public String description = "Invite Nano to another server";
     public String usage = "";
 
+    @Override
     public void respond(NanoMessage message, String[] args) {
         message.reply("M-me!? On another server?\n" + message.getJDA().getSelfInfo().getAuthUrl(Permission.ADMINISTRATOR));
     }

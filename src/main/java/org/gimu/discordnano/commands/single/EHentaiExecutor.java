@@ -36,9 +36,9 @@ import java.io.Reader;
 
 public class EHentaiExecutor extends NanoExecutor {
 
-    private String[] triggers = {"ehentai"};
-    private String description = "Display e-hentai entry";
-    private String usage = "";
+    public String[] triggers = {"ehentai"};
+    public String description = "Display e-hentai entry";
+    public String usage = "";
 
     @Override
     public void respond(NanoMessage message, String[] args) {

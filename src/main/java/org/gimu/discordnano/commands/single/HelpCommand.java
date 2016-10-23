@@ -26,6 +26,7 @@ public class HelpCommand extends NanoExecutor {
     public String description = "Display the help page";
     public String usage = "";
 
+    @Override
     public void respond(NanoMessage message, String[] args) {
         // TODO: automated processing
         /*message.getAuthor().getPrivateChannel().sendMessage("__General Commands__\n"

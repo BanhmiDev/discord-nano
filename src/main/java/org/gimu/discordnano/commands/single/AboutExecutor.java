@@ -26,7 +26,8 @@ public class AboutExecutor extends NanoExecutor {
     public String description = "Get information about Nano";
     public String usage = "";
 
-    public void respond(NanoMessage message, String[] args) {
+    @Override
+    public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
         message.reply("I was made by " + message.getJDA().getUserById(DiscordNano.AUTHOR_ID).getAsMention());
     }
 }

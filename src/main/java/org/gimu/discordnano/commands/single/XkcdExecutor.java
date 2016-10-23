@@ -24,13 +24,12 @@ import java.util.Random;
 
 public class XkcdExecutor extends NanoExecutor {
 
-    private String[] triggers = {"xkcd"};
-    private String description = "Display xkcd comic";
-    private String usage = "[number|latest]";
+    public String[] triggers = {"xkcd"};
+    public String description = "Display xkcd comic";
+    public String usage = "[number|latest]";
 
     @Override
     public void respond(NanoMessage message, String[] args) {
-
         try {
             JSONObject latestJSON = JSON.readJsonFromUrl("http://xkcd.com/info.0.json");
 

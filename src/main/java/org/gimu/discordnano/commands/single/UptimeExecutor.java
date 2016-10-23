@@ -28,6 +28,7 @@ public class UptimeExecutor extends NanoExecutor {
     public String description = "Show Nano's uptime";
     public String usage = "";
 
+    @Override
     public void respond(NanoMessage message, String[] args) {
         long duration = (System.currentTimeMillis() - DiscordNano.START_TIME) / 1000;
         long days = TimeUnit.SECONDS.toDays(duration);
