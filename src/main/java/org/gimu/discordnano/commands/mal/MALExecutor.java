@@ -13,17 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.commands.media;
+package org.gimu.discordnano.commands.mal;
 
 import org.gimu.discordnano.commands.NanoExecutor;
 import org.gimu.discordnano.units.MALUnit;
 import org.gimu.discordnano.util.NanoMessage;
 
-public class MALCommand extends NanoExecutor {
+import java.util.Arrays;
 
-    private String[] triggers = {"mal"};
-    private String description = "Search and display anime/manga from MyAnimeList";
-    private String usage = "<anime|manga> <query|view <index>>";
+public class MALExecutor extends NanoExecutor {
+
+    public String[] triggers = {"mal"};
+    public String description = "Search and display anime/manga from MyAnimeList";
+    public String usage = "<anime|manga> <query|view <index>>";
 
     @Override
     public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
@@ -31,20 +33,13 @@ public class MALCommand extends NanoExecutor {
             throw new IllegalArgumentException();
         }
 
-        String query = args.length >= 2 ? args[1] : "";
-        if (args[0].toLowerCase().equals("anime")) {
-            if (query.length() == 0) {
-                throw new IllegalArgumentException();
-            }
-            MALUnit.search(message, query);
-        }
-
-        String index = args.length >= 2 ? args[1] : "";
-        if (args[0].toLowerCase().equals("view")) {
-            if (index.length() == 0) {
-                MALUnit.viewRecent(message, true);
-            }
-            MALUnit.view(message, index);
+        String command = args[0].toLowerCase();
+        if (command.equals("anime")) {
+            message.reply(AnimeCommand.respond(args));
+        } else if (command.equals("manga")) {
+            message.reply(MangaCommand.respond(args));
+        } else {
+            throw new IllegalArgumentException();
         }
     }
 }
