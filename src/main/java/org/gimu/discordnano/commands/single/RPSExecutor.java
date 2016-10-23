@@ -13,12 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.commands.text;
+
+package org.gimu.discordnano.commands.single;
 
 import org.gimu.discordnano.commands.NanoExecutor;
 import org.gimu.discordnano.util.NanoMessage;
 
-public class RPSCommand extends NanoExecutor {
+public class RPSExecutor extends NanoExecutor {
 
     public String[] triggers = {"rps"};
     public String description = "Plays rock-paper-scissors";

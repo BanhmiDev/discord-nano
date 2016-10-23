@@ -13,12 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.commands.text;
+
+package org.gimu.discordnano.commands.single;
 
 import org.gimu.discordnano.commands.NanoExecutor;
 import org.gimu.discordnano.util.NanoMessage;
 
-public class FlipCommand extends NanoExecutor {
+public class FlipExecutor extends NanoExecutor {
 
     public String[] triggers = {"flip", "coin"};
     public String description = "Flips a coin";

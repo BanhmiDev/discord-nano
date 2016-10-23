@@ -13,7 +13,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.commands.text;
+
+package org.gimu.discordnano.commands.single;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
@@ -28,7 +29,7 @@ import org.json.JSONObject;
 
 import java.util.StringJoiner;
 
-public class GameLookupCommand extends NanoExecutor {
+public class GamelookupExecutor extends NanoExecutor {
 
     public String[] triggers = {"gamelookup"};
     public String description = "Looks up a video game";

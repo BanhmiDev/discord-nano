@@ -22,7 +22,7 @@ import org.gimu.discordnano.util.NanoMessage;
 
 import java.util.concurrent.TimeUnit;
 
-public class UptimeCommand extends NanoExecutor {
+public class UptimeExecutor extends NanoExecutor {
 
     public String[] triggers = {"uptime"};
     public String description = "Show Nano's uptime";

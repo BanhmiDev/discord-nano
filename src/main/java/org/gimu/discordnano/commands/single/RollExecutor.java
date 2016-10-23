@@ -13,7 +13,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.commands.text;
+
+package org.gimu.discordnano.commands.single;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.gimu.discordnano.commands.NanoExecutor;
@@ -21,7 +22,7 @@ import org.gimu.discordnano.util.NanoMessage;
 
 import java.util.Random;
 
-public class RollCommand extends NanoExecutor {
+public class RollExecutor extends NanoExecutor {
 
     public String[] triggers = {"roll"};
     public String description = "Rolls a dice";

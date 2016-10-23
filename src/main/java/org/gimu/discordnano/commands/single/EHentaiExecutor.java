@@ -13,7 +13,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.commands.media;
+
+package org.gimu.discordnano.commands.single;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -33,7 +34,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-public class EHentaiCommand extends NanoExecutor {
+public class EHentaiExecutor extends NanoExecutor {
 
     private String[] triggers = {"ehentai"};
     private String description = "Display e-hentai entry";

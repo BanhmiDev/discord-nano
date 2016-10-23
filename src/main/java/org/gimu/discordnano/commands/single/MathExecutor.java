@@ -13,7 +13,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.commands.text;
+
+package org.gimu.discordnano.commands.single;
 
 import org.apache.commons.lang3.StringUtils;
 import org.gimu.discordnano.commands.NanoExecutor;
@@ -21,7 +22,7 @@ import org.gimu.discordnano.util.NanoMessage;
 
 import java.text.DecimalFormat;
 
-public class MathCommand extends NanoExecutor {
+public class MathExecutor extends NanoExecutor {
 
     public String[] triggers = {"math"};
     public String description = "Evaluates mathematical expressions";

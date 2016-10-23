@@ -22,7 +22,7 @@ import org.gimu.discordnano.util.NanoMessage;
 import org.json.JSONObject;
 import java.util.Random;
 
-public class XkcdCommand extends NanoExecutor {
+public class XkcdExecutor extends NanoExecutor {
 
     private String[] triggers = {"xkcd"};
     private String description = "Display xkcd comic";

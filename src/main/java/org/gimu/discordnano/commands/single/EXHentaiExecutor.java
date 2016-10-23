@@ -16,17 +16,17 @@
 
 package org.gimu.discordnano.commands.single;
 
-import net.dv8tion.jda.Permission;
 import org.gimu.discordnano.commands.NanoExecutor;
 import org.gimu.discordnano.util.NanoMessage;
 
-public class InviteCommand extends NanoExecutor {
+public class EXHentaiExecutor extends NanoExecutor {
 
-    public String[] triggers = {"invite"};
-    public String description = "Invite Nano to another server";
-    public String usage = "";
+    private String[] triggers = {"exhentai"};
+    private String description = "Display ex-hentai entry";
+    private String usage = "";
 
+    @Override
     public void respond(NanoMessage message, String[] args) {
-        message.reply("M-me!? On another server?\n" + message.getJDA().getSelfInfo().getAuthUrl(Permission.ADMINISTRATOR));
+        message.reply("D-don't push me! I'm working on it~");
     }
 }

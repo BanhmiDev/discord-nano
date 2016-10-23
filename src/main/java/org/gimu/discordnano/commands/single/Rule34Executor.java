@@ -13,7 +13,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.commands.text;
+
+package org.gimu.discordnano.commands.single;
 
 import org.gimu.discordnano.commands.NanoExecutor;
 import org.gimu.discordnano.util.NanoMessage;
@@ -26,7 +27,7 @@ import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 import java.util.Random;
 
-public class Rule34Command extends NanoExecutor {
+public class Rule34Executor extends NanoExecutor {
 
     public String[] triggers = {"rule34"};
     public String description = "Fetches image from rule34.xxx";

@@ -13,12 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.commands.text;
+
+package org.gimu.discordnano.commands.single;
 
 import org.gimu.discordnano.commands.NanoExecutor;
 import org.gimu.discordnano.util.NanoMessage;
 
-public class ChooseCommand extends NanoExecutor {
+public class ChooseExecutor extends NanoExecutor {
 
     public String[] triggers = {"choose"};
     public String description = "Chooses an option from a list of options";

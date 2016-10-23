@@ -13,19 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.commands.media;
 
+package org.gimu.discordnano.commands.single;
+
+import net.dv8tion.jda.Permission;
 import org.gimu.discordnano.commands.NanoExecutor;
 import org.gimu.discordnano.util.NanoMessage;
 
-public class EXHentaiCommand extends NanoExecutor {
+public class InviteExecutor extends NanoExecutor {
 
-    private String[] triggers = {"exhentai"};
-    private String description = "Display ex-hentai entry";
-    private String usage = "";
+    public String[] triggers = {"invite"};
+    public String description = "Invite Nano to another server";
+    public String usage = "";
 
-    @Override
     public void respond(NanoMessage message, String[] args) {
-        message.reply("D-don't push me! I'm working on it~");
+        message.reply("M-me!? On another server?\n" + message.getJDA().getSelfInfo().getAuthUrl(Permission.ADMINISTRATOR));
     }
 }
