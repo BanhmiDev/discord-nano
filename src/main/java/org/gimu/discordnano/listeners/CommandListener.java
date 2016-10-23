@@ -30,6 +30,7 @@ import org.gimu.discordnano.util.NanoMessage;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -54,7 +55,6 @@ public class CommandListener extends ListenerAdapter {
         // TODO: refactor
         Reflections reflections = new Reflections("org.gimu.discordnano.commands");
         Set<Class<? extends NanoExecutor>> allCommands = reflections.getSubTypesOf(NanoExecutor.class);
-
 
         for (Class<? extends NanoExecutor> command : allCommands) {
             Class cls = null;
@@ -126,8 +126,11 @@ public class CommandListener extends ListenerAdapter {
                 instance = cls.newInstance();
                 method = cls.getMethod("respond", NanoMessage.class, String[].class);
                 method.invoke(instance, new NanoMessage(event.getMessage(), event.getGuild()), args);
-            } catch (IllegalArgumentException e) {
+            } catch (InvocationTargetException e) {
                 // TODO: print out usage text
+                System.out.println(e.getTargetException());
+                System.out.println(method.getDeclaringClass());
+                System.out.println(method.getName());
             } catch (Exception e) {
                 e.printStackTrace();
             }
