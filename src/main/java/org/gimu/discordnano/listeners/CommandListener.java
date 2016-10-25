@@ -131,8 +131,24 @@ public class CommandListener extends ListenerAdapter {
                 System.out.println(e.getTargetException());
                 System.out.println(method.getDeclaringClass());
                 System.out.println(method.getName());
-            } catch (Exception e) {
-                e.printStackTrace();
+
+                String usageText = null;
+                Field field = null;
+                try {
+                    // TODO: fix this mess
+                    field = cls.getField("usage");
+                    usageText = (String)field.get(instance);
+                } catch (Exception er) {
+                    er.printStackTrace();
+                }
+                StringBuilder sb = new StringBuilder();
+                sb.append("```");
+                sb.append("Usage: " + DiscordNano.prefix + command.toLowerCase() + " ");
+                sb.append(usageText);
+                sb.append("```");
+                event.getChannel().sendMessage(sb.toString());
+            } catch (Exception er) {
+                er.printStackTrace();
             }
         } else if (command.equalsIgnoreCase("clear")) {
             while (channel.getHistory().retrieve(100) != null) {

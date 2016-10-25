@@ -31,7 +31,7 @@ public class Rule34Executor extends NanoExecutor {
 
     public String[] triggers = {"rule34"};
     public String description = "Fetches image from rule34.xxx";
-    public String usage = "<rock|paper|scissors>";
+    public String usage = "<query>";
 
     @Override
     public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {

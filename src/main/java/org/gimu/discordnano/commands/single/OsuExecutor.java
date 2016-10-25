@@ -34,6 +34,10 @@ public class OsuExecutor extends NanoExecutor {
 
     @Override
     public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
+        if (args.length == 0) {
+            throw new IllegalArgumentException();
+        }
+
         String api = "https://osu.ppy.sh/api/get_user";
         StringBuilder sb = new StringBuilder();
         InputStream response = null;
