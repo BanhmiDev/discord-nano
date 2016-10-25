@@ -24,6 +24,7 @@ import net.dv8tion.jda.player.source.AudioSource;
 import net.dv8tion.jda.player.source.RemoteSource;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.music.MusicExecutor;
+import org.gimu.discordnano.lib.NanoMessage;
 
 public class CustomMusicPlayer extends MusicPlayer {
 

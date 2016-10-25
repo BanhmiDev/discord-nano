@@ -17,8 +17,8 @@
 package org.gimu.discordnano.commands.single;
 
 import net.dv8tion.jda.Permission;
-import org.gimu.discordnano.commands.NanoExecutor;
-import org.gimu.discordnano.util.NanoMessage;
+import org.gimu.discordnano.lib.NanoExecutor;
+import org.gimu.discordnano.lib.NanoMessage;
 
 public class InviteExecutor extends NanoExecutor {
 

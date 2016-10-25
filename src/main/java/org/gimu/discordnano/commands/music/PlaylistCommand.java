@@ -15,18 +15,8 @@
  */
 package org.gimu.discordnano.commands.music;
 
-import net.dv8tion.jda.entities.Message;
 import net.dv8tion.jda.entities.User;
-import net.dv8tion.jda.player.Playlist;
-import net.dv8tion.jda.player.source.AudioInfo;
-import net.dv8tion.jda.player.source.AudioSource;
-import net.dv8tion.jda.player.source.RemoteSource;
-import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.util.NanoMessage;
-import org.gimu.discordnano.util.SongInfo;
-
-import java.util.LinkedList;
-import java.util.List;
+import org.gimu.discordnano.lib.NanoMessage;
 
 public class PlaylistCommand {
 

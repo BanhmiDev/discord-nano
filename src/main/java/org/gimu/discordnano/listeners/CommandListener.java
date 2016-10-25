@@ -25,8 +25,8 @@ import net.dv8tion.jda.events.ReadyEvent;
 import net.dv8tion.jda.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.hooks.ListenerAdapter;
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.commands.*;
-import org.gimu.discordnano.util.NanoMessage;
+import org.gimu.discordnano.lib.NanoExecutor;
+import org.gimu.discordnano.lib.NanoMessage;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Field;

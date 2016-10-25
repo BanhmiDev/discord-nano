@@ -15,17 +15,14 @@
  */
 package org.gimu.discordnano.commands.mal;
 
-import org.gimu.discordnano.commands.NanoExecutor;
-import org.gimu.discordnano.units.MALUnit;
-import org.gimu.discordnano.util.NanoMessage;
-
-import java.util.Arrays;
+import org.gimu.discordnano.lib.NanoExecutor;
+import org.gimu.discordnano.lib.NanoMessage;
 
 public class MALExecutor extends NanoExecutor {
 
     public String[] triggers = {"mal"};
     public String description = "Search and display anime/manga from MyAnimeList";
-    public String usage = "<anime|manga> <query|view <index>>";
+    public String usage = "<user|anime|manga> <query|view <index>>";
 
     @Override
     public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
@@ -34,7 +31,9 @@ public class MALExecutor extends NanoExecutor {
         }
 
         String command = args[0].toLowerCase();
-        if (command.equals("anime")) {
+        if (command.equals("user")) {
+            message.replyFramed("MyAnimeList Profile", UserCommand.respond(args));
+        } else if (command.equals("anime")) {
             message.reply(AnimeCommand.respond(args));
         } else if (command.equals("manga")) {
             message.reply(MangaCommand.respond(args));

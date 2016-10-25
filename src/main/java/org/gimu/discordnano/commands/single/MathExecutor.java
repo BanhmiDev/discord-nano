@@ -17,8 +17,8 @@
 package org.gimu.discordnano.commands.single;
 
 import org.apache.commons.lang3.StringUtils;
-import org.gimu.discordnano.commands.NanoExecutor;
-import org.gimu.discordnano.util.NanoMessage;
+import org.gimu.discordnano.lib.NanoExecutor;
+import org.gimu.discordnano.lib.NanoMessage;
 
 import java.text.DecimalFormat;
 

@@ -15,10 +15,10 @@
  */
 package org.gimu.discordnano.commands.mal;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.gimu.discordnano.DiscordNano;
+import org.gimu.discordnano.util.APIUtil;
 import org.gimu.discordnano.util.MALInfo;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -27,8 +27,7 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -110,21 +109,17 @@ public class AnimeCommand {
             }
             lastExecution = currentExecution;
         }
+
         try {
-            String encodedQuery = URLEncoder.encode(query, "UTF-8");
-            String api = "http://myanimelist.net/api/anime/search.xml?q=" + encodedQuery;
-            URL url = new URL(api);
-            URLConnection uc = url.openConnection();
-            String userpass = MAL_USER + ":" + MAL_PASS;
-            String basicAuth = "Basic " + new String(new Base64().encode(userpass.getBytes()));
-            uc.setRequestProperty("Authorization", basicAuth);
+            String parameters = "q=" + URLEncoder.encode(query, "UTF-8");
+            InputStream response = APIUtil.sendAuthGet("http://myanimelist.net/api/anime/search.xml", parameters, MAL_USER, MAL_PASS);
 
             String id = "", title = "", english = "", episodes = "", score = "", type = "", status = "", synopsis = "";
 
             // XML parsing
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(uc.getInputStream());
+            Document doc = dBuilder.parse(response);
             doc.getDocumentElement().normalize();
             NodeList nodes = doc.getElementsByTagName("entry");
 
@@ -164,7 +159,7 @@ public class AnimeCommand {
                 }
             }
 
-            return "__Query result__\n\n" + result.toString() + "\nList temporarily saved. Write `" + DiscordNano.prefix + "anime view <index>` to examine an entry.";
+            return "__Query result__\n\n" + result.toString() + "\nList temporarily saved. Write `" + DiscordNano.prefix + "mal anime view <index>` to examine an entry.";
         } catch (Exception e) {
             //System.out.println(e.getMessage());
             return "I couldn't find an entry fitting that phrase.";

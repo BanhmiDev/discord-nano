@@ -21,9 +21,9 @@ import net.dv8tion.jda.player.source.AudioSource;
 import net.dv8tion.jda.player.source.AudioTimestamp;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.util.CustomMusicPlayer;
-import org.gimu.discordnano.util.Hastebin;
+import org.gimu.discordnano.util.HastebinUtil;
 import org.gimu.discordnano.util.MusicUtil;
-import org.gimu.discordnano.util.NanoMessage;
+import org.gimu.discordnano.lib.NanoMessage;
 
 import java.util.List;
 import java.util.StringJoiner;
@@ -74,7 +74,7 @@ public class NowCommand {
                 message.getChannel().sendTyping();
                 StringBuilder body = new StringBuilder();
                 queue.stream().map(MusicUtil::buildQueue).forEach(body::append);
-                queueString.append(Hastebin.post(body.deleteCharAt(body.length()-1).toString()));
+                queueString.append(HastebinUtil.post(body.deleteCharAt(body.length()-1).toString()));
             }
 
             int totalSeconds = 0;

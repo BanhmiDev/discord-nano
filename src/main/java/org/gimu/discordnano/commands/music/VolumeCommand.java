@@ -19,7 +19,7 @@ import net.dv8tion.jda.entities.User;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.gimu.discordnano.util.CustomMusicPlayer;
 import org.gimu.discordnano.util.MusicUtil;
-import org.gimu.discordnano.util.NanoMessage;
+import org.gimu.discordnano.lib.NanoMessage;
 
 public class VolumeCommand {
 

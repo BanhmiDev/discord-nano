@@ -16,8 +16,8 @@
 
 package org.gimu.discordnano.commands.single;
 
-import org.gimu.discordnano.commands.NanoExecutor;
-import org.gimu.discordnano.util.NanoMessage;
+import org.gimu.discordnano.lib.NanoExecutor;
+import org.gimu.discordnano.lib.NanoMessage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Attributes;

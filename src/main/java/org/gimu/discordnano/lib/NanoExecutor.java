@@ -13,11 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.commands;
+
+package org.gimu.discordnano.lib;
 
 import net.dv8tion.jda.entities.MessageChannel;
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.util.NanoMessage;
+import org.gimu.discordnano.lib.NanoMessage;
 
 public abstract class NanoExecutor {
 

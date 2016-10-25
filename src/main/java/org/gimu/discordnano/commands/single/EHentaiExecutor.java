@@ -21,8 +21,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.gimu.discordnano.commands.NanoExecutor;
-import org.gimu.discordnano.util.NanoMessage;
+import org.gimu.discordnano.lib.NanoExecutor;
+import org.gimu.discordnano.lib.NanoMessage;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -69,7 +69,6 @@ public class EHentaiExecutor extends NanoExecutor {
             HttpPost postRequest = new HttpPost("http://g.e-hentai.org/api.php");
             postRequest.setHeader("Content-type", "application/json");
             StringEntity entity = new StringEntity(jsonString);
-
             postRequest.setEntity(entity);
 
             HttpResponse response = httpClient.execute(postRequest);

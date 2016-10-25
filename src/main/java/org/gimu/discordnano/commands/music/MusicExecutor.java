@@ -22,7 +22,6 @@ import net.dv8tion.jda.managers.AudioManager;
 import net.dv8tion.jda.player.MusicPlayer;
 import net.dv8tion.jda.player.source.AudioInfo;
 import net.dv8tion.jda.player.source.AudioSource;
-import net.dv8tion.jda.player.source.AudioTimestamp;
 import net.dv8tion.jda.player.source.RemoteSource;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.HttpEntity;
@@ -34,11 +33,11 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.commands.NanoExecutor;
+import org.gimu.discordnano.lib.NanoExecutor;
 import org.gimu.discordnano.listeners.CommandListener;
 import org.gimu.discordnano.util.CustomMusicPlayer;
 import org.gimu.discordnano.util.MusicUtil;
-import org.gimu.discordnano.util.NanoMessage;
+import org.gimu.discordnano.lib.NanoMessage;
 import org.gimu.discordnano.util.SongInfo;
 import org.json.JSONObject;
 import java.io.InputStream;
@@ -75,6 +74,7 @@ public class MusicExecutor extends NanoExecutor {
         AudioInfo srcInfo = src.getInfo();
         if (srcInfo.getError() == null) {
             if (channel.checkPermission(channel.getJDA().getSelfInfo(), Permission.MESSAGE_MANAGE)) {
+                // Delete request message
                 message.deleteMessage();
             }
 
@@ -84,8 +84,7 @@ public class MusicExecutor extends NanoExecutor {
             if (player.getIdle()) {
                 player.skipToNext();
                 player.setIdle(false);
-            }
-            if (!player.isPlaying()) {
+            } else if (!player.isPlaying()) {
                 player.play();
                 message.reply("**Now playing**: `" + srcInfo.getTitle() + "`");
                 DiscordNano.jda.getAccountManager().setGame(srcInfo.getTitle());

@@ -13,7 +13,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.util;
+
+package org.gimu.discordnano.lib;
 
 import net.dv8tion.jda.JDA;
 import net.dv8tion.jda.entities.*;
@@ -33,166 +34,148 @@ public class NanoMessage implements Message
         this.guild = guild;
     }
 
-    public Message reply(String str)
-    {
+    public Message reply(String str) {
         return message.getChannel().sendMessage(str);
     }
 
+    public Message replyFramed(String title, String str) {
+        return message.getChannel().sendMessage("```Haskell\n" + title + "```\n```Haskell\n" + str + "```");
+    }
+
+    public Message replyFramed(String str) {
+        return message.getChannel().sendMessage("```Haskell\n" + str + "```");
+    }
+
     @Override
-    public String getId()
-    {
+    public String getId() {
         return message.getId();
     }
 
     @Override
-    public List<User> getMentionedUsers()
-    {
+    public List<User> getMentionedUsers() {
         return message.getMentionedUsers();
     }
 
     @Override
-    public boolean isMentioned(User user)
-    {
+    public boolean isMentioned(User user) {
         return message.isMentioned(user);
     }
 
     @Override
-    public List<TextChannel> getMentionedChannels()
-    {
+    public List<TextChannel> getMentionedChannels() {
         return message.getMentionedChannels();
     }
 
     @Override
-    public List<Role> getMentionedRoles()
-    {
+    public List<Role> getMentionedRoles() {
         return message.getMentionedRoles();
     }
 
     @Override
-    public boolean mentionsEveryone()
-    {
+    public boolean mentionsEveryone() {
         return message.mentionsEveryone();
     }
 
     @Override
-    public OffsetDateTime getTime()
-    {
+    public OffsetDateTime getTime() {
         return message.getTime();
     }
 
     @Override
-    public boolean isEdited()
-    {
+    public boolean isEdited() {
         return message.isEdited();
     }
 
     @Override
-    public OffsetDateTime getEditedTimestamp()
-    {
+    public OffsetDateTime getEditedTimestamp() {
         return message.getEditedTimestamp();
     }
 
     @Override
-    public User getAuthor()
-    {
+    public User getAuthor() {
         return message.getAuthor();
     }
 
     @Override
-    public String getContent()
-    {
+    public String getContent() {
         return message.getContent();
     }
 
     @Override
-    public String getRawContent()
-    {
+    public String getRawContent() {
         return message.getRawContent();
     }
 
     @Override
-    public String getStrippedContent()
-    {
+    public String getStrippedContent() {
         return message.getStrippedContent();
     }
 
     @Override
-    public boolean isPrivate()
-    {
+    public boolean isPrivate() {
         return message.isPrivate();
     }
 
     @Override
-    public String getChannelId()
-    {
+    public String getChannelId() {
         return message.getChannelId();
     }
 
     @Override
-    public MessageChannel getChannel()
-    {
+    public MessageChannel getChannel() {
         return message.getChannel();
     }
 
     @Override
-    public List<Attachment> getAttachments()
-    {
+    public List<Attachment> getAttachments() {
         return message.getAttachments();
     }
 
     @Override
-    public List<MessageEmbed> getEmbeds()
-    {
+    public List<MessageEmbed> getEmbeds() {
         return message.getEmbeds();
     }
 
     @Override
-    public boolean isTTS()
-    {
+    public boolean isTTS() {
         return message.isTTS();
     }
 
     @Override
-    public Message updateMessage(String s)
-    {
+    public Message updateMessage(String s) {
         return message.updateMessage(s);
     }
 
     @Override
-    public void updateMessageAsync(String s, Consumer<Message> consumer)
-    {
+    public void updateMessageAsync(String s, Consumer<Message> consumer) {
         message.updateMessageAsync(s, consumer);
     }
 
     @Override
-    public void deleteMessage()
-    {
+    public void deleteMessage() {
         message.deleteMessage();
     }
 
     @Override
-    public JDA getJDA()
-    {
+    public JDA getJDA() {
         return message.getJDA();
     }
 
     @Override
-    public boolean isPinned()
-    {
+    public boolean isPinned() {
         return message.isPinned();
     }
 
     @Override
-    public boolean pin()
-    {
+    public boolean pin() {
         return message.pin();
     }
 
     @Override
-    public boolean unpin()
-    {
+    public boolean unpin() {
         return message.unpin();
     }
+
 
     public Guild getGuild() {
         return guild;

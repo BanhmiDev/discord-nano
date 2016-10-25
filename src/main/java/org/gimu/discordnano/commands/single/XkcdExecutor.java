@@ -16,9 +16,9 @@
 
 package org.gimu.discordnano.commands.single;
 
-import org.gimu.discordnano.commands.NanoExecutor;
+import org.gimu.discordnano.lib.NanoExecutor;
 import org.gimu.discordnano.util.JSON;
-import org.gimu.discordnano.util.NanoMessage;
+import org.gimu.discordnano.lib.NanoMessage;
 import org.json.JSONObject;
 import java.util.Random;
 

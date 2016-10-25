@@ -1,0 +1,82 @@
+/*
+ *  Copyright 2016 Son Nguyen <mail@gimu.org>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.gimu.discordnano.util;
+
+import org.apache.commons.codec.binary.Base64;
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+
+public class APIUtil {
+
+	private static final String USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36";
+
+	public static InputStream sendAuthGet(String target, String parameters, String username, String password) throws Exception {
+		URL url = new URL(target + "?" + parameters);
+		System.out.println(url);
+		URLConnection uc = url.openConnection();
+		String preAuth = username + ":" + password;
+		String basicAuth = "Basic " + new String(new Base64().encode(preAuth.getBytes()));
+		uc.setRequestProperty("Authorization", basicAuth);
+
+		return uc.getInputStream();
+	}
+
+	public static InputStream sendGet(String url, String parameters) throws Exception {
+		URL object = new URL(url + "?" + parameters);
+		HttpURLConnection connection = (HttpURLConnection)object.openConnection();
+		connection.setRequestMethod("GET");
+		connection.setRequestProperty("User-Agent", USER_AGENT);
+		return connection.getInputStream();
+	}
+
+	public static InputStream sendPost(String url, String parameters) throws Exception {
+		URL object = new URL(url);
+		HttpURLConnection connection = (HttpURLConnection)object.openConnection();
+		connection.setRequestMethod("POST");
+		connection.setRequestProperty("User-Agent", USER_AGENT);
+		connection.setDoOutput(true); // We need to send a request body
+
+		DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
+		dataOutputStream.writeBytes(parameters);
+		dataOutputStream.flush();
+		dataOutputStream.close();
+
+		return connection.getInputStream();
+	}
+
+
+    /*public static HttpResponse postJSON(String url) {
+        String jsonString = "{\"method\": \"gdata\", \"gidlist\": [[" + galleryID + ", \"" + galleryToken + "\"]], \"namespace\": 1}".trim();
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        HttpPost postRequest = new HttpPost("http://g.e-hentai.org/api.php");
+        postRequest.setHeader("Content-type", "application/json");
+        StringEntity entity = new StringEntity(jsonString);
+        postRequest.setEntity(entity);
+
+        HttpResponse response = httpClient.execute(postRequest);
+
+        InputStream is = response.getEntity().getContent();
+
+    }*/
+/*
+    public static HttpResponse<JsonNode> getMashapeJSON(String target, String key) throws Exception {
+        return Unirest.get(target).header("X-Mashape-Key", key).header("Accept", "application/json").asJson();
+    }*/
+
+}

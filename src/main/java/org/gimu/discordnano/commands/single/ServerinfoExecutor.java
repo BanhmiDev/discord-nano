@@ -16,8 +16,8 @@
 package org.gimu.discordnano.commands.single;
 
 import net.dv8tion.jda.entities.Guild;
-import org.gimu.discordnano.commands.NanoExecutor;
-import org.gimu.discordnano.util.NanoMessage;
+import org.gimu.discordnano.lib.NanoExecutor;
+import org.gimu.discordnano.lib.NanoMessage;
 
 public class ServerinfoExecutor extends NanoExecutor {
 
@@ -29,12 +29,10 @@ public class ServerinfoExecutor extends NanoExecutor {
     public void respond(NanoMessage message, String[] args) {
         Guild guild = message.getGuild();
         StringBuilder sb = new StringBuilder();
-        sb.append("```");
         sb.append("Server: " + guild.getName() + "\n");
         sb.append("ID: " + guild.getId() + "\n");
         sb.append("Owner: " + guild.getOwner().getUsername() + "#" + guild.getOwner().getDiscriminator() + "\n");
         sb.append("Region: " + guild.getRegion());
-        sb.append("```");
-        message.reply(sb.toString());
+        message.replyFramed(sb.toString());
     }
 }

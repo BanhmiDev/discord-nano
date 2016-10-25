@@ -17,7 +17,7 @@ package org.gimu.discordnano.util;
 
 import com.mashape.unirest.http.Unirest;
 
-public class Hastebin {
+public class HastebinUtil {
 
     public static String post(String input) {
         String response = "ERROR";

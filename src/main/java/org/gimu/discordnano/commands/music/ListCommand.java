@@ -15,10 +15,8 @@
  */
 package org.gimu.discordnano.commands.music;
 
-import net.dv8tion.jda.player.source.AudioSource;
-import org.gimu.discordnano.util.Hastebin;
-import org.gimu.discordnano.util.NanoMessage;
-import org.gimu.discordnano.util.SongInfo;
+import org.gimu.discordnano.util.HastebinUtil;
+import org.gimu.discordnano.lib.NanoMessage;
 import org.json.JSONObject;
 
 import java.util.Map;
@@ -43,7 +41,7 @@ public class ListCommand {
                 body.append("**" + iterator + "** " + entry.getKey() + " **<" + entry.getValue().getString("url") + ">**\n");
                 iterator++;
             }
-            stringBuilder.append(Hastebin.post(body.deleteCharAt(body.length()-1).toString()));
+            stringBuilder.append(HastebinUtil.post(body.deleteCharAt(body.length()-1).toString()));
         }
         message.reply(stringBuilder.toString());
     }

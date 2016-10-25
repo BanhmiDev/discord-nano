@@ -16,8 +16,8 @@
 
 package org.gimu.discordnano.commands.single;
 
-import org.gimu.discordnano.commands.NanoExecutor;
-import org.gimu.discordnano.util.NanoMessage;
+import org.gimu.discordnano.lib.NanoExecutor;
+import org.gimu.discordnano.lib.NanoMessage;
 
 public class EXHentaiExecutor extends NanoExecutor {
 
