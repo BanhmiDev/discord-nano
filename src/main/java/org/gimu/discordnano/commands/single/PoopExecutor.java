@@ -36,19 +36,19 @@ public class PoopExecutor extends NanoExecutor {
 
         String poop = StringUtils.join(args, " ");
 
-        StringJoiner joiner = new StringJoiner("\n", "```\n", "```");
+        StringJoiner response = new StringJoiner("\n", "```\n", "```");
 
-        joiner.add("░░░░░░░░░░░█▀▀░░█░░░░░░");
-        joiner.add("░░░░░░▄▀▀▀▀░░░░░█▄▄░░░░");
-        joiner.add("░░░░░░█░█░░░░░░░░░░▐░░░");
-        joiner.add("░░░░░░▐▐░░░░░░░░░▄░▐░░░");
-        joiner.add("░░░░░░█░░░░░░░░▄▀▀░▐░░░");
-        joiner.add("░░░░▄▀░░░░░░░░▐░▄▄▀░░░░");
-        joiner.add("░░▄▀░░░▐░░░░░█▄▀░▐░░░░░");
-        joiner.add("░░█░░░▐░░░░░░░░▄░▌░░░░░");
-        joiner.add("░░░█▄░░▀▄░░░░▄▀█░▌░░░░░");
-        joiner.add("░░░▌▐▀▀▀░▀▀▀▀░░█░▌░░░░░");
-        joiner.add("░░▐▌▐▄░░▀▄░░░░░█░█▄▄░░░");
+        response.add("░░░░░░░░░░░█▀▀░░█░░░░░░");
+        response.add("░░░░░░▄▀▀▀▀░░░░░█▄▄░░░░");
+        response.add("░░░░░░█░█░░░░░░░░░░▐░░░");
+        response.add("░░░░░░▐▐░░░░░░░░░▄░▐░░░");
+        response.add("░░░░░░█░░░░░░░░▄▀▀░▐░░░");
+        response.add("░░░░▄▀░░░░░░░░▐░▄▄▀░░░░");
+        response.add("░░▄▀░░░▐░░░░░█▄▀░▐░░░░░");
+        response.add("░░█░░░▐░░░░░░░░▄░▌░░░░░");
+        response.add("░░░█▄░░▀▄░░░░▄▀█░▌░░░░░");
+        response.add("░░░▌▐▀▀▀░▀▀▀▀░░█░▌░░░░░");
+        response.add("░░▐▌▐▄░░▀▄░░░░░█░█▄▄░░░");
 
 
         StringBuilder poopArt = new StringBuilder("░░░▀▀░▄███▄▄░░░▀▄▄▄▀░░░");
@@ -62,9 +62,9 @@ public class PoopExecutor extends NanoExecutor {
             }
         }
 
-        joiner.add(poopArt);
-        joiner.add("░░░░░░░░░░░░░░░░░░░░░░░");
+        response.add(poopArt);
+        response.add("░░░░░░░░░░░░░░░░░░░░░░░");
 
-        message.reply(joiner.toString());
+        message.reply(response.toString());
     }
 }

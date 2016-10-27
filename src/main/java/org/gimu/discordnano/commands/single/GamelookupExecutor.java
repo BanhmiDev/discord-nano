@@ -44,13 +44,12 @@ public class GamelookupExecutor extends NanoExecutor {
         try {
             String query = StringUtils.join(args, "+");
 
-            HttpResponse<JsonNode> response = Unirest.get("https://videogamesrating.p.mashape.com/get.php?count=5&game=" + query)
+            HttpResponse<JsonNode> httpResponse = Unirest.get("https://videogamesrating.p.mashape.com/get.php?count=5&game=" + query)
                     .header("X-Mashape-Key", DiscordNano.config.getString("x_mashape_key"))
                     .header("Accept", "application/json")
                     .asJson();
 
-            JSONArray jsa = response.getBody().getArray();
-            System.out.println(response.getBody());
+            JSONArray jsa = httpResponse.getBody().getArray();
 
             if (jsa.length() == 0) {
                 message.getChannel().sendMessage("I couldn't find a game with that title.");
@@ -59,23 +58,21 @@ public class GamelookupExecutor extends NanoExecutor {
 
             JSONObject jso = new JSONObject(jsa.getJSONObject(0).toString()) {
                 @Override
-                public String getString(String key) throws JSONException
-                {
+                public String getString(String key) throws JSONException {
                     String s = super.getString(key);
-                    return s == null || s.isEmpty() ? "Not found." : s;
+                    return s == null || s.isEmpty() ? "Unknown" : s;
                 }
             };
 
-            StringJoiner joiner = new StringJoiner("\n");
+            StringJoiner response = new StringJoiner("\n");
 
-            joiner.add("**Title**: " + jso.getString("title"));
-            joiner.add("**Publisher**: " + jso.getString("publisher"));
-            joiner.add("**Score**: " + jso.getString("score"));
-            joiner.add("\n" + jso.getString("short_description"));
+            response.add("**Title**: " + jso.getString("title"));
+            response.add("**Publisher**: " + jso.getString("publisher"));
+            response.add("**Score**: " + jso.getString("score"));
+            response.add("\n" + jso.getString("short_description"));
+            response.add("\n**" + jso.getString("thumb") + "**");
 
-            joiner.add("\n**" + jso.getString("thumb") + "**");
-
-            message.getChannel().sendMessage(joiner.toString());
+            message.reply(response.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

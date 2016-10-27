@@ -42,19 +42,19 @@ public class UptimeExecutor extends NanoExecutor {
 
         long seconds = TimeUnit.SECONDS.toSeconds(duration);
 
-        StringBuilder msg = new StringBuilder( );
+        StringBuilder response = new StringBuilder( );
         if (days!=0) {
-            msg.append(days + " day(s) ");
+            response.append(days + " day(s) ");
         }
         if (hours!=0) {
-            msg.append(hours + " hours(s) ");
+            response.append(hours + " hours(s) ");
         }
         if (minutes!=0) {
-            msg.append(minutes + " minutes(s) ");
+            response.append(minutes + " minutes(s) ");
         }
         if (seconds!=0) {
-            msg.append(seconds + " seconds(s)");
+            response.append(seconds + " seconds(s)");
         }
-        message.reply("**Uptime**: " + msg.toString());
+        message.reply("**Uptime**: " + response.toString());
     }
 }

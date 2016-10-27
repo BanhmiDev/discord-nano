@@ -46,11 +46,11 @@ public class LeetExecutor extends NanoExecutor {
             throw new IllegalArgumentException();
         }
 
-        String str = StringUtils.join(args, " ");
+        String response = StringUtils.join(args, " ");
 
         for (Map.Entry<String, String> entry : dictionary.entrySet()) {
-            str = str.replaceAll(entry.getKey(), entry.getValue());
+            response = response.replaceAll(entry.getKey(), entry.getValue());
         }
-        message.reply("`" + str + "`");
+        message.reply("`" + response + "`");
     }
 }

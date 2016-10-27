@@ -63,11 +63,11 @@ public class XkcdExecutor extends NanoExecutor {
                 JSONObject randJSON = JSON.readJsonFromUrl(String.format("http://xkcd.com/%d/info.0.json", rand));
 
                 if (randJSON != null) {
-                    String builder = "**xkcd**: " + randJSON.getString("title") + "\n" +
+                    String response = "**xkcd**: " + randJSON.getString("title") + "\n" +
                             "**No**: " + randJSON.getInt("num") + "\n" +
                             "**<" + randJSON.getString("img").replaceAll("\\\\/", "/") + ">**";
 
-                    message.reply(builder);
+                    message.reply(response);
                     return;
                 }
             }

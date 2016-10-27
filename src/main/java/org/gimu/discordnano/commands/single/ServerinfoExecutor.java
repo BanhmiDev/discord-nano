@@ -28,11 +28,11 @@ public class ServerinfoExecutor extends NanoExecutor {
     @Override
     public void respond(NanoMessage message, String[] args) {
         Guild guild = message.getGuild();
-        StringBuilder sb = new StringBuilder();
-        sb.append("Server: " + guild.getName() + "\n");
-        sb.append("ID: " + guild.getId() + "\n");
-        sb.append("Owner: " + guild.getOwner().getUsername() + "#" + guild.getOwner().getDiscriminator() + "\n");
-        sb.append("Region: " + guild.getRegion());
-        message.replyFramed(sb.toString());
+        StringBuilder response = new StringBuilder();
+        response.append("Server: " + guild.getName() + "\n");
+        response.append("ID: " + guild.getId() + "\n");
+        response.append("Owner: " + guild.getOwner().getUsername() + "#" + guild.getOwner().getDiscriminator() + "\n");
+        response.append("Region: " + guild.getRegion());
+        message.replyFramed(response.toString());
     }
 }
