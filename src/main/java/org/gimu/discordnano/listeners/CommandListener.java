@@ -39,8 +39,7 @@ import java.util.Set;
 
 public class CommandListener extends ListenerAdapter {
 
-    public static HashMap<String, Class> commands = new HashMap<>();
-    public static Guild guild;
+    private HashMap<String, Class> commands = new HashMap<>();
 
     private Set<String> whitelist = new HashSet<String>();
 
@@ -84,8 +83,6 @@ public class CommandListener extends ListenerAdapter {
         String messageContent = message.getRawContent();
         User author = event.getAuthor();
 
-        guild = event.getGuild();
-
         if (DiscordNano.TESTMODE && !channel.getId().equals(DiscordNano.TESTCHANNEL_ID)) {
             channel.sendMessage("Currently in test-mode, not accepting commands from you .( ̵˃﹏˂̵ )");
             return;
@@ -101,11 +98,11 @@ public class CommandListener extends ListenerAdapter {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            ChatterBotSession bot1session = bot.createSession();
+            ChatterBotSession botSession = bot.createSession();
 
             String response = "";
             try {
-                response = bot1session.think(message.getRawContent());
+                response = botSession.think(message.getRawContent());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -127,11 +124,6 @@ public class CommandListener extends ListenerAdapter {
                 method = cls.getMethod("respond", NanoMessage.class, String[].class);
                 method.invoke(instance, new NanoMessage(event.getMessage(), event.getGuild()), args);
             } catch (InvocationTargetException e) {
-                // TODO: print out usage text
-                System.out.println(e.getTargetException());
-                System.out.println(method.getDeclaringClass());
-                System.out.println(method.getName());
-
                 String usageText = null;
                 Field field = null;
                 try {
@@ -141,12 +133,12 @@ public class CommandListener extends ListenerAdapter {
                 } catch (Exception er) {
                     er.printStackTrace();
                 }
-                StringBuilder sb = new StringBuilder();
-                sb.append("```");
-                sb.append("Usage: " + DiscordNano.prefix + command.toLowerCase() + " ");
-                sb.append(usageText);
-                sb.append("```");
-                event.getChannel().sendMessage(sb.toString());
+                StringBuilder response = new StringBuilder();
+                response.append("```");
+                response.append("Usage: " + DiscordNano.prefix + command.toLowerCase() + " ");
+                response.append(usageText);
+                response.append("```");
+                event.getChannel().sendMessage(response.toString());
             } catch (Exception er) {
                 er.printStackTrace();
             }
@@ -155,9 +147,5 @@ public class CommandListener extends ListenerAdapter {
                 channel.deleteMessages(channel.getHistory().retrieve(100));
             }
         }
-
-        /*if (channel.checkPermission(jda.getSelfInfo(), Permission.MESSAGE_MANAGE))
-            channel.deleteMessageById(message.getId());*/
-
     }
 }
