@@ -19,30 +19,32 @@ import org.gimu.discordnano.util.HastebinUtil;
 import org.gimu.discordnano.lib.NanoMessage;
 import org.json.JSONObject;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ListCommand {
 
-    public static void respond(NanoMessage message, Map<String, JSONObject> musicLibraryMap) {
+    public static String respond(MusicLibrary library) {
+        LinkedHashMap<String, JSONObject> musicLibraryMap = library.musicLibraryMap;
+
         if (musicLibraryMap.size() == 0) {
-            message.reply("The music library empty ｢(ﾟﾍﾟ)");
+            return "The music library empty.";
         }
-        StringBuilder stringBuilder = new StringBuilder("__Music Library Status__ (Entries: " + musicLibraryMap.size() + ")\n\n");
+        StringBuilder response = new StringBuilder("__Music Library Status__ (Entries: " + musicLibraryMap.size() + ")\n\n");
         int iterator = 0;
         if (musicLibraryMap.size() <= 10) {
             for (Map.Entry<String, JSONObject> entry : musicLibraryMap.entrySet()) {
-                stringBuilder.append("**" + iterator + "** " + entry.getKey() + " **<" + entry.getValue().getString("url") + ">\n");
+                response.append("**" + iterator + "** " + entry.getKey() + " **<" + entry.getValue().getString("url") + ">\n");
                 iterator++;
             }
         } else {
-            message.getChannel().sendTyping();
             StringBuilder body = new StringBuilder();
             for (Map.Entry<String, JSONObject> entry : musicLibraryMap.entrySet()) {
                 body.append("**" + iterator + "** " + entry.getKey() + " **<" + entry.getValue().getString("url") + ">**\n");
                 iterator++;
             }
-            stringBuilder.append(HastebinUtil.post(body.deleteCharAt(body.length()-1).toString()));
+            response.append(HastebinUtil.post(body.deleteCharAt(body.length()-1).toString()));
         }
-        message.reply(stringBuilder.toString());
+        return response.toString();
     }
 }

@@ -18,53 +18,45 @@ package org.gimu.discordnano.commands.music;
 import net.dv8tion.jda.player.source.RemoteSource;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.util.CustomMusicPlayer;
-import org.gimu.discordnano.lib.NanoMessage;
 
 public class PlayCommand {
 
-    public static void respond(NanoMessage message, String input, CustomMusicPlayer player) {
+    public static String respond(MusicStreamer streamer, String input) {
         if (input.length() == 0) {
-            if (player.isPlaying()) {
-                message.reply("Usage: `" + DiscordNano.prefix + "music play <url>|<index>|<searchquery>`");
-            } else if (player.isPaused()) {
-                player.play();
-                message.reply("Resuming playback.");
+            if (streamer.isPlaying()) {
+                return "Usage: `" + DiscordNano.prefix + "music play <url>|<index>|<searchquery>`";
+            } else if (streamer.isPaused()) {
+                streamer.play();
+                return "Resuming playback.";
             } else {
-                if (player.getAudioQueue().isEmpty()) {
-                    message.reply("Usage: `" + DiscordNano.prefix + "music play <url>|<index>|<searchquery>`");
+                if (streamer.getAudioQueue().isEmpty()) {
+                    return "Usage: `" + DiscordNano.prefix + "music play <url>|<index>|<searchquery>`";
                 } else {
-                    player.play();
-                    message.reply("Starting playback.");
+                    streamer.play();
+                    return "Starting playback.";
                 }
             }
         } else {
-            message.getChannel().sendTyping();
-
             if (NumberUtils.isNumber(input) || !input.contains("http")) {
                 // Fetch from library
-                String urlFromLibrary = MusicExecutor.getSrcFromLibrary(input);
+                String urlFromLibrary = MusicExecutor.musicLibrary.get(input);
                 if (urlFromLibrary.equals("-1")) {
-                    message.reply("Couldn't find music from the library.");
+                    return "Couldn't find music from the library.";
                 } else {
-                    message.getChannel().sendTyping();
-                    MusicExecutor.addSingleSource(new RemoteSource(urlFromLibrary), player, message);
+                    MusicExecutor.musicLibrary.add(streamer, new RemoteSource(urlFromLibrary), false);
                 }
             } else {
                 // Direct playback
                 RemoteSource src = new RemoteSource(input);
                 if (src.getInfo().getError() != null) {
                     String err = src.getInfo().getError();
-                    if (err.length() > 1900) {
-                        System.err.println(err);
-                        message.reply("I fucked up!");
-                    } else
-                        message.reply("Invalid URL, you fucked up.");
+                    System.err.println(err);
+                    return "I fucked up!";
                 } else if (src.getInfo().isLive()) {
-                    message.reply("I don't play livestreams.");
+                    return "I don't play livestreams.";
                 } else {
                     MusicExecutor.threadPool.submit(() -> {
-                        MusicExecutor.addSingleSource(src, player, message);
+                        MusicExecutor.musicLibrary.add(streamer, src, false);
                     });
                 }
             }

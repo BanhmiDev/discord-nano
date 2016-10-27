@@ -25,24 +25,24 @@ public class SongInfo {
 
     public static final ArrayList<String> skips = new ArrayList<>();
     private final User author;
-    private final Guild guild;
+    //private final Guild guild;
 
-    public SongInfo(User author, Guild guild) {
+    public SongInfo(User author) {
         this.author = author;
-        this.guild = guild;
+        //this.guild = guild;
     }
 
     public User getAuthor() {
         return author;
     }
 
-    public VoiceChannel getVoiceChannel() {
+    /*public VoiceChannel getVoiceChannel() {
         return guild.getVoiceStatusOfUser(author).getChannel();
-    }
+    }*/
 
-    public String getGuildId() {
+    /*public String getGuildId() {
         return guild.getId();
-    }
+    }*/
 
     public int getVotes() {
         return skips.size();

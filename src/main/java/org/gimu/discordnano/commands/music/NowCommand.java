@@ -20,7 +20,6 @@ import net.dv8tion.jda.player.source.AudioInfo;
 import net.dv8tion.jda.player.source.AudioSource;
 import net.dv8tion.jda.player.source.AudioTimestamp;
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.util.CustomMusicPlayer;
 import org.gimu.discordnano.util.HastebinUtil;
 import org.gimu.discordnano.util.MusicUtil;
 import org.gimu.discordnano.lib.NanoMessage;
@@ -30,13 +29,12 @@ import java.util.StringJoiner;
 
 public class NowCommand {
 
-    public static void respond(NanoMessage message, CustomMusicPlayer player) {
+    public static String respond(NanoMessage message, MusicStreamer player) {
         if (!player.isPlaying()) {
-            message.reply("I'm not playing anything.");
-            return;
+            return "I'm not playing anything.";
         }
 
-        StringJoiner stringJoiner = new StringJoiner("\n");
+        StringJoiner response = new StringJoiner("\n");
 
         // Current song information
         AudioTimestamp currentTime = player.getCurrentTimestamp();
@@ -45,23 +43,23 @@ public class NowCommand {
         User currentDJ = player.getAuthor();
 
         // Current song information string
-        stringJoiner.add("**Song**: " + info.getTitle());
-        stringJoiner.add("**Source**: " + info.getOrigin());
-        stringJoiner.add((info.getError() != null ? "" : "**Time**: [" + currentTime.getTimestamp() + " / " + info.getDuration().getTimestamp() + "]"));
+        response.add("**Song**: " + info.getTitle());
+        response.add("**Source**: " + info.getOrigin());
+        response.add((info.getError() != null ? "" : "**Time**: [" + currentTime.getTimestamp() + " / " + info.getDuration().getTimestamp() + "]"));
         if (!player.getIdle()) {
-            stringJoiner.add("**DJ**: " + currentDJ.getUsername().replace("~~", "\\~\\~").replace("_", "\\_").replace("*", "\\*").replace("`", "\\`") + "#" + currentDJ.getDiscriminator());
+            response.add("**DJ**: " + currentDJ.getUsername().replace("~~", "\\~\\~").replace("_", "\\_").replace("*", "\\*").replace("`", "\\`") + "#" + currentDJ.getDiscriminator());
         }
 
         // Queue information
         List<AudioSource> queue = player.getAudioQueue();
 
         if (player.getIdle()) {
-            stringJoiner.add("\nCurrently in **IDLE** mode and playing songs from the library.");
+            response.add("\nCurrently in **IDLE** mode and playing songs from the library.");
         } else if (queue.isEmpty()) {
             if (DiscordNano.RANDOM_MUSIC) {
-                stringJoiner.add("\nNo more songs in the queue. Seems like I have to play from the library soon!");
+                response.add("\nNo more songs in the queue. Seems like I have to play from the library soon!");
             } else {
-                stringJoiner.add("\nNo more songs in the queue. Seems like I have to stop soon!");
+                response.add("\nNo more songs in the queue. Seems like I have to stop soon!");
             }
         } else {
             StringBuilder queueString = new StringBuilder("\n\n**Queue Status** (Entries: " + queue.size() + ")\n");
@@ -83,9 +81,9 @@ public class NowCommand {
             }
             queueString.append("\nTotal Queue Duration: ").append(AudioTimestamp.fromSeconds(totalSeconds).getTimestamp()).append(" minutes.");
 
-            stringJoiner.add(queueString);
+            response.add(queueString);
         }
 
-        message.reply(stringJoiner.toString());
+        return response.toString();
     }
 }

@@ -37,6 +37,14 @@ public class APIUtil {
 		return uc.getInputStream();
 	}
 
+	public static InputStream sendGet(String url) throws Exception {
+		URL object = new URL(url);
+		HttpURLConnection connection = (HttpURLConnection)object.openConnection();
+		connection.setRequestMethod("GET");
+		connection.setRequestProperty("User-Agent", USER_AGENT);
+		return connection.getInputStream();
+	}
+
 	public static InputStream sendGet(String url, String parameters) throws Exception {
 		URL object = new URL(url + "?" + parameters);
 		HttpURLConnection connection = (HttpURLConnection)object.openConnection();
@@ -59,24 +67,4 @@ public class APIUtil {
 
 		return connection.getInputStream();
 	}
-
-
-    /*public static HttpResponse postJSON(String url) {
-        String jsonString = "{\"method\": \"gdata\", \"gidlist\": [[" + galleryID + ", \"" + galleryToken + "\"]], \"namespace\": 1}".trim();
-        HttpClient httpClient = HttpClientBuilder.create().build();
-        HttpPost postRequest = new HttpPost("http://g.e-hentai.org/api.php");
-        postRequest.setHeader("Content-type", "application/json");
-        StringEntity entity = new StringEntity(jsonString);
-        postRequest.setEntity(entity);
-
-        HttpResponse response = httpClient.execute(postRequest);
-
-        InputStream is = response.getEntity().getContent();
-
-    }*/
-/*
-    public static HttpResponse<JsonNode> getMashapeJSON(String target, String key) throws Exception {
-        return Unirest.get(target).header("X-Mashape-Key", key).header("Accept", "application/json").asJson();
-    }*/
-
 }

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.util;
+package org.gimu.discordnano.commands.music;
 
 import net.dv8tion.jda.entities.User;
 import net.dv8tion.jda.entities.VoiceChannel;
@@ -23,21 +23,26 @@ import net.dv8tion.jda.player.source.AudioInfo;
 import net.dv8tion.jda.player.source.AudioSource;
 import net.dv8tion.jda.player.source.RemoteSource;
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.commands.music.MusicExecutor;
 import org.gimu.discordnano.lib.NanoMessage;
+import org.gimu.discordnano.util.SongInfo;
 
-public class CustomMusicPlayer extends MusicPlayer {
+import java.util.HashMap;
+import java.util.Map;
 
+public class MusicStreamer extends MusicPlayer {
+
+
+    public static Map<AudioSource, SongInfo> musicQueue = new HashMap<>();
     private boolean idle = false;
+    private NanoMessage message;
     private AudioManager am;
     private VoiceChannel vc;
-    private NanoMessage message;
     private User author;
 
-    public CustomMusicPlayer(AudioManager am, VoiceChannel vc, NanoMessage message) {
+    public MusicStreamer(NanoMessage message) {
         super();
-        this.am = am;
-        this.vc = vc;
+        this.am = message.getGuild().getAudioManager();
+        this.vc = message.getGuild().getJDA().getVoiceChannelById(DiscordNano.VOICECHANNEL_ID); // TODO
         this.message = message;
         this.author = message.getAuthor();
         setVolume(DiscordNano.DEFAULT_VOLUME);
@@ -57,30 +62,31 @@ public class CustomMusicPlayer extends MusicPlayer {
 
     @Override
     public void stop() {
-        MusicExecutor.musicQueue.remove(super.getPreviousAudioSource());
-        DiscordNano.jda.getAccountManager().setGame(DiscordNano.DEFAULT_STATUS);
-        super.stop();
-        am.closeAudioConnection();
+        if (am != null) {
+            musicQueue.remove(super.getPreviousAudioSource());
+            DiscordNano.jda.getAccountManager().setGame(DiscordNano.DEFAULT_STATUS);
+            super.stop();
+            am.closeAudioConnection();
+        }
     }
 
     @Override
     public void playNext(boolean b) {
         super.playNext(b);
         SongInfo.skips.clear();
-        MusicExecutor.musicQueue.remove(super.getPreviousAudioSource());
+        musicQueue.remove(super.getPreviousAudioSource());
         AudioSource src = super.getCurrentAudioSource();
         if (src == null) {
             if (DiscordNano.RANDOM_MUSIC && vc.getUsers().size() > 1) { // Random music whenever someone is listening
                 setIdle(true);
-                src = new RemoteSource(MusicExecutor.getSrcFromLibrary(String.valueOf((int) (Math.random() * MusicExecutor.musicLibraryMap.size()))));
+                src = new RemoteSource(MusicExecutor.musicLibrary.get(String.valueOf((int) (Math.random() * MusicExecutor.musicLibrary.musicLibraryMap.size()))));
                 AudioInfo srcInfo = src.getInfo();
                 if (srcInfo.getError() == null) {
 
                     this.getAudioQueue().add(src);
-                    MusicExecutor.musicQueue.put(src, new SongInfo(null, null));
+                    musicQueue.put(src, new SongInfo(null));
 
-                    message.reply("**Now playing**: `" + srcInfo.getTitle() + "` \\(ﾉ´ヮ´)ﾉ*:･ﾟ");
-                    DiscordNano.jda.getAccountManager().setGame(src.getInfo().getTitle());
+                    updateStatus();
 
                     if (!this.isPlaying())
                         this.play();
@@ -104,11 +110,25 @@ public class CustomMusicPlayer extends MusicPlayer {
         super.play();
         super.setVolume(DiscordNano.DEFAULT_VOLUME);
 
+        updateStatus();
+
         if (am.isConnected()) {
             am.moveAudioConnection(vc);
         } else {
             am.openAudioConnection(vc);
         }
 
+    }
+
+    public void add(AudioSource audioSource, SongInfo songInfo) {
+        this.getAudioQueue().add(audioSource);
+        musicQueue.put(audioSource, songInfo);
+    }
+
+    private void updateStatus() {
+        AudioSource audioSource = super.getCurrentAudioSource();
+        AudioInfo audioInfo = audioSource.getInfo();
+        message.reply("**Now playing**: `" + audioInfo.getTitle() + "`");
+        DiscordNano.jda.getAccountManager().setGame(audioInfo.getTitle());
     }
 }

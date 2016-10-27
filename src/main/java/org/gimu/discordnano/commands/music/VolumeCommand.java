@@ -17,32 +17,28 @@ package org.gimu.discordnano.commands.music;
 
 import net.dv8tion.jda.entities.User;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.gimu.discordnano.util.CustomMusicPlayer;
 import org.gimu.discordnano.util.MusicUtil;
-import org.gimu.discordnano.lib.NanoMessage;
 
 public class VolumeCommand {
 
-    public static void setVolume(NanoMessage message, CustomMusicPlayer player, User user, String input) {
+    public static String setVolume(MusicStreamer player, User user, String input) {
         if (MusicUtil.isDJ(player, user)) {
-            message.reply(MusicExecutor.NO_DJ_REPLY);
-            return;
+            return MusicExecutor.NO_DJ_REPLY;
         }
 
         if (input.length() == 0) {
-            message.reply("Current volume: " + player.getVolume());
+            return "Current volume: " + player.getVolume();
         } else {
             if (!NumberUtils.isNumber(input)) {
-                message.reply("Please enter a valid value!");
-                return;
+                return "Please enter a valid value!";
             }
 
             float newVolume = Float.parseFloat(input);
             if (newVolume <= 1f) {
                 player.setVolume(newVolume);
-                message.reply("VolumeCommand set to " + newVolume);
+                return "VolumeCommand set to " + newVolume;
             } else {
-                message.reply("That's too loud（ノT＿T)ノ ＾┻━┻");
+                return "That's too loud（ノT＿T)ノ ＾┻━┻";
             }
         }
     }

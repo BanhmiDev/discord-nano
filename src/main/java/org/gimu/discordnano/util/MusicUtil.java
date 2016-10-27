@@ -20,10 +20,11 @@ import net.dv8tion.jda.player.source.AudioInfo;
 import net.dv8tion.jda.player.source.AudioSource;
 import net.dv8tion.jda.player.source.AudioTimestamp;
 import org.gimu.discordnano.DiscordNano;
+import org.gimu.discordnano.commands.music.MusicStreamer;
 
 public class MusicUtil {
 
-    public static boolean isDJ(CustomMusicPlayer player, User user) {
+    public static boolean isDJ(MusicStreamer player, User user) {
         return user.getId().equals(DiscordNano.AUTHOR_ID) || (user == player.getAuthor());
     }
 

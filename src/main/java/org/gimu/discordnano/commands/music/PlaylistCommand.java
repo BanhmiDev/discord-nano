@@ -15,17 +15,28 @@
  */
 package org.gimu.discordnano.commands.music;
 
+import net.dv8tion.jda.entities.Message;
 import net.dv8tion.jda.entities.User;
+import net.dv8tion.jda.player.Playlist;
+import net.dv8tion.jda.player.source.AudioInfo;
+import net.dv8tion.jda.player.source.AudioSource;
+import net.dv8tion.jda.player.source.RemoteSource;
+import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.lib.NanoMessage;
+
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 public class PlaylistCommand {
 
-    public static void respond(NanoMessage message, User author, String input) {
-        message.reply("Currently disabled.");
+    // TODO: cleanup loader
+    public static final Set<String> playlistLoader = new HashSet<>();
 
-        /*if (input.length() == 0) {
-            message.reply("Please select a playlist using `" + DiscordNano.prefix + "music playlist <url>`");
-            return;
+    public static String respond(MusicStreamer streamer, NanoMessage message, User author, String input) {
+        if (input.length() == 0) {
+            return "Please select a playlist using `" + DiscordNano.prefix + "music playlist <url>`";
         }
 
         Message playlistStatus = message.reply("*Processing playlist..*");
@@ -33,23 +44,24 @@ public class PlaylistCommand {
         Playlist playlist = null;
         try {
             playlist = Playlist.getPlaylist(input);
-
         } catch (NullPointerException ex) {
             if (ex.getLocalizedMessage().equals("The YT-DL playlist process resulted in a null or zero-length INFO!")) {
-                playlistStatus.updateMessage("That's not a valid playlist URL ｢(ﾟﾍﾟ)");
-                return;
+                return "That's not a valid playlist source.";
             } else
                 ex.printStackTrace();
         }
 
         List<AudioSource> sources = new LinkedList<>(playlist.getSources());
         if (sources.size() <= 1) {
+            // Single source
             RemoteSource src = new RemoteSource(input);
-            threadPool.submit(() -> {
-                addSingleSource(src, player, message);
+            MusicExecutor.threadPool.submit(() -> {
+                message.deleteMessage();
+                MusicExecutor.musicLibrary.add(streamer, src, false);
             });
         } else {
-            if (playlistLoader.contains(message.getChannelId())) {
+            // Multiple sources
+            if (playlistLoader.contains(message.getChannelId())) { // Limit processing calls
                 playlistStatus.updateMessage("Currently busy processing another playlist（；¬＿¬)");
                 return;
             }
@@ -57,7 +69,7 @@ public class PlaylistCommand {
             playlistLoader.add(message.getChannelId());
             playlistStatus.updateMessage("Queuing up " + sources.size() + " songs...");
 
-            threadPool.submit(() -> {
+            MusicExecutor.threadPool.submit(() -> {
                 sources.stream().forEachOrdered(audioSource -> {
                     AudioInfo audioInfo = audioSource.getInfo();
                     if (audioInfo.isLive()) {
@@ -65,21 +77,12 @@ public class PlaylistCommand {
                         return;
                     }
 
-                    List<AudioSource> audioQueue = player.getAudioQueue();
-                    if (audioInfo.getError() == null) {
-                        musicQueue.put(audioSource, new SongInfo(author, null));
-                        audioQueue.add(audioSource);
-                        if (player.isStopped())
-                            player.play();
-                    } else {
-                        String err = audioInfo.getError();
-                        System.err.println(err);
-                    }
+                    MusicExecutor.musicLibrary.add(streamer, audioSource, false);
                 });
                 playlistLoader.remove(message.getChannelId());
                 message.deleteMessage();
                 playlistStatus.updateMessage("Successfully loaded `" + input + "`!");
             });
-        }*/
+        }
     }
 }
