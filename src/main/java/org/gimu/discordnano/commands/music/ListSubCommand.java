@@ -16,12 +16,16 @@
 package org.gimu.discordnano.commands.music;
 
 import org.gimu.discordnano.util.HastebinUtil;
-import org.gimu.discordnano.lib.NanoMessage;
 import org.json.JSONObject;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+@SubCommand(
+        aliases = {"music"},
+        usage = "",
+        description = "Plays music"
+)
 public class ListCommand {
 
     public static String respond(MusicLibrary library) {
@@ -34,13 +38,13 @@ public class ListCommand {
         int iterator = 0;
         if (musicLibraryMap.size() <= 10) {
             for (Map.Entry<String, JSONObject> entry : musicLibraryMap.entrySet()) {
-                response.append("**" + iterator + "** " + entry.getKey() + " **<" + entry.getValue().getString("url") + ">\n");
+                response.append("**" + iterator + "** " + entry.getKey() + " **<" + entry.getValue().get("url") + ">**\n");
                 iterator++;
             }
         } else {
             StringBuilder body = new StringBuilder();
             for (Map.Entry<String, JSONObject> entry : musicLibraryMap.entrySet()) {
-                body.append("**" + iterator + "** " + entry.getKey() + " **<" + entry.getValue().getString("url") + ">**\n");
+                body.append("**" + iterator + "** " + entry.getKey() + " **<" + entry.getValue().get("url") + ">**\n");
                 iterator++;
             }
             response.append(HastebinUtil.post(body.deleteCharAt(body.length()-1).toString()));

@@ -16,23 +16,25 @@
 package org.gimu.discordnano.commands.single;
 
 import net.dv8tion.jda.entities.Guild;
-import org.gimu.discordnano.lib.NanoExecutor;
+import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.NanoMessage;
 
-public class ServerinfoExecutor extends NanoExecutor {
+import java.util.Optional;
 
-    public String[] triggers = {"serverinfo"};
-    public String description = "Get information about the server";
-    public String usage = "";
+@MainCommand(
+        alias = {"serverinfo"},
+        description = "Gets server information"
+)
+public class ServerinfoExecutor extends AbstractCommand {
 
-    @Override
-    public void respond(NanoMessage message, String[] args) {
+    public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
         Guild guild = message.getGuild();
         StringBuilder response = new StringBuilder();
         response.append("Server: " + guild.getName() + "\n");
         response.append("ID: " + guild.getId() + "\n");
         response.append("Owner: " + guild.getOwner().getUsername() + "#" + guild.getOwner().getDiscriminator() + "\n");
         response.append("Region: " + guild.getRegion());
-        message.replyFramed(response.toString());
+        return Optional.of(response.toString());
     }
 }

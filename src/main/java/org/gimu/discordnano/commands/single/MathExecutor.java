@@ -17,29 +17,30 @@
 package org.gimu.discordnano.commands.single;
 
 import org.apache.commons.lang3.StringUtils;
-import org.gimu.discordnano.lib.NanoExecutor;
+import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.NanoMessage;
 
 import java.text.DecimalFormat;
+import java.util.Optional;
 
-public class MathExecutor extends NanoExecutor {
-
-    public String[] triggers = {"math"};
-    public String description = "Evaluates mathematical expressions";
-    public String usage = "<expression>";
+@MainCommand(
+        alias = {"math"},
+        description = "Evaluates mathematical expressions",
+        usage = "<expression>"
+)
+public class MathExecutor extends AbstractCommand {
 
     private final DecimalFormat formatter = new DecimalFormat() {{setDecimalSeparatorAlwaysShown(false);}};
 
-    @Override
-    public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
+    public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
         if (args.length == 0) {
             throw new IllegalArgumentException();
         }
 
         String exp = StringUtils.join(args, " ");
         double result = new Expression(exp).eval();
-        message.reply("Expression `" + exp + "` evaluating.");
-        message.reply("Final answer: `" + formatter.format(result) + "`");
+        return Optional.of("Final answer for `" + exp + "`: `" + formatter.format(result) + "`");
     }
 
     private class Expression {

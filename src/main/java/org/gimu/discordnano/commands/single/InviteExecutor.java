@@ -17,17 +17,19 @@
 package org.gimu.discordnano.commands.single;
 
 import net.dv8tion.jda.Permission;
-import org.gimu.discordnano.lib.NanoExecutor;
+import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.NanoMessage;
 
-public class InviteExecutor extends NanoExecutor {
+import java.util.Optional;
 
-    public String[] triggers = {"invite"};
-    public String description = "Invite Nano to another server";
-    public String usage = "";
+@MainCommand(
+        alias = {"invite"},
+        description = "Get the invite link for Nano"
+)
+public class InviteExecutor extends AbstractCommand {
 
-    @Override
-    public void respond(NanoMessage message, String[] args) {
-        message.reply("M-me!? On another server?\n" + message.getJDA().getSelfInfo().getAuthUrl(Permission.ADMINISTRATOR));
+    public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
+        return Optional.of("M-me!? On another server?\n" + message.getJDA().getSelfInfo().getAuthUrl(Permission.ADMINISTRATOR));
     }
 }

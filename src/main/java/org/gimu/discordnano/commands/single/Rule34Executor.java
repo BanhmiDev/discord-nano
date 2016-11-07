@@ -16,7 +16,8 @@
 
 package org.gimu.discordnano.commands.single;
 
-import org.gimu.discordnano.lib.NanoExecutor;
+import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.NanoMessage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attribute;
@@ -25,16 +26,19 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
+
+import java.util.Optional;
 import java.util.Random;
 
-public class Rule34Executor extends NanoExecutor {
+@MainCommand(
+        alias = {"rule34"},
+        description = "Fetches image from rule34.xxx",
+        usage = "<query>"
+)
+public class Rule34Executor extends AbstractCommand {
 
-    public String[] triggers = {"rule34"};
-    public String description = "Fetches image from rule34.xxx";
-    public String usage = "<query>";
-
-    @Override
-    public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
+    public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
+        String response = "";
         if (args.length == 0) {
             throw new IllegalArgumentException();
         }
@@ -68,9 +72,11 @@ public class Rule34Executor extends NanoExecutor {
 
             url = att2.getValue();
 
-            message.reply("http:" + url);
+            response = "http:" + url;
         } catch (Exception e) {
-            message.reply("I couldn't find anything.");
+            response = "I couldn't find anything.";
         }
+
+        return Optional.of(response);
     }
 }

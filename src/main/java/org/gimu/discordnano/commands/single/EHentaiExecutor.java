@@ -21,7 +21,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.gimu.discordnano.lib.NanoExecutor;
+import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.NanoMessage;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,15 +34,15 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Optional;
 
-public class EHentaiExecutor extends NanoExecutor {
+@MainCommand(
+        alias = {"ehentai"},
+        description = "Displays a random e-hentai entry"
+)
+public class EHentaiExecutor extends AbstractCommand {
 
-    public String[] triggers = {"ehentai"};
-    public String description = "Display e-hentai entry";
-    public String usage = "";
-
-    @Override
-    public void respond(NanoMessage message, String[] args) {
+    public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
         // GENERATE RANDOM PAGE
         String galleryID = "";
         String galleryToken = "";
@@ -108,11 +109,12 @@ public class EHentaiExecutor extends NanoExecutor {
             }
             sb.append("\n\n**<http://g.e-hentai.org/g/" + first.getInt("gid") + "/" + first.getString("token") + ">**");
             sb.append("\n\n" + first.getString("thumb"));
-            message.reply(sb.toString());
+            return Optional.of(sb.toString());
             //System.out.println("****************");
         } catch (Exception ex) {
             ex.printStackTrace();
-            message.reply("I fucked up! Try again.");
+            //message.reply("I fucked up! Try again.");
         }
+        return Optional.empty();
     }
 }

@@ -13,25 +13,21 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package org.gimu.discordnano.commands;
 
-package org.gimu.discordnano.commands.single;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.gimu.discordnano.lib.NanoExecutor;
-import org.gimu.discordnano.lib.NanoMessage;
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface SubCommand {
 
-public class FlipExecutor extends NanoExecutor {
+    String[] alias();
 
-    public String[] triggers = {"flip", "coin"};
-    public String description = "Flips a coin";
-    public String usage = "";
+    String description() default "No description";
 
-    @Override
-    public void respond(NanoMessage message, String[] args) {
-        double random = Math.random();
-        if (random < 0.5) {
-            message.reply("**Tails!**");
-        } else {
-            message.reply("**Heads!**");
-        }
-    }
+    String usage() default "";
+
 }

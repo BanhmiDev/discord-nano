@@ -13,21 +13,30 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package org.gimu.discordnano.commands;
 
-package org.gimu.discordnano.commands.single;
+import java.util.List;
 
-import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.lib.NanoExecutor;
-import org.gimu.discordnano.lib.NanoMessage;
+public abstract class AbstractSubCommand implements CommandExecutor {
 
-public class AboutExecutor extends NanoExecutor {
+    private AbstractCommand mainCommand;
+    private String description;
+    private String usage;
+    private List<String> aliases;
 
-    public String[] triggers = {"about"};
-    public String description = "Get information about Nano";
-    public String usage = "";
+    public AbstractSubCommand(AbstractCommand mainCommand) {
+        this.mainCommand = mainCommand;
+    }
 
-    @Override
-    public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
-        message.reply("I was made by " + message.getJDA().getUserById(DiscordNano.AUTHOR_ID).getAsMention());
+    public String getDescription() {
+        return description;
+    }
+
+    public String getUsage() {
+        return usage;
+    }
+
+    public List<String> getAliases() {
+        return aliases;
     }
 }

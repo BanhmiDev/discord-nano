@@ -16,17 +16,22 @@
 
 package org.gimu.discordnano.commands.single;
 
-import org.gimu.discordnano.lib.NanoExecutor;
+import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.CommandExecutor;
+import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.NanoMessage;
 
-public class ChooseExecutor extends NanoExecutor {
+import java.util.Optional;
 
-    public String[] triggers = {"choose"};
-    public String description = "Chooses an option from a list of options";
-    public String usage = "<option1;option2...>";
+@MainCommand(
+        alias = {"choose"},
+        description = "Chooses from a minimum of two options",
+        usage = "<option1;option2...>"
+)
+public class ChooseCommand extends AbstractCommand {
 
-    @Override
-    public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
+    public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
+        String response;
         if (args.length == 0) {
             throw new IllegalArgumentException();
         }
@@ -42,15 +47,16 @@ public class ChooseExecutor extends NanoExecutor {
 
             int choose = (int) (Math.random() * choices.length - 1);
             if (choices.length == 2) {
-                message.reply("**" + choices[0] + "** or **" + choices[1] + "**?\nI'll go with **" + choices[choose] + "**.");
+                response = "**" + choices[0] + "** or **" + choices[1] + "**?\nI'll go with **" + choices[choose] + "**.";
             } else {
                 String result = "**" + choices[0] + "**";
                 for (int i = 1; i < choices.length-1; i++) {
                     result += ", **" + choices[i] + "**";
                 }
                 result += " or **" + choices[choices.length-1] + "**?\n";
-                message.reply(result + "I'll go with **" + choices[choose] + "**.");
+                response = result + "I'll go with **" + choices[choose] + "**.";
             }
         }
+        return Optional.of(response);
     }
 }

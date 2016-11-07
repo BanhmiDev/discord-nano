@@ -17,19 +17,21 @@
 package org.gimu.discordnano.commands.single;
 
 import org.apache.commons.lang3.StringUtils;
-import org.gimu.discordnano.lib.NanoExecutor;
+import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.NanoMessage;
 
+import java.util.Optional;
 import java.util.StringJoiner;
 
-public class PoopExecutor extends NanoExecutor {
+@MainCommand(
+        alias = {"poop"},
+        description = "Poop out text in ASCII format",
+        usage = "<text>"
+)
+public class PoopExecutor extends AbstractCommand {
 
-    public String[] triggers = {"poop"};
-    public String description = "Poops out a text with ASCII art";
-    public String usage = "<text>";
-
-    @Override
-    public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
+    public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
         if (args.length == 0) {
             throw new IllegalArgumentException();
         }
@@ -57,14 +59,13 @@ public class PoopExecutor extends NanoExecutor {
             try {
                 poopArt.setCharAt(7 + i, poop.charAt(i));
             } catch (Exception e) {
-                message.reply("It's t-too big (ノдヽ)");
-                return;
+                return Optional.of("It's t-too big (ノдヽ)");
             }
         }
 
         response.add(poopArt);
         response.add("░░░░░░░░░░░░░░░░░░░░░░░");
 
-        message.reply(response.toString());
+        return Optional.of(response.toString());
     }
 }

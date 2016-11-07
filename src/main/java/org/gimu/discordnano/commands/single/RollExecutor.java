@@ -17,29 +17,33 @@
 package org.gimu.discordnano.commands.single;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.gimu.discordnano.lib.NanoExecutor;
+import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.NanoMessage;
 
+import java.util.Optional;
 import java.util.Random;
 
-public class RollExecutor extends NanoExecutor {
+@MainCommand(
+        alias = {"roll"},
+        description = "Rolls a dice",
+        usage = "[faces]"
+)
+public class RollExecutor extends AbstractCommand {
 
-    public String[] triggers = {"roll"};
-    public String description = "Rolls a dice";
-    public String usage = "[faces]";
-
-    @Override
-    public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
+    public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
+        String response = "";
         Random random = new Random();
         int rolled;
         if (args.length == 0) {
             rolled = 1 + random.nextInt(6);
-            message.reply(" Rolled dice and got **" + rolled + "**.");
+            response = " Rolled dice and got **" + rolled + "**.";
         } else if (NumberUtils.isNumber(args[0]) && Integer.parseInt(args[0]) > 0) {
             rolled = 1 + random.nextInt(Integer.parseInt(args[0]));
-            message.reply(" Rolled dice with " + args[0] + " faces and got **" + rolled + "**.");
+            response = " Rolled dice with " + args[0] + " faces and got **" + rolled + "**.";
         } else {
-            message.reply("Please give me a valid number!");
+            response = "Please give me a valid number!";
         }
+        return Optional.of(response);
     }
 }

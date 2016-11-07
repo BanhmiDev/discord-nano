@@ -17,19 +17,26 @@
 package org.gimu.discordnano.commands.single;
 
 import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.CommandExecutor;
 import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.NanoMessage;
 
 import java.util.Optional;
 
 @MainCommand(
-        alias = {"help"},
-        description = "Get a link to the help page"
+        alias = {"flip", "coin"},
+        description = "Flips a coin"
 )
-public class HelpCommand extends AbstractCommand {
+public class FlipCommand extends AbstractCommand {
 
-    public Optional execute(NanoMessage message, String[] args) {
-        message.getAuthor().getPrivateChannel().sendMessage("Visit https://gimu.org/discord-nano for a list of commands!");
-        return Optional.of("Sent (ﾉ´ヮ´)ﾉ*:･ﾟ✧");
+    public Optional<String> execute(NanoMessage message, String[] args) {
+        String response = "";
+        double random = Math.random();
+        if (random < 0.5) {
+            response = "**Tails!**";
+        } else {
+            response = "**Heads!**";
+        }
+        return Optional.of(response);
     }
 }

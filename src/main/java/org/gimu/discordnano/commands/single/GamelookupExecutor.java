@@ -21,22 +21,24 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import org.apache.commons.lang3.StringUtils;
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.lib.NanoExecutor;
+import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.NanoMessage;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Optional;
 import java.util.StringJoiner;
 
-public class GamelookupExecutor extends NanoExecutor {
+@MainCommand(
+        alias = {"gamelookup"},
+        description = "Looks up a game",
+        usage = "<query>"
+)
+public class GamelookupExecutor extends AbstractCommand {
 
-    public String[] triggers = {"gamelookup"};
-    public String description = "Looks up a video game";
-    public String usage = "";
-
-    @Override
-    public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
+    public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
         if (args.length == 0) {
            throw new IllegalArgumentException();
         }
@@ -52,8 +54,7 @@ public class GamelookupExecutor extends NanoExecutor {
             JSONArray jsa = httpResponse.getBody().getArray();
 
             if (jsa.length() == 0) {
-                message.getChannel().sendMessage("I couldn't find a game with that title.");
-                return;
+                return Optional.of("I couldn't find a game with that title.");
             }
 
             JSONObject jso = new JSONObject(jsa.getJSONObject(0).toString()) {
@@ -72,9 +73,10 @@ public class GamelookupExecutor extends NanoExecutor {
             response.add("\n" + jso.getString("short_description"));
             response.add("\n**" + jso.getString("thumb") + "**");
 
-            message.reply(response.toString());
+            return Optional.of(response.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return Optional.empty();
     }
 }

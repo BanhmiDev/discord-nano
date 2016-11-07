@@ -25,52 +25,54 @@ import net.dv8tion.jda.events.ReadyEvent;
 import net.dv8tion.jda.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.hooks.ListenerAdapter;
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.lib.NanoExecutor;
+import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.CommandHandler;
+import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.commands.single.AboutCommand;
+import org.gimu.discordnano.commands.single.ChooseCommand;
+import org.gimu.discordnano.commands.single.FlipCommand;
 import org.gimu.discordnano.lib.NanoMessage;
 import org.reflections.Reflections;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
 
 public class CommandListener extends ListenerAdapter {
 
-    private HashMap<String, Class> commands = new HashMap<>();
+    private CommandHandler commandHandler = new CommandHandler();
 
     private Set<String> whitelist = new HashSet<String>();
-
     private ChatterBotFactory factory = new ChatterBotFactory();
     private ChatterBot bot = null;
+
 
     @Override
     public void onReady(ReadyEvent event) {
         DiscordNano.jda.getAccountManager().setGame(DiscordNano.DEFAULT_STATUS);
 
-        // Register commands
-        // TODO: refactor
+        // Init commands
         Reflections reflections = new Reflections("org.gimu.discordnano.commands");
-        Set<Class<? extends NanoExecutor>> allCommands = reflections.getSubTypesOf(NanoExecutor.class);
+        Set<Class<? extends AbstractCommand>> allCommands = reflections.getSubTypesOf(AbstractCommand.class);
 
-        for (Class<? extends NanoExecutor> command : allCommands) {
-            Class cls = null;
-            Object instance = null;
-            String[] triggers = null;
-            Field field = null;
-            try {
-                cls = Class.forName(command.getName());
-                instance = cls.newInstance();
-                field = cls.getField("triggers");
-                triggers = (String[])field.get(instance);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        for (Class<? extends AbstractCommand> command : allCommands) {
+            Annotation[] annotations = command.getAnnotations();
 
-            for (String trigger : triggers) {
-                commands.put(trigger, cls);
+            for (Annotation annotation : annotations) {
+                if (annotation instanceof MainCommand) {
+                    MainCommand myAnnotation = (MainCommand) annotation;
+
+                    for (String alias : myAnnotation.alias()) {
+                        //System.out.println("registering " + alias);
+                        try {
+                            commandHandler.addMainCommand(alias, command.newInstance());
+                        } catch (InstantiationException e) {
+                            e.printStackTrace();
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
         }
     }
@@ -111,41 +113,12 @@ public class CommandListener extends ListenerAdapter {
 
         if (!messageContent.startsWith(DiscordNano.prefix) || author.isBot() || author == jda.getSelfInfo()) return;
 
-        String[] sections = messageContent.split(" ");
-        String command = sections[0].replace(DiscordNano.prefix, "");
-        String[] args = Arrays.copyOfRange(sections, 1, sections.length); // without command
+        commandHandler.parseMessage(new NanoMessage(message, event.getGuild()));
 
-        if (commands.get(command.toLowerCase()) != null) {
-            Class cls = commands.get(command.toLowerCase());
-            Method method = null;
-            Object instance = null;
-            try {
-                instance = cls.newInstance();
-                method = cls.getMethod("respond", NanoMessage.class, String[].class);
-                method.invoke(instance, new NanoMessage(event.getMessage(), event.getGuild()), args);
-            } catch (InvocationTargetException e) {
-                String usageText = null;
-                Field field = null;
-                try {
-                    // TODO: fix this mess
-                    field = cls.getField("usage");
-                    usageText = (String)field.get(instance);
-                } catch (Exception er) {
-                    er.printStackTrace();
-                }
-                StringBuilder response = new StringBuilder();
-                response.append("```");
-                response.append("Usage: " + DiscordNano.prefix + command.toLowerCase() + " ");
-                response.append(usageText);
-                response.append("```");
-                event.getChannel().sendMessage(response.toString());
-            } catch (Exception er) {
-                er.printStackTrace();
-            }
-        } else if (command.equalsIgnoreCase("clear")) {
+        /*
             while (channel.getHistory().retrieve(100) != null) {
                 channel.deleteMessages(channel.getHistory().retrieve(100));
             }
-        }
+        }*/
     }
 }

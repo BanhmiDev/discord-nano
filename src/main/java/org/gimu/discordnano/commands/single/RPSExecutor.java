@@ -16,28 +16,34 @@
 
 package org.gimu.discordnano.commands.single;
 
-import org.gimu.discordnano.lib.NanoExecutor;
+import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.NanoMessage;
 
-public class RPSExecutor extends NanoExecutor {
+import java.util.Optional;
 
-    public String[] triggers = {"rps"};
-    public String description = "Plays rock-paper-scissors";
-    public String usage = "<rock|paper|scissors>";
+@MainCommand(
+        alias = {"rps"},
+        description = "Play rock-paper-scissors",
+        usage = "<rock|paper|scissors>"
+)
+public class RPSExecutor extends AbstractCommand {
 
-    @Override
-    public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
+    public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
+        String response = "";
         if (args.length == 0 || (!args[0].equalsIgnoreCase("rock") && !args[0].equalsIgnoreCase("paper") && !args[0].equalsIgnoreCase("scissors"))) {
-            throw new IllegalArgumentException();
+            response = "Choose rock, paper or scissors!";
+        } else {
+            int choice = (int) Math.floor(Math.random() * 3);
+            if (choice == 0) {
+                response = "You picked " + args[0] + ".\nI picked **rock**!";
+            } else if (choice == 1) {
+                response = "You picked " + args[0] + "\nI picked **paper**!";
+            } else if (choice == 2) {
+                response = "You picked " + args[0] + "\nI picked **scissors**!";
+            }
         }
 
-        int choice = (int)Math.floor(Math.random() * 3);
-        if (choice == 0) {
-            message.reply("You picked " + args[0] + ".\nI picked **rock**!");
-        } else if (choice == 1) {
-            message.reply("You picked " + args[0] + "\nI picked **paper**!");
-        } else if (choice == 2) {
-            message.reply("You picked " + args[0] + "\nI picked **scissors**!");
-        }
+        return Optional.of(response);
     }
 }

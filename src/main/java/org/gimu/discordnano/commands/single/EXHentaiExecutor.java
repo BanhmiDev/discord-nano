@@ -16,17 +16,19 @@
 
 package org.gimu.discordnano.commands.single;
 
-import org.gimu.discordnano.lib.NanoExecutor;
+import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.NanoMessage;
 
-public class EXHentaiExecutor extends NanoExecutor {
+import java.util.Optional;
 
-    private String[] triggers = {"exhentai"};
-    private String description = "Display ex-hentai entry";
-    private String usage = "";
+@MainCommand(
+        alias = {"exhentai"},
+        description = "Displays a random ex-hentai entry"
+)
+public class EXHentaiExecutor extends AbstractCommand {
 
-    @Override
-    public void respond(NanoMessage message, String[] args) {
-        message.reply("D-don't push me! I'm working on it~");
+    public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
+        return Optional.of("D-don't push me! I'm working on it~");
     }
 }

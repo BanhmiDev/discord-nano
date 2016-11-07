@@ -16,8 +16,9 @@
 package org.gimu.discordnano.commands.single;
 
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.lib.NanoExecutor;
-import org.gimu.discordnano.util.APIUtil;
+import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.util.HTTPUtil;
 import org.gimu.discordnano.lib.NanoMessage;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,15 +26,16 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Optional;
 
-public class OsuExecutor extends NanoExecutor {
+@MainCommand(
+        alias = {"osu"},
+        description = "Fetches osu! profile",
+        usage = "<user>"
+)
+public class OsuExecutor extends AbstractCommand {
 
-    public String[] triggers = {"osu"};
-    public String description = "Fetches osu! profile";
-    public String usage = "<user>";
-
-    @Override
-    public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
+    public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
         if (args.length == 0) {
             throw new IllegalArgumentException();
         }
@@ -42,7 +44,7 @@ public class OsuExecutor extends NanoExecutor {
         StringBuilder sb = new StringBuilder();
         InputStream response = null;
         try {
-            response = APIUtil.sendGet(api, "k=" + DiscordNano.config.getString("osu_api_key") + "&u=" + args[0]);
+            response = HTTPUtil.sendGet(api, "k=" + DiscordNano.config.getString("osu_api_key") + "&u=" + args[0]);
 
             BufferedReader streamReader = new BufferedReader(new InputStreamReader(response, "UTF-8"));
             StringBuilder responseStrBuilder = new StringBuilder();
@@ -64,6 +66,6 @@ public class OsuExecutor extends NanoExecutor {
             e.printStackTrace();
         }
 
-        message.replyFramed("osu! Profile", sb.toString());
+        return Optional.of("osu! Profile\n" + sb.toString());
     }
 }

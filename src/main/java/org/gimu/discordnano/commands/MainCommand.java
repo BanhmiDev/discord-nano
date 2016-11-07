@@ -13,23 +13,21 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package org.gimu.discordnano.commands;
 
-package org.gimu.discordnano.commands.single;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.gimu.discordnano.commands.AbstractCommand;
-import org.gimu.discordnano.commands.MainCommand;
-import org.gimu.discordnano.lib.NanoMessage;
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface MainCommand {
 
-import java.util.Optional;
+    String[] alias();
 
-@MainCommand(
-        alias = {"help"},
-        description = "Get a link to the help page"
-)
-public class HelpCommand extends AbstractCommand {
+    String description() default "No description";
 
-    public Optional execute(NanoMessage message, String[] args) {
-        message.getAuthor().getPrivateChannel().sendMessage("Visit https://gimu.org/discord-nano for a list of commands!");
-        return Optional.of("Sent (ﾉ´ヮ´)ﾉ*:･ﾟ✧");
-    }
+    String usage() default "";
+
 }

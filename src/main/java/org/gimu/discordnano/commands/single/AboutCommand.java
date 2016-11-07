@@ -16,43 +16,20 @@
 
 package org.gimu.discordnano.commands.single;
 
-import org.apache.commons.lang3.StringUtils;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.NanoMessage;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 @MainCommand(
-        alias = {"leet"},
-        description = "Translates text into 1337speak",
-        usage = "<text>"
+        alias = {"about"},
+        description = "About Nano"
 )
-public class LeetExecutor extends AbstractCommand {
-
-    private static final Map<String, String> dictionary = new HashMap<String, String>() {{
-        put("a", "@");
-        put("e", "3");
-        put("f", "ph");
-        put("g", "9");
-        put("i", "1");
-        put("o", "0");
-        put("s", "z");
-        put("t", "7");
-    }};
+public class AboutCommand extends AbstractCommand {
 
     public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
-        if (args.length == 0) {
-            throw new IllegalArgumentException();
-        }
-
-        String response = StringUtils.join(args, " ");
-
-        for (Map.Entry<String, String> entry : dictionary.entrySet()) {
-            response = response.replaceAll(entry.getKey(), entry.getValue());
-        }
-        return Optional.of("`" + response + "`");
+        String response = "OK";
+        return Optional.of(response);
     }
 }

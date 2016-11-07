@@ -17,19 +17,20 @@
 package org.gimu.discordnano.commands.single;
 
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.lib.NanoExecutor;
+import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.NanoMessage;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-public class UptimeExecutor extends NanoExecutor {
+@MainCommand(
+        alias = {"uptime"},
+        description = "Gets Nano's uptime"
+)
+public class UptimeExecutor extends AbstractCommand {
 
-    public String[] triggers = {"uptime"};
-    public String description = "Show Nano's uptime";
-    public String usage = "";
-
-    @Override
-    public void respond(NanoMessage message, String[] args) {
+    public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
         long duration = (System.currentTimeMillis() - DiscordNano.START_TIME) / 1000;
         long days = TimeUnit.SECONDS.toDays(duration);
         duration -= TimeUnit.DAYS.toSeconds(days);
@@ -55,6 +56,7 @@ public class UptimeExecutor extends NanoExecutor {
         if (seconds!=0) {
             response.append(seconds + " seconds(s)");
         }
-        message.reply("**Uptime**: " + response.toString());
+
+        return Optional.of("**Uptime**: " + response.toString());
     }
 }

@@ -28,8 +28,7 @@ public class NanoMessage implements Message
     private final Message message;
     private final Guild guild;
 
-    public NanoMessage(Message message, Guild guild)
-    {
+    public NanoMessage(Message message, Guild guild) {
         this.message = message;
         this.guild = guild;
     }
