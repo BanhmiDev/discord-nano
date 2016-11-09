@@ -23,7 +23,7 @@ public class VolumeCommand {
 
     public static String setVolume(MusicStreamer player, User user, String input) {
         if (MusicUtil.isDJ(player, user)) {
-            return MusicExecutor.NO_DJ_REPLY;
+            return MusicCommand.NO_DJ_REPLY;
         }
 
         if (input.length() == 0) {

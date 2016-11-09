@@ -33,7 +33,7 @@ import java.util.Optional;
         description = "Fetches osu! profile",
         usage = "<user>"
 )
-public class OsuExecutor extends AbstractCommand {
+public class OsuCommand extends AbstractCommand {
 
     public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
         if (args.length == 0) {

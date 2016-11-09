@@ -13,9 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package org.gimu.discordnano.commands.single;
 
-import net.dv8tion.jda.entities.Guild;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.NanoMessage;
@@ -23,18 +23,12 @@ import org.gimu.discordnano.lib.NanoMessage;
 import java.util.Optional;
 
 @MainCommand(
-        alias = {"serverinfo"},
-        description = "Gets server information"
+        alias = {"exhentai"},
+        description = "Displays a random ex-hentai entry"
 )
-public class ServerinfoExecutor extends AbstractCommand {
+public class EXHentaiCommand extends AbstractCommand {
 
     public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
-        Guild guild = message.getGuild();
-        StringBuilder response = new StringBuilder();
-        response.append("Server: " + guild.getName() + "\n");
-        response.append("ID: " + guild.getId() + "\n");
-        response.append("Owner: " + guild.getOwner().getUsername() + "#" + guild.getOwner().getDiscriminator() + "\n");
-        response.append("Region: " + guild.getRegion());
-        return Optional.of(response.toString());
+        return Optional.of("D-don't push me! I'm working on it~");
     }
 }

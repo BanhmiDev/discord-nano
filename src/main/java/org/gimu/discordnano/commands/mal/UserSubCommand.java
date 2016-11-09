@@ -16,7 +16,7 @@
 package org.gimu.discordnano.commands.mal;
 
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.util.APIUtil;
+import org.gimu.discordnano.util.HTTPUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -25,7 +25,6 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
-import java.net.URLEncoder;
 
 public class UserCommand {
 
@@ -41,7 +40,7 @@ public class UserCommand {
 
         try {
             String parameters = "u=" + args[1];
-            InputStream response = APIUtil.sendGet("http://myanimelist.net/malappinfo.php", parameters);
+            InputStream response = HTTPUtil.sendGet("http://myanimelist.net/malappinfo.php", parameters);
 
             // XML parsing
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();

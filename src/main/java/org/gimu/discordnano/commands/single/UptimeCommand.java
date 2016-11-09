@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
         alias = {"uptime"},
         description = "Gets Nano's uptime"
 )
-public class UptimeExecutor extends AbstractCommand {
+public class UptimeCommand extends AbstractCommand {
 
     public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
         long duration = (System.currentTimeMillis() - DiscordNano.START_TIME) / 1000;

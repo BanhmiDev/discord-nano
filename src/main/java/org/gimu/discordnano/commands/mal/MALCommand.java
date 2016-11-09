@@ -15,16 +15,15 @@
  */
 package org.gimu.discordnano.commands.mal;
 
-import org.gimu.discordnano.lib.NanoExecutor;
+import org.gimu.discordnano.commands.CommandExecutor;
 import org.gimu.discordnano.lib.NanoMessage;
 
-public class MALExecutor extends NanoExecutor {
+public class MALExecutor {
 
     public String[] triggers = {"mal"};
     public String description = "Search and display anime/manga from MyAnimeList";
     public String usage = "<user|anime|manga> <query|view <index>>";
 
-    @Override
     public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
         if (args.length == 0) {
             throw new IllegalArgumentException();

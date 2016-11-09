@@ -30,7 +30,7 @@ import java.util.Random;
         description = "Displays xkcd comic",
         usage = "[number|latest]"
 )
-public class XkcdExecutor extends AbstractCommand {
+public class XkcdCommand extends AbstractCommand {
 
     public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
         String response = "";

@@ -22,7 +22,8 @@ import net.dv8tion.jda.player.MusicPlayer;
 import net.dv8tion.jda.player.source.AudioSource;
 import net.dv8tion.jda.player.source.RemoteSource;
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.lib.NanoExecutor;
+import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.commands.CommandExecutor;
 import org.gimu.discordnano.util.MusicUtil;
 import org.gimu.discordnano.lib.NanoMessage;
 import org.gimu.discordnano.util.SongInfo;
@@ -30,7 +31,8 @@ import org.gimu.discordnano.util.SongInfo;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class MusicExecutor extends NanoExecutor {
+//TODO: FINISH
+public class MusicExecutor  {
 
     // TODO: each guild one streamer, up to one library for all?
 
@@ -47,6 +49,8 @@ public class MusicExecutor extends NanoExecutor {
 
     public MusicExecutor() {
         musicLibrary = new MusicLibrary();
+
+        // Register subcommands
     }
 
     private static boolean isIdle(MusicPlayer musicStreamer, NanoMessage message) {
@@ -73,49 +77,35 @@ public class MusicExecutor extends NanoExecutor {
         }
 
         String inputArgs = args.length >= 2 ? args[1] : "";
-        AudioSource currentSource = null;
-        User currentDJ = null;
-        AudioSource src;
+        AudioSource currentSource = musicStreamer.getCurrentAudioSource();
 
         // Commands
         switch (args[0].toLowerCase()) {
             case "join":
-                if (am != null) am.openAudioConnection(vc);
+                am.openAudioConnection(vc);
                 break;
             case "leave":
                 musicStreamer.stop();
                 break;
             case "play":
-                PlayCommand.respond(musicStreamer, inputArgs);
+                PlayCommand.respond(musicStreamer, author, inputArgs);
                 break;
             case "library":
             case "list":
-                ListCommand.respond(musicLibrary);
+                message.reply(ListSubCommand.respond(musicLibrary));
                 break;
             case "add":
                 if (inputArgs.length() == 0) return;
 
-                message.getChannel().sendTyping();
-                src = new RemoteSource(inputArgs);
-                if (src.getInfo().getError() != null) {
-                    String err = src.getInfo().getError();
-                    System.err.println(err);
-                    message.reply("Invalid URL, you fucked up.");
-                } else if (src.getInfo().isLive()) {
-                    message.reply("I don't play livestreams.");
-                } else {
-                    // Add to library
-                    threadPool.submit(() -> {
-                        musicLibrary.add(musicStreamer, author, src, true);
-                        // Delete request message
-                        message.deleteMessage();
-                    });
-                }
+                musicLibrary.add(musicStreamer, author, new RemoteSource(inputArgs), true);
+                threadPool.submit(() -> {
+                    // Delete request message
+                    message.deleteMessage();
+                });
                 break;
             case "dj":
-                currentSource = musicStreamer.getCurrentAudioSource();
                 if (currentSource != null) {
-                    currentDJ = musicStreamer.musicQueue.get(currentSource).getAuthor();
+                    User currentDJ = musicStreamer.musicQueue.get(currentSource).getAuthor();
                     message.reply("**Current DJ**: " + currentDJ.getAsMention());
                 } else {
                     message.reply("Current DJ: (╯°□°）╯︵ ┻━┻");
@@ -124,14 +114,12 @@ public class MusicExecutor extends NanoExecutor {
             case "volume":
                 VolumeCommand.setVolume(musicStreamer, author, inputArgs);
                 break;
-
             case "now":
             case "queue":
             case "status":
             case "current":
                 NowCommand.respond(message, musicStreamer);
                 break;
-
             case "skip":
                 if (isIdle(musicStreamer, message))
                     return;
@@ -156,18 +144,17 @@ public class MusicExecutor extends NanoExecutor {
                         message.reply(author.getUsername().replace("`", "\\`") + " has voted to skip the song! " + voteCount + "/" + votesRequired + "");
                 }
                 break;
-
+            case "stop":
             case "clear":
             case "reset":
                 if (!MusicUtil.isDJ(musicStreamer, author)) {
-                    message.reply("I don't think so, " + author.getUsername().replace("`", "\\`") + " (ノಠ益ಠ)ノ");
+                    message.reply("I don't think so, " + author.getUsername().replace("`", "\\`"));
                     return;
                 }
 
                 musicStreamer.stop();
                 message.reply("(ノಠ益ಠ)ノ彡┻━┻");
                 break;
-
             case "shuffle":
                 if (!MusicUtil.isDJ(musicStreamer, author)) {
                     message.reply(NO_DJ_REPLY);
@@ -183,7 +170,6 @@ public class MusicExecutor extends NanoExecutor {
                         message.reply("Enabled shuffling.");
                 }
                 break;
-
             case "pause":
                 if (isIdle(musicStreamer, message))
                     return;
@@ -195,29 +181,14 @@ public class MusicExecutor extends NanoExecutor {
 
                 musicStreamer.setIdle(false);
                 musicStreamer.pause();
-                message.reply("Paused the musicStreamer.");
+                message.reply("I paused the music stream.");
                 DiscordNano.jda.getAccountManager().setGame(DiscordNano.DEFAULT_STATUS);
                 break;
-
-            case "stop":
-                if (isIdle(musicStreamer, message))
-                    return;
-
-                if (!MusicUtil.isDJ(musicStreamer, author)) {
-                    message.reply(NO_DJ_REPLY);
-                    return;
-                }
-
-                musicStreamer.stop();
-                message.reply("Stopped the musicStreamer.");
+            case "resume":
+                if (!musicStreamer.isPlaying()) musicStreamer.play();
                 break;
-
             case "playlist":
                 PlaylistCommand.respond(musicStreamer, message, author, inputArgs);
-                break;
-
-            default:
-                System.out.println("WRONG INPUT");
                 break;
         }
     }

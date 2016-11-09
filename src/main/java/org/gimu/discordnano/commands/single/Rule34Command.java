@@ -35,7 +35,7 @@ import java.util.Random;
         description = "Fetches image from rule34.xxx",
         usage = "<query>"
 )
-public class Rule34Executor extends AbstractCommand {
+public class Rule34Command extends AbstractCommand {
 
     public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
         String response = "";

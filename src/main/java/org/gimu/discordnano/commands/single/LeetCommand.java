@@ -16,34 +16,43 @@
 
 package org.gimu.discordnano.commands.single;
 
-import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.NanoMessage;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
 
 @MainCommand(
-        alias = {"roll"},
-        description = "Rolls a dice",
-        usage = "[faces]"
+        alias = {"leet"},
+        description = "Translates text into 1337speak",
+        usage = "<text>"
 )
-public class RollExecutor extends AbstractCommand {
+public class LeetCommand extends AbstractCommand {
+
+    private static final Map<String, String> dictionary = new HashMap<String, String>() {{
+        put("a", "@");
+        put("e", "3");
+        put("f", "ph");
+        put("g", "9");
+        put("i", "1");
+        put("o", "0");
+        put("s", "z");
+        put("t", "7");
+    }};
 
     public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
-        String response = "";
-        Random random = new Random();
-        int rolled;
         if (args.length == 0) {
-            rolled = 1 + random.nextInt(6);
-            response = " Rolled dice and got **" + rolled + "**.";
-        } else if (NumberUtils.isNumber(args[0]) && Integer.parseInt(args[0]) > 0) {
-            rolled = 1 + random.nextInt(Integer.parseInt(args[0]));
-            response = " Rolled dice with " + args[0] + " faces and got **" + rolled + "**.";
-        } else {
-            response = "Please give me a valid number!";
+            throw new IllegalArgumentException();
         }
-        return Optional.of(response);
+
+        String response = StringUtils.join(args, " ");
+
+        for (Map.Entry<String, String> entry : dictionary.entrySet()) {
+            response = response.replaceAll(entry.getKey(), entry.getValue());
+        }
+        return Optional.of("`" + response + "`");
     }
 }

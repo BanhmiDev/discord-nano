@@ -79,7 +79,7 @@ public class MusicStreamer extends MusicPlayer {
         if (src == null) {
             if (DiscordNano.RANDOM_MUSIC && vc.getUsers().size() > 1) { // Random music whenever someone is listening
                 setIdle(true);
-                src = new RemoteSource(MusicExecutor.musicLibrary.get(String.valueOf((int) (Math.random() * MusicExecutor.musicLibrary.musicLibraryMap.size()))));
+                src = new RemoteSource(MusicCommand.musicLibrary.get(String.valueOf((int) (Math.random() * MusicCommand.musicLibrary.musicLibraryMap.size()))));
                 AudioInfo srcInfo = src.getInfo();
                 if (srcInfo.getError() == null) {
 

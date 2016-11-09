@@ -15,13 +15,14 @@
  */
 package org.gimu.discordnano.commands.music;
 
+import net.dv8tion.jda.entities.User;
 import net.dv8tion.jda.player.source.RemoteSource;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.gimu.discordnano.DiscordNano;
 
 public class PlayCommand {
 
-    public static String respond(MusicStreamer streamer, String input) {
+    public static String respond(MusicStreamer streamer, User author, String input) {
         if (input.length() == 0) {
             if (streamer.isPlaying()) {
                 return "Usage: `" + DiscordNano.prefix + "music play <url>|<index>|<searchquery>`";
@@ -39,11 +40,11 @@ public class PlayCommand {
         } else {
             if (NumberUtils.isNumber(input) || !input.contains("http")) {
                 // Fetch from library
-                String urlFromLibrary = MusicExecutor.musicLibrary.get(input);
+                String urlFromLibrary = MusicCommand.musicLibrary.get(input);
                 if (urlFromLibrary.equals("-1")) {
                     return "Couldn't find music from the library.";
                 } else {
-                    MusicExecutor.musicLibrary.add(streamer, new RemoteSource(urlFromLibrary), false);
+                    MusicCommand.musicLibrary.add(streamer, author, new RemoteSource(urlFromLibrary), false);
                 }
             } else {
                 // Direct playback
@@ -55,11 +56,13 @@ public class PlayCommand {
                 } else if (src.getInfo().isLive()) {
                     return "I don't play livestreams.";
                 } else {
-                    MusicExecutor.threadPool.submit(() -> {
-                        MusicExecutor.musicLibrary.add(streamer, src, false);
+                    MusicCommand.threadPool.submit(() -> {
+                        MusicCommand.musicLibrary.add(streamer, author, src, false);
                     });
                 }
             }
         }
+
+        return null;
     }
 }

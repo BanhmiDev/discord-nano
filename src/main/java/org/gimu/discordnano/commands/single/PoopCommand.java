@@ -29,7 +29,7 @@ import java.util.StringJoiner;
         description = "Poop out text in ASCII format",
         usage = "<text>"
 )
-public class PoopExecutor extends AbstractCommand {
+public class PoopCommand extends AbstractCommand {
 
     public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
         if (args.length == 0) {

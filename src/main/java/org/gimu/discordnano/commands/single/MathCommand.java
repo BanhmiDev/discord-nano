@@ -29,7 +29,7 @@ import java.util.Optional;
         description = "Evaluates mathematical expressions",
         usage = "<expression>"
 )
-public class MathExecutor extends AbstractCommand {
+public class MathCommand extends AbstractCommand {
 
     private final DecimalFormat formatter = new DecimalFormat() {{setDecimalSeparatorAlwaysShown(false);}};
 

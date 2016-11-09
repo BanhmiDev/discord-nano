@@ -40,7 +40,7 @@ import java.util.Optional;
         alias = {"ehentai"},
         description = "Displays a random e-hentai entry"
 )
-public class EHentaiExecutor extends AbstractCommand {
+public class EHentaiCommand extends AbstractCommand {
 
     public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
         // GENERATE RANDOM PAGE

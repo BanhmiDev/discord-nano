@@ -16,6 +16,7 @@
 
 package org.gimu.discordnano.commands.single;
 
+import net.dv8tion.jda.Permission;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.NanoMessage;
@@ -23,12 +24,12 @@ import org.gimu.discordnano.lib.NanoMessage;
 import java.util.Optional;
 
 @MainCommand(
-        alias = {"exhentai"},
-        description = "Displays a random ex-hentai entry"
+        alias = {"invite"},
+        description = "Get the invite link for Nano"
 )
-public class EXHentaiExecutor extends AbstractCommand {
+public class InviteCommand extends AbstractCommand {
 
     public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
-        return Optional.of("D-don't push me! I'm working on it~");
+        return Optional.of("M-me!? On another server?\n" + message.getJDA().getSelfInfo().getAuthUrl(Permission.ADMINISTRATOR));
     }
 }

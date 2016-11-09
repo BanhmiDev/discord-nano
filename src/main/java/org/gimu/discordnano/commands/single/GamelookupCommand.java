@@ -36,7 +36,7 @@ import java.util.StringJoiner;
         description = "Looks up a game",
         usage = "<query>"
 )
-public class GamelookupExecutor extends AbstractCommand {
+public class GamelookupCommand extends AbstractCommand {
 
     public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
         if (args.length == 0) {

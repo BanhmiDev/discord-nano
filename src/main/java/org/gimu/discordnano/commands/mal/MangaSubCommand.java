@@ -18,7 +18,7 @@ package org.gimu.discordnano.commands.mal;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.util.APIUtil;
+import org.gimu.discordnano.util.HTTPUtil;
 import org.gimu.discordnano.util.MALInfo;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -96,7 +96,7 @@ public class MangaCommand {
 	}
 
 	private static String searchMAL(String query) {
-		// MALExecutor/Manga search
+		// MALCommand/Manga search
 		if (MAL_USER == "" || MAL_PASS == "") {
 			return "MAL login not configured.";
 		}
@@ -113,7 +113,7 @@ public class MangaCommand {
         }
         try {
             String parameters = "q=" + URLEncoder.encode(query, "UTF-8");
-            InputStream response = APIUtil.sendAuthGet("http://myanimelist.net/api/manga/search.xml", parameters, MAL_USER, MAL_PASS);
+            InputStream response = HTTPUtil.sendAuthGet("http://myanimelist.net/api/manga/search.xml", parameters, MAL_USER, MAL_PASS);
 
             String id = "", title = "", english = "", episodes = "", score = "", type = "", status = "", synopsis = "";
 

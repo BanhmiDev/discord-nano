@@ -16,20 +16,34 @@
 
 package org.gimu.discordnano.commands.single;
 
-import net.dv8tion.jda.Permission;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.NanoMessage;
 
 import java.util.Optional;
+import java.util.Random;
 
 @MainCommand(
-        alias = {"invite"},
-        description = "Get the invite link for Nano"
+        alias = {"roll"},
+        description = "Rolls a dice",
+        usage = "[faces]"
 )
-public class InviteExecutor extends AbstractCommand {
+public class RollCommand extends AbstractCommand {
 
     public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
-        return Optional.of("M-me!? On another server?\n" + message.getJDA().getSelfInfo().getAuthUrl(Permission.ADMINISTRATOR));
+        String response = "";
+        Random random = new Random();
+        int rolled;
+        if (args.length == 0) {
+            rolled = 1 + random.nextInt(6);
+            response = " Rolled dice and got **" + rolled + "**.";
+        } else if (NumberUtils.isNumber(args[0]) && Integer.parseInt(args[0]) > 0) {
+            rolled = 1 + random.nextInt(Integer.parseInt(args[0]));
+            response = " Rolled dice with " + args[0] + " faces and got **" + rolled + "**.";
+        } else {
+            response = "Please give me a valid number!";
+        }
+        return Optional.of(response);
     }
 }

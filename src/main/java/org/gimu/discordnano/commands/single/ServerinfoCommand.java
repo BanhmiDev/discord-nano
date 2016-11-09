@@ -13,9 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.gimu.discordnano.commands.single;
 
+import net.dv8tion.jda.entities.Guild;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.NanoMessage;
@@ -23,27 +23,18 @@ import org.gimu.discordnano.lib.NanoMessage;
 import java.util.Optional;
 
 @MainCommand(
-        alias = {"rps"},
-        description = "Play rock-paper-scissors",
-        usage = "<rock|paper|scissors>"
+        alias = {"serverinfo"},
+        description = "Gets server information"
 )
-public class RPSExecutor extends AbstractCommand {
+public class ServerinfoCommand extends AbstractCommand {
 
     public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
-        String response = "";
-        if (args.length == 0 || (!args[0].equalsIgnoreCase("rock") && !args[0].equalsIgnoreCase("paper") && !args[0].equalsIgnoreCase("scissors"))) {
-            response = "Choose rock, paper or scissors!";
-        } else {
-            int choice = (int) Math.floor(Math.random() * 3);
-            if (choice == 0) {
-                response = "You picked " + args[0] + ".\nI picked **rock**!";
-            } else if (choice == 1) {
-                response = "You picked " + args[0] + "\nI picked **paper**!";
-            } else if (choice == 2) {
-                response = "You picked " + args[0] + "\nI picked **scissors**!";
-            }
-        }
-
-        return Optional.of(response);
+        Guild guild = message.getGuild();
+        StringBuilder response = new StringBuilder();
+        response.append("Server: " + guild.getName() + "\n");
+        response.append("ID: " + guild.getId() + "\n");
+        response.append("Owner: " + guild.getOwner().getUsername() + "#" + guild.getOwner().getDiscriminator() + "\n");
+        response.append("Region: " + guild.getRegion());
+        return Optional.of(response.toString());
     }
 }

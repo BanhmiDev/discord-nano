@@ -34,9 +34,10 @@ public class PlaylistCommand {
     // TODO: cleanup loader
     public static final Set<String> playlistLoader = new HashSet<>();
 
-    public static String respond(MusicStreamer streamer, NanoMessage message, User author, String input) {
+    public static void respond(MusicStreamer streamer, NanoMessage message, User author, String input) {
         if (input.length() == 0) {
-            return "Please select a playlist using `" + DiscordNano.prefix + "music playlist <url>`";
+            message.reply("Please select a playlist using `" + DiscordNano.prefix + "music playlist <url>`");
+            return;
         }
 
         Message playlistStatus = message.reply("*Processing playlist..*");
@@ -46,18 +47,20 @@ public class PlaylistCommand {
             playlist = Playlist.getPlaylist(input);
         } catch (NullPointerException ex) {
             if (ex.getLocalizedMessage().equals("The YT-DL playlist process resulted in a null or zero-length INFO!")) {
-                return "That's not a valid playlist source.";
-            } else
+                message.reply("That's not a valid playlist source.");
+                return;
+            } else {
                 ex.printStackTrace();
+            }
         }
 
         List<AudioSource> sources = new LinkedList<>(playlist.getSources());
         if (sources.size() <= 1) {
             // Single source
             RemoteSource src = new RemoteSource(input);
-            MusicExecutor.threadPool.submit(() -> {
+            MusicCommand.threadPool.submit(() -> {
                 message.deleteMessage();
-                MusicExecutor.musicLibrary.add(streamer, src, false);
+                MusicCommand.musicLibrary.add(streamer, author, src, false);
             });
         } else {
             // Multiple sources
@@ -69,7 +72,7 @@ public class PlaylistCommand {
             playlistLoader.add(message.getChannelId());
             playlistStatus.updateMessage("Queuing up " + sources.size() + " songs...");
 
-            MusicExecutor.threadPool.submit(() -> {
+            MusicCommand.threadPool.submit(() -> {
                 sources.stream().forEachOrdered(audioSource -> {
                     AudioInfo audioInfo = audioSource.getInfo();
                     if (audioInfo.isLive()) {
@@ -77,7 +80,7 @@ public class PlaylistCommand {
                         return;
                     }
 
-                    MusicExecutor.musicLibrary.add(streamer, audioSource, false);
+                    MusicCommand.musicLibrary.add(streamer, author, audioSource, false);
                 });
                 playlistLoader.remove(message.getChannelId());
                 message.deleteMessage();
