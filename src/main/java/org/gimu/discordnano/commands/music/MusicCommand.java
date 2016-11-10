@@ -22,36 +22,30 @@ import net.dv8tion.jda.player.MusicPlayer;
 import net.dv8tion.jda.player.source.AudioSource;
 import net.dv8tion.jda.player.source.RemoteSource;
 import org.gimu.discordnano.DiscordNano;
+import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
-import org.gimu.discordnano.commands.CommandExecutor;
+import org.gimu.discordnano.lib.MusicLibrary;
+import org.gimu.discordnano.lib.MusicStreamer;
 import org.gimu.discordnano.util.MusicUtil;
 import org.gimu.discordnano.lib.NanoMessage;
-import org.gimu.discordnano.util.SongInfo;
+import org.gimu.discordnano.lib.MusicInfo;
 
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-//TODO: FINISH
-public class MusicExecutor  {
+@MainCommand(
+        alias = {"music"},
+        description = "Plays music"
+)
+public class MusicCommand extends AbstractCommand {
 
     // TODO: each guild one streamer, up to one library for all?
-
-    public String[] triggers = {"music"};
-    public String description = "Plays music";
-    public String usage = "";
-
-    public MusicStreamer musicStreamer;
-
-    public static MusicLibrary musicLibrary;
+    public static MusicStreamer musicStreamer;
+    public static MusicLibrary musicLibrary = new MusicLibrary();
     public static final ExecutorService threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
 
     protected static final String NO_DJ_REPLY = "You are not the DJ (ノдヽ)";
-
-    public MusicExecutor() {
-        musicLibrary = new MusicLibrary();
-
-        // Register subcommands
-    }
 
     private static boolean isIdle(MusicPlayer musicStreamer, NanoMessage message) {
         if (!musicStreamer.isPlaying()) {
@@ -61,7 +55,7 @@ public class MusicExecutor  {
         return false;
     }
 
-    public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
+    public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
         if (args.length == 0) {
             throw new IllegalArgumentException();
         }
@@ -87,21 +81,14 @@ public class MusicExecutor  {
             case "leave":
                 musicStreamer.stop();
                 break;
-            case "play":
-                PlayCommand.respond(musicStreamer, author, inputArgs);
-                break;
-            case "library":
-            case "list":
-                message.reply(ListSubCommand.respond(musicLibrary));
-                break;
             case "add":
-                if (inputArgs.length() == 0) return;
-
-                musicLibrary.add(musicStreamer, author, new RemoteSource(inputArgs), true);
-                threadPool.submit(() -> {
-                    // Delete request message
-                    message.deleteMessage();
-                });
+                if (inputArgs.length() != 0) {
+                    musicLibrary.add(musicStreamer, author, new RemoteSource(inputArgs), true);
+                    threadPool.submit(() -> {
+                        // Delete request message
+                        message.deleteMessage();
+                    });
+                }
                 break;
             case "dj":
                 if (currentSource != null) {
@@ -111,37 +98,27 @@ public class MusicExecutor  {
                     message.reply("Current DJ: (╯°□°）╯︵ ┻━┻");
                 }
                 break;
-            case "volume":
-                VolumeCommand.setVolume(musicStreamer, author, inputArgs);
-                break;
-            case "now":
-            case "queue":
-            case "status":
-            case "current":
-                NowCommand.respond(message, musicStreamer);
-                break;
             case "skip":
-                if (isIdle(musicStreamer, message))
-                    return;
-
-                SongInfo s = musicStreamer.musicQueue.get(musicStreamer.getCurrentAudioSource());
-                if (MusicUtil.isDJ(musicStreamer, author)) {
-                    message.reply("DJ skipped the song!");
-                    musicStreamer.skipToNext();
-                } else {
-                    if (s.hasVoted(author)) {
-                        message.reply("You have already voted to skip the song!");
-                        return;
-                    }
-
-                    s.voteSkip(author);
-                    int voteCount = s.getVotes();
-                    int votesRequired = Math.round(message.getGuild().getAudioManager().getConnectedChannel().getUsers().size() / 2);
-                    if (voteCount >= votesRequired) {
+                if (!isIdle(musicStreamer, message)) {
+                    MusicInfo s = musicStreamer.musicQueue.get(musicStreamer.getCurrentAudioSource());
+                    if (MusicUtil.isDJ(musicStreamer, author)) {
+                        message.reply("DJ skipped the song!");
                         musicStreamer.skipToNext();
-                        message.reply("Skipping to the next song.");
-                    } else
-                        message.reply(author.getUsername().replace("`", "\\`") + " has voted to skip the song! " + voteCount + "/" + votesRequired + "");
+                    } else {
+                        if (s.hasVoted(author)) {
+                            message.reply("You have already voted to skip the song!");
+                        } else {
+                            s.voteSkip(author);
+                            int voteCount = s.getVotes();
+                            int votesRequired = Math.round(message.getGuild().getAudioManager().getConnectedChannel().getUsers().size() / 2);
+                            if (voteCount >= votesRequired) {
+                                musicStreamer.skipToNext();
+                                message.reply("Skipping to the next song.");
+                            } else {
+                                message.reply(author.getUsername().replace("`", "\\`") + " has voted to skip the song! " + voteCount + "/" + votesRequired + "");
+                            }
+                        }
+                    }
                 }
                 break;
             case "stop":
@@ -149,48 +126,41 @@ public class MusicExecutor  {
             case "reset":
                 if (!MusicUtil.isDJ(musicStreamer, author)) {
                     message.reply("I don't think so, " + author.getUsername().replace("`", "\\`"));
-                    return;
+                } else {
+                    musicStreamer.stop();
+                    message.reply("(ノಠ益ಠ)ノ彡┻━┻");
                 }
-
-                musicStreamer.stop();
-                message.reply("(ノಠ益ಠ)ノ彡┻━┻");
                 break;
             case "shuffle":
                 if (!MusicUtil.isDJ(musicStreamer, author)) {
                     message.reply(NO_DJ_REPLY);
-                    return;
-                }
-
-                boolean shuffle = musicStreamer.isShuffle();
-                if (inputArgs.equals("")) {
-                    musicStreamer.setShuffle(!shuffle);
-                    if (shuffle)
-                        message.reply("Disabled shuffling.");
-                    else
-                        message.reply("Enabled shuffling.");
+                } else {
+                    boolean shuffle = musicStreamer.isShuffle();
+                    if (inputArgs.equals("")) {
+                        musicStreamer.setShuffle(!shuffle);
+                        if (shuffle) {
+                            message.reply("Disabled shuffling.");
+                        } else {
+                            message.reply("Enabled shuffling.");
+                        }
+                    }
                 }
                 break;
             case "pause":
-                if (isIdle(musicStreamer, message))
-                    return;
-
-                if (!MusicUtil.isDJ(musicStreamer, author)) {
+                if (isIdle(musicStreamer, message) || !MusicUtil.isDJ(musicStreamer, author)) {
                     message.reply(NO_DJ_REPLY);
-                    return;
+                } else {
+                    musicStreamer.setIdle(false);
+                    musicStreamer.pause();
+                    message.reply("I paused the music stream.");
+                    DiscordNano.jda.getAccountManager().setGame(DiscordNano.DEFAULT_STATUS);
                 }
-
-                musicStreamer.setIdle(false);
-                musicStreamer.pause();
-                message.reply("I paused the music stream.");
-                DiscordNano.jda.getAccountManager().setGame(DiscordNano.DEFAULT_STATUS);
                 break;
             case "resume":
                 if (!musicStreamer.isPlaying()) musicStreamer.play();
                 break;
-            case "playlist":
-                PlaylistCommand.respond(musicStreamer, message, author, inputArgs);
-                break;
         }
-    }
 
+        return Optional.empty();
+    }
 }

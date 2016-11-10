@@ -16,6 +16,9 @@
 package org.gimu.discordnano.commands.mal;
 
 import org.gimu.discordnano.DiscordNano;
+import org.gimu.discordnano.commands.AbstractSubCommand;
+import org.gimu.discordnano.commands.SubCommand;
+import org.gimu.discordnano.lib.NanoMessage;
 import org.gimu.discordnano.util.HTTPUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -25,13 +28,17 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
+import java.util.Optional;
 
-public class UserCommand {
+@SubCommand(
+        mainCommandAlias = "mal",
+        alias = {"user"},
+        description = "",
+        usage = ""
+)
+public class UserSubCommand extends AbstractSubCommand {
 
-    private static final String MAL_USER = DiscordNano.config.getString("mal_user");
-    private static final String MAL_PASS = DiscordNano.config.getString("mal_pass");
-
-    public static String respond(String[] args) {
+    public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
         if (args.length == 0) {
             throw new IllegalArgumentException();
         }
@@ -39,7 +46,7 @@ public class UserCommand {
         StringBuilder sb = new StringBuilder();
 
         try {
-            String parameters = "u=" + args[1];
+            String parameters = "u=" + args[0];
             InputStream response = HTTPUtil.sendGet("http://myanimelist.net/malappinfo.php", parameters);
 
             // XML parsing
@@ -66,6 +73,6 @@ public class UserCommand {
             // TODO
         }
 
-        return sb.toString();
+        return Optional.of(sb.toString());
     }
 }

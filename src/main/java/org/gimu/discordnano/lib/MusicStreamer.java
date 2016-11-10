@@ -13,7 +13,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.commands.music;
+
+package org.gimu.discordnano.lib;
 
 import net.dv8tion.jda.entities.User;
 import net.dv8tion.jda.entities.VoiceChannel;
@@ -23,16 +24,14 @@ import net.dv8tion.jda.player.source.AudioInfo;
 import net.dv8tion.jda.player.source.AudioSource;
 import net.dv8tion.jda.player.source.RemoteSource;
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.lib.NanoMessage;
-import org.gimu.discordnano.util.SongInfo;
+import org.gimu.discordnano.commands.music.MusicCommand;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class MusicStreamer extends MusicPlayer {
 
-
-    public static Map<AudioSource, SongInfo> musicQueue = new HashMap<>();
+    public static Map<AudioSource, MusicInfo> musicQueue = new HashMap<>();
     private boolean idle = false;
     private NanoMessage message;
     private AudioManager am;
@@ -73,7 +72,7 @@ public class MusicStreamer extends MusicPlayer {
     @Override
     public void playNext(boolean b) {
         super.playNext(b);
-        SongInfo.skips.clear();
+        MusicInfo.skips.clear();
         musicQueue.remove(super.getPreviousAudioSource());
         AudioSource src = super.getCurrentAudioSource();
         if (src == null) {
@@ -84,7 +83,7 @@ public class MusicStreamer extends MusicPlayer {
                 if (srcInfo.getError() == null) {
 
                     this.getAudioQueue().add(src);
-                    musicQueue.put(src, new SongInfo(null));
+                    musicQueue.put(src, new MusicInfo(null));
 
                     updateStatus();
 
@@ -120,9 +119,9 @@ public class MusicStreamer extends MusicPlayer {
 
     }
 
-    public void add(AudioSource audioSource, SongInfo songInfo) {
+    public void add(AudioSource audioSource, MusicInfo musicInfo) {
         this.getAudioQueue().add(audioSource);
-        musicQueue.put(audioSource, songInfo);
+        musicQueue.put(audioSource, musicInfo);
     }
 
     private void updateStatus() {

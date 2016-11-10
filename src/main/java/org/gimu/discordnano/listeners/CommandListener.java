@@ -25,12 +25,8 @@ import net.dv8tion.jda.events.ReadyEvent;
 import net.dv8tion.jda.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.hooks.ListenerAdapter;
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.commands.AbstractCommand;
-import org.gimu.discordnano.commands.CommandHandler;
-import org.gimu.discordnano.commands.MainCommand;
-import org.gimu.discordnano.commands.single.AboutCommand;
-import org.gimu.discordnano.commands.single.ChooseCommand;
-import org.gimu.discordnano.commands.single.FlipCommand;
+import org.gimu.discordnano.commands.*;
+import org.gimu.discordnano.lib.NanoLogger;
 import org.gimu.discordnano.lib.NanoMessage;
 import org.reflections.Reflections;
 
@@ -51,6 +47,8 @@ public class CommandListener extends ListenerAdapter {
     public void onReady(ReadyEvent event) {
         DiscordNano.jda.getAccountManager().setGame(DiscordNano.DEFAULT_STATUS);
 
+        NanoLogger.debug("Initializing main commands");
+
         // Init commands
         Reflections reflections = new Reflections("org.gimu.discordnano.commands");
         Set<Class<? extends AbstractCommand>> allCommands = reflections.getSubTypesOf(AbstractCommand.class);
@@ -63,9 +61,31 @@ public class CommandListener extends ListenerAdapter {
                     MainCommand myAnnotation = (MainCommand) annotation;
 
                     for (String alias : myAnnotation.alias()) {
-                        //System.out.println("registering " + alias);
                         try {
                             commandHandler.addMainCommand(alias, command.newInstance());
+                        } catch (InstantiationException e) {
+                            e.printStackTrace();
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+
+        // Init sub commands
+        Set<Class<? extends AbstractSubCommand>> allSubCommands = reflections.getSubTypesOf(AbstractSubCommand.class);
+
+        for (Class<? extends AbstractSubCommand> command : allSubCommands) {
+            Annotation[] annotations = command.getAnnotations();
+
+            for (Annotation annotation : annotations) {
+                if (annotation instanceof SubCommand) {
+                    SubCommand myAnnotation = (SubCommand) annotation;
+
+                    for (String alias : myAnnotation.alias()) {
+                        try {
+                            commandHandler.addSubCommand(alias, myAnnotation.mainCommandAlias(), command.newInstance());
                         } catch (InstantiationException e) {
                             e.printStackTrace();
                         } catch (IllegalAccessException e) {

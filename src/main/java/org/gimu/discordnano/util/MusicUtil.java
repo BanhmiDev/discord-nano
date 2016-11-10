@@ -20,7 +20,7 @@ import net.dv8tion.jda.player.source.AudioInfo;
 import net.dv8tion.jda.player.source.AudioSource;
 import net.dv8tion.jda.player.source.AudioTimestamp;
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.commands.music.MusicStreamer;
+import org.gimu.discordnano.lib.MusicStreamer;
 
 public class MusicUtil {
 

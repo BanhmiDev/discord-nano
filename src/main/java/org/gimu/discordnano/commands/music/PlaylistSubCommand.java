@@ -22,33 +22,39 @@ import net.dv8tion.jda.player.source.AudioInfo;
 import net.dv8tion.jda.player.source.AudioSource;
 import net.dv8tion.jda.player.source.RemoteSource;
 import org.gimu.discordnano.DiscordNano;
+import org.gimu.discordnano.commands.AbstractSubCommand;
+import org.gimu.discordnano.commands.SubCommand;
+import org.gimu.discordnano.lib.MusicStreamer;
 import org.gimu.discordnano.lib.NanoMessage;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-public class PlaylistCommand {
+@SubCommand(
+        mainCommandAlias = "music",
+        alias = {"playlist"},
+        description = "",
+        usage = ""
+)
+public class PlaylistSubCommand extends AbstractSubCommand {
 
-    // TODO: cleanup loader
     public static final Set<String> playlistLoader = new HashSet<>();
 
-    public static void respond(MusicStreamer streamer, NanoMessage message, User author, String input) {
-        if (input.length() == 0) {
-            message.reply("Please select a playlist using `" + DiscordNano.prefix + "music playlist <url>`");
-            return;
+    public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
+        if (args.length == 0) {
+            //message.reply("Please select a playlist using `" + DiscordNano.prefix + "music playlist <url>`");
+            throw new IllegalArgumentException();
         }
 
+        String source = args[0];
+        MusicStreamer streamer = MusicCommand.musicStreamer;
         Message playlistStatus = message.reply("*Processing playlist..*");
 
         Playlist playlist = null;
         try {
-            playlist = Playlist.getPlaylist(input);
+            playlist = Playlist.getPlaylist(source);
         } catch (NullPointerException ex) {
             if (ex.getLocalizedMessage().equals("The YT-DL playlist process resulted in a null or zero-length INFO!")) {
                 message.reply("That's not a valid playlist source.");
-                return;
             } else {
                 ex.printStackTrace();
             }
@@ -57,35 +63,36 @@ public class PlaylistCommand {
         List<AudioSource> sources = new LinkedList<>(playlist.getSources());
         if (sources.size() <= 1) {
             // Single source
-            RemoteSource src = new RemoteSource(input);
+            RemoteSource remoteSource = new RemoteSource(source);
             MusicCommand.threadPool.submit(() -> {
                 message.deleteMessage();
-                MusicCommand.musicLibrary.add(streamer, author, src, false);
+                MusicCommand.musicLibrary.add(streamer, message.getAuthor(), remoteSource, false);
             });
         } else {
             // Multiple sources
             if (playlistLoader.contains(message.getChannelId())) { // Limit processing calls
                 playlistStatus.updateMessage("Currently busy processing another playlist（；¬＿¬)");
-                return;
-            }
+            } else {
+                playlistLoader.add(message.getChannelId());
+                playlistStatus.updateMessage("Queuing up " + sources.size() + " songs...");
 
-            playlistLoader.add(message.getChannelId());
-            playlistStatus.updateMessage("Queuing up " + sources.size() + " songs...");
+                MusicCommand.threadPool.submit(() -> {
+                    sources.stream().forEachOrdered(audioSource -> {
+                        AudioInfo audioInfo = audioSource.getInfo();
+                        if (audioInfo.isLive()) {
+                            message.reply("I don't play livestreams ｢(ﾟﾍﾟ)");
+                            return;
+                        }
 
-            MusicCommand.threadPool.submit(() -> {
-                sources.stream().forEachOrdered(audioSource -> {
-                    AudioInfo audioInfo = audioSource.getInfo();
-                    if (audioInfo.isLive()) {
-                        message.reply("I don't play livestreams ｢(ﾟﾍﾟ)");
-                        return;
-                    }
-
-                    MusicCommand.musicLibrary.add(streamer, author, audioSource, false);
+                        MusicCommand.musicLibrary.add(streamer, message.getAuthor(), audioSource, false);
+                    });
+                    playlistLoader.remove(message.getChannelId());
+                    message.deleteMessage();
+                    playlistStatus.updateMessage("Successfully loaded `" + source + "`!");
                 });
-                playlistLoader.remove(message.getChannelId());
-                message.deleteMessage();
-                playlistStatus.updateMessage("Successfully loaded `" + input + "`!");
-            });
+            }
         }
+
+        return Optional.empty();
     }
 }

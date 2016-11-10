@@ -20,70 +20,80 @@ import net.dv8tion.jda.player.source.AudioInfo;
 import net.dv8tion.jda.player.source.AudioSource;
 import net.dv8tion.jda.player.source.AudioTimestamp;
 import org.gimu.discordnano.DiscordNano;
+import org.gimu.discordnano.commands.AbstractSubCommand;
+import org.gimu.discordnano.commands.SubCommand;
+import org.gimu.discordnano.lib.MusicStreamer;
 import org.gimu.discordnano.util.HastebinUtil;
 import org.gimu.discordnano.util.MusicUtil;
 import org.gimu.discordnano.lib.NanoMessage;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.StringJoiner;
 
-public class NowCommand {
+@SubCommand(
+        mainCommandAlias = "music",
+        alias = {"now", "queue"},
+        description = "",
+        usage = ""
+)
+public class NowSubCommand extends AbstractSubCommand {
 
-    public static String respond(NanoMessage message, MusicStreamer player) {
-        if (!player.isPlaying()) {
-            return "I'm not playing anything.";
-        }
-
+    public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
+        MusicStreamer player = MusicCommand.musicStreamer;
         StringJoiner response = new StringJoiner("\n");
-
-        // Current song information
-        AudioTimestamp currentTime = player.getCurrentTimestamp();
-        AudioSource currentSource = player.getCurrentAudioSource();
-        AudioInfo info = currentSource.getInfo();
-        User currentDJ = player.getAuthor();
-
-        // Current song information string
-        response.add("**Song**: " + info.getTitle());
-        response.add("**Source**: " + info.getOrigin());
-        response.add((info.getError() != null ? "" : "**Time**: [" + currentTime.getTimestamp() + " / " + info.getDuration().getTimestamp() + "]"));
-        if (!player.getIdle()) {
-            response.add("**DJ**: " + currentDJ.getUsername().replace("~~", "\\~\\~").replace("_", "\\_").replace("*", "\\*").replace("`", "\\`") + "#" + currentDJ.getDiscriminator());
-        }
-
-        // Queue information
-        List<AudioSource> queue = player.getAudioQueue();
-
-        if (player.getIdle()) {
-            response.add("\nCurrently in **IDLE** mode and playing songs from the library.");
-        } else if (queue.isEmpty()) {
-            if (DiscordNano.RANDOM_MUSIC) {
-                response.add("\nNo more songs in the queue. Seems like I have to play from the library soon!");
-            } else {
-                response.add("\nNo more songs in the queue. Seems like I have to stop soon!");
-            }
+        if (!player.isPlaying()) {
+            response.add("I'm not playing anything.");
         } else {
-            StringBuilder queueString = new StringBuilder("\n\n**Queue Status** (Entries: " + queue.size() + ")\n");
-            queueString.append("**Shuffle**: " + player.isShuffle() + "\n\n");
-            if (queue.size() <= 5) {
-                for (int i = 0; i < queue.size(); i++) {
-                    queueString.append(MusicUtil.buildQueue(queue.get(i)));
+            // Current song information
+            AudioTimestamp currentTime = player.getCurrentTimestamp();
+            AudioSource currentSource = player.getCurrentAudioSource();
+            AudioInfo info = currentSource.getInfo();
+            User currentDJ = player.getAuthor();
+
+            // Current song information string
+            response.add("**Song**: " + info.getTitle());
+            response.add("**Source**: " + info.getOrigin());
+            response.add((info.getError() != null ? "" : "**Time**: [" + currentTime.getTimestamp() + " / " + info.getDuration().getTimestamp() + "]"));
+            if (!player.getIdle()) {
+                response.add("**DJ**: " + currentDJ.getUsername().replace("~~", "\\~\\~").replace("_", "\\_").replace("*", "\\*").replace("`", "\\`") + "#" + currentDJ.getDiscriminator());
+            }
+
+            // Queue information
+            List<AudioSource> queue = player.getAudioQueue();
+
+            if (player.getIdle()) {
+                response.add("\nCurrently in **IDLE** mode and playing songs from the library.");
+            } else if (queue.isEmpty()) {
+                if (DiscordNano.RANDOM_MUSIC) {
+                    response.add("\nNo more songs in the queue. Seems like I have to play from the library soon!");
+                } else {
+                    response.add("\nNo more songs in the queue. Seems like I have to stop soon!");
                 }
             } else {
-                message.getChannel().sendTyping();
-                StringBuilder body = new StringBuilder();
-                queue.stream().map(MusicUtil::buildQueue).forEach(body::append);
-                queueString.append(HastebinUtil.post(body.deleteCharAt(body.length()-1).toString()));
-            }
+                StringBuilder queueString = new StringBuilder("\n\n**Queue Status** (Entries: " + queue.size() + ")\n");
+                queueString.append("**Shuffle**: " + player.isShuffle() + "\n\n");
+                if (queue.size() <= 5) {
+                    for (int i = 0; i < queue.size(); i++) {
+                        queueString.append(MusicUtil.buildQueue(queue.get(i)));
+                    }
+                } else {
+                    message.getChannel().sendTyping();
+                    StringBuilder body = new StringBuilder();
+                    queue.stream().map(MusicUtil::buildQueue).forEach(body::append);
+                    queueString.append(HastebinUtil.post(body.deleteCharAt(body.length() - 1).toString()));
+                }
 
-            int totalSeconds = 0;
-            for (AudioSource source : queue) {
-                totalSeconds += source.getInfo().getDuration().getTotalSeconds();
-            }
-            queueString.append("\nTotal Queue Duration: ").append(AudioTimestamp.fromSeconds(totalSeconds).getTimestamp()).append(" minutes.");
+                int totalSeconds = 0;
+                for (AudioSource source : queue) {
+                    totalSeconds += source.getInfo().getDuration().getTotalSeconds();
+                }
+                queueString.append("\nTotal Queue Duration: ").append(AudioTimestamp.fromSeconds(totalSeconds).getTimestamp()).append(" minutes.");
 
-            response.add(queueString);
+                response.add(queueString);
+            }
         }
 
-        return response.toString();
+        return Optional.of(response.toString());
     }
 }

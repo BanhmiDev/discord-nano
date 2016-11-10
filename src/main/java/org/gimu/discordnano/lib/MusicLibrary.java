@@ -13,21 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.commands.music;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+package org.gimu.discordnano.lib;
+
 import net.dv8tion.jda.entities.User;
 import net.dv8tion.jda.player.source.AudioInfo;
 import net.dv8tion.jda.player.source.AudioSource;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.gimu.discordnano.util.SongInfo;
 import org.json.JSONObject;
 
-import java.io.*;
 import java.util.*;
 
-//TODO: FINISH
 public class MusicLibrary {
 
     public static LinkedHashMap<String, JSONObject> musicLibraryMap = new LinkedHashMap<>();
@@ -64,7 +60,7 @@ public class MusicLibrary {
         System.out.println("OK");
         AudioInfo srcInfo = src.getInfo();
         if (srcInfo.getError() == null && !srcInfo.isLive()) {
-            streamer.add(src, new SongInfo(author));
+            streamer.add(src, new MusicInfo(author));
 
             System.out.println("OK2");
             // Save to library

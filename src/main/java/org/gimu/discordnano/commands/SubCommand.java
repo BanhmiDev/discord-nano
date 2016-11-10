@@ -24,6 +24,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface SubCommand {
 
+    String mainCommandAlias();
+
     String[] alias();
 
     String description() default "No description";

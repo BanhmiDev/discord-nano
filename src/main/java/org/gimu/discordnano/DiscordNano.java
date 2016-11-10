@@ -33,6 +33,7 @@ public class DiscordNano {
     public static final boolean RANDOM_MUSIC = true;
 
     public static final JSONObject config = Configurator.getConfig();
+    public static final boolean VERBOSE = true;
     public static String prefix;
     public static String VOICECHANNEL_ID;
     public static String TESTCHANNEL_ID;

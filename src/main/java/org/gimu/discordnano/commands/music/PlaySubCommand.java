@@ -19,50 +19,67 @@ import net.dv8tion.jda.entities.User;
 import net.dv8tion.jda.player.source.RemoteSource;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.gimu.discordnano.DiscordNano;
+import org.gimu.discordnano.commands.AbstractSubCommand;
+import org.gimu.discordnano.commands.SubCommand;
+import org.gimu.discordnano.lib.MusicStreamer;
+import org.gimu.discordnano.lib.NanoMessage;
 
-public class PlayCommand {
+import java.util.Arrays;
+import java.util.Optional;
 
-    public static String respond(MusicStreamer streamer, User author, String input) {
-        if (input.length() == 0) {
+@SubCommand(
+        mainCommandAlias = "music",
+        alias = {"play"},
+        description = "",
+        usage = ""
+)
+public class PlaySubCommand extends AbstractSubCommand {
+
+    public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
+        MusicStreamer streamer = MusicCommand.musicStreamer;
+        String response = "";
+        if (args.length == 0) {
             if (streamer.isPlaying()) {
-                return "Usage: `" + DiscordNano.prefix + "music play <url>|<index>|<searchquery>`";
+                throw new IllegalArgumentException();
+                //response = "Usage: `" + DiscordNano.prefix + "music play <url>|<index>|<searchquery>`";
             } else if (streamer.isPaused()) {
                 streamer.play();
-                return "Resuming playback.";
+                response = "Resuming playback.";
             } else {
                 if (streamer.getAudioQueue().isEmpty()) {
-                    return "Usage: `" + DiscordNano.prefix + "music play <url>|<index>|<searchquery>`";
+                    throw new IllegalArgumentException();
+                    //return "Usage: `" + DiscordNano.prefix + "music play <url>|<index>|<searchquery>`";
                 } else {
                     streamer.play();
-                    return "Starting playback.";
+                    response = "Starting playback.";
                 }
             }
         } else {
-            if (NumberUtils.isNumber(input) || !input.contains("http")) {
+            String source = args[0];
+            if (NumberUtils.isNumber(source) || !source.contains("http")) {
                 // Fetch from library
-                String urlFromLibrary = MusicCommand.musicLibrary.get(input);
+                String urlFromLibrary = MusicCommand.musicLibrary.get(source);
                 if (urlFromLibrary.equals("-1")) {
-                    return "Couldn't find music from the library.";
+                    response = "Couldn't find music from the library.";
                 } else {
-                    MusicCommand.musicLibrary.add(streamer, author, new RemoteSource(urlFromLibrary), false);
+                    MusicCommand.musicLibrary.add(streamer, message.getAuthor(), new RemoteSource(urlFromLibrary), false);
                 }
             } else {
                 // Direct playback
-                RemoteSource src = new RemoteSource(input);
-                if (src.getInfo().getError() != null) {
-                    String err = src.getInfo().getError();
-                    System.err.println(err);
-                    return "I fucked up!";
-                } else if (src.getInfo().isLive()) {
-                    return "I don't play livestreams.";
+                RemoteSource remoteSource = new RemoteSource(source);
+                if (remoteSource.getInfo().getError() != null) {
+                    System.out.println(remoteSource.getInfo().getError());
+                    response = "I fucked up!";
+                } else if (remoteSource.getInfo().isLive()) {
+                    response = "I don't play livestreams.";
                 } else {
                     MusicCommand.threadPool.submit(() -> {
-                        MusicCommand.musicLibrary.add(streamer, author, src, false);
+                        MusicCommand.musicLibrary.add(streamer, message.getAuthor(), remoteSource, false);
                     });
                 }
             }
         }
 
-        return null;
+        return Optional.of(response);
     }
 }

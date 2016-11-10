@@ -13,36 +13,25 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.util;
 
-import net.dv8tion.jda.entities.Guild;
+package org.gimu.discordnano.lib;
+
 import net.dv8tion.jda.entities.User;
-import net.dv8tion.jda.entities.VoiceChannel;
 
 import java.util.ArrayList;
 
-public class SongInfo {
+public class MusicInfo {
 
     public static final ArrayList<String> skips = new ArrayList<>();
     private final User author;
-    //private final Guild guild;
 
-    public SongInfo(User author) {
+    public MusicInfo(User author) {
         this.author = author;
-        //this.guild = guild;
     }
 
     public User getAuthor() {
         return author;
     }
-
-    /*public VoiceChannel getVoiceChannel() {
-        return guild.getVoiceStatusOfUser(author).getChannel();
-    }*/
-
-    /*public String getGuildId() {
-        return guild.getId();
-    }*/
 
     public int getVotes() {
         return skips.size();

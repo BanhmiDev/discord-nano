@@ -18,6 +18,9 @@ package org.gimu.discordnano.commands.mal;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.gimu.discordnano.DiscordNano;
+import org.gimu.discordnano.commands.AbstractSubCommand;
+import org.gimu.discordnano.commands.SubCommand;
+import org.gimu.discordnano.lib.NanoMessage;
 import org.gimu.discordnano.util.HTTPUtil;
 import org.gimu.discordnano.util.MALInfo;
 import org.w3c.dom.Document;
@@ -31,8 +34,15 @@ import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
-public class AnimeCommand {
+@SubCommand(
+        mainCommandAlias = "mal",
+        alias = {"anime"},
+        description = "",
+        usage = ""
+)
+public class AnimeSubCommand extends AbstractSubCommand {
 
 	private static long lastExecution = 0L;
 	private static final String MAL_USER = DiscordNano.config.getString("mal_user");
@@ -40,31 +50,31 @@ public class AnimeCommand {
 
 	private static HashMap<Integer, MALInfo> animeMap = new HashMap<>();
 
-	public static String respond(String[] args) {
+    public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
 		if (args.length == 0) {
 			throw new IllegalArgumentException();
 		}
 
 		// Viewing
-		String index = args.length >= 3 ? args[2] : "";
-		if (args[1].toLowerCase().equals("view")) {
+		String index = args.length >= 2 ? args[1] : "";
+		if (args[0].toLowerCase().equals("view")) {
 			if (index.length() == 0) {
-				return viewRecent();
+				return Optional.of(viewRecent());
 			} else {
-				return viewEntry(index);
+				return Optional.of(viewEntry(index));
 			}
 		}
 
 		// Searching
 		StringBuilder sb = new StringBuilder();
-		for (int i = 1; i < args.length-1; i++) {
+		for (int i = 0; i < args.length-1; i++) {
 			sb.append(args[i] + " ");
 		}
 		sb.append(args[args.length-1]);
-		return searchMAL(sb.toString());
+		return Optional.of(searchMAL(sb.toString()));
 	}
 
-	private static String viewRecent() {
+	private String viewRecent() {
         if (animeMap.isEmpty()) {
 			return "There are no recent queries to show!";
 		}
@@ -79,7 +89,7 @@ public class AnimeCommand {
         return result.toString();
 	}
 
-	private static String viewEntry(String index) {
+	private String viewEntry(String index) {
 		MALInfo entry = animeMap.get(Integer.parseInt(index));
 		if (!NumberUtils.isNumber(index) || entry == null) {
 			return "Not a valid index or no recent queries saved!";
@@ -94,7 +104,7 @@ public class AnimeCommand {
                 + "\n\n**<http://www.myanimelist.net/anime/" + entry.id + ">**");
 	}
 
-	private static String searchMAL(String query) {
+	private String searchMAL(String query) {
 		// MALCommand/Manga search
 		if (MAL_USER == "" || MAL_PASS == "") {
 			return "MAL login not configured.";

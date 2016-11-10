@@ -22,7 +22,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 
-public class JSON {
+public class JSONUtil {
     public static JSONObject readJsonFromUrl(String url) throws JSONException {
         URLConnection uCon;
         try {

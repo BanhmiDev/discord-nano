@@ -22,7 +22,7 @@ import java.util.*;
 
 public class CommandHandler {
 
-    private static HashMap<String, AbstractCommand> mainCommandMap = new HashMap<>();
+    private static HashMap<String, AbstractCommand> mainCommandMap = new HashMap<String, AbstractCommand>();
 
     public boolean addMainCommand(String alias, AbstractCommand command) {
         if (mainCommandMap.get(alias) != null) {
@@ -33,20 +33,21 @@ public class CommandHandler {
         }
     }
 
-    public boolean addSubCommand(String alias, AbstractCommand mainCommand, AbstractCommand command) {
-        if (!mainCommand.hasSubCommand(alias)) {
-            mainCommand.addSubCommand(command);
+    public boolean addSubCommand(String alias, String mainCommandAlias, AbstractSubCommand command) {
+        AbstractCommand mainCommand = mainCommandMap.get(mainCommandAlias);
+        if (mainCommand != null) {
+            mainCommand.addSubCommand(alias, command);
             return true;
         }
         return false;
     }
 
     public void parseMessage(NanoMessage nanoMessage) {
+        String[] args;
         String message = nanoMessage.getRawContent();
         String[] sections = message.split(" "); // Split message by whitespace
         String commandString = sections[0].replace(DiscordNano.prefix, ""); // Main command
-        String subcommandString = (sections.length >= 1) ? sections[0] : ""; // Sub command
-        String[] args = (sections.length >= 1) ? Arrays.copyOfRange(sections, 1, sections.length) : new String[0]; // Only arguments, with possible sub command?
+        String subcommandString = (sections.length >= 2) ? sections[1] : ""; // Sub command
 
         Optional<String> response = null;
 
@@ -54,16 +55,32 @@ public class CommandHandler {
         AbstractCommand mainCommand = mainCommandMap.get(commandString.toLowerCase());
         if (mainCommand != null) {
             // Sub command parsing
-            AbstractCommand subCommand = mainCommand.getSubCommand(subcommandString);
+            AbstractSubCommand subCommand = mainCommand.getSubCommand(subcommandString);
+
+            System.out.println("subcommnad..." + subcommandString);
             if (subCommand != null) {
-                response = subCommand.execute(nanoMessage, args);
+                System.out.println("subcommnad...");
+                try {
+                    args = (sections.length >= 2) ? Arrays.copyOfRange(sections, 2, sections.length) : new String[0]; // Only arguments (excludes sub command alias)
+                    response = subCommand.execute(nanoMessage, args);
+                } catch (IllegalArgumentException e) {
+                    nanoMessage.reply(mainCommand.getUsage());
+                }
             } else {
-                response = mainCommand.execute(nanoMessage, args);
+                try {
+                    args = (sections.length >= 1) ? Arrays.copyOfRange(sections, 1, sections.length) : new String[0]; // Only arguments (excludes main command alias)
+                    response = mainCommand.execute(nanoMessage, args);
+                } catch (IllegalArgumentException e) {
+                    nanoMessage.reply(mainCommand.getUsage());
+                }
             }
         }
 
         if (response != null && response.isPresent()) {
-            nanoMessage.reply(response.orElse(new String()));
+            String responseString = response.get();
+            if (responseString.trim().length() > 0) {
+                nanoMessage.reply(responseString);
+            }
         }
     }
 }

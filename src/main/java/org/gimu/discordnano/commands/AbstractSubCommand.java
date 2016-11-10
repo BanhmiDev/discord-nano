@@ -19,14 +19,9 @@ import java.util.List;
 
 public abstract class AbstractSubCommand implements CommandExecutor {
 
-    private AbstractCommand mainCommand;
     private String description;
     private String usage;
     private List<String> aliases;
-
-    public AbstractSubCommand(AbstractCommand mainCommand) {
-        this.mainCommand = mainCommand;
-    }
 
     public String getDescription() {
         return description;

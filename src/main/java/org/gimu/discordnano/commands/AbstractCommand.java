@@ -22,20 +22,20 @@ public abstract class AbstractCommand implements CommandExecutor {
     private String description;
     private String usage;
     private List<String> aliases;
-    private HashMap<String, AbstractCommand> subCommandMap = new HashMap<String, AbstractCommand>();
+    private HashMap<String, AbstractSubCommand> subCommandMap = new HashMap<String, AbstractSubCommand>();
 
-    public void addSubCommand(AbstractCommand subCommand) {
-        for (String alias : subCommand.getAliases()) {
+    public void addSubCommand(String alias, AbstractSubCommand subCommand) { // todo: all aliases from subcommand, stored in class level
+        //for (String alias : subCommand.getAliases()) {
             //if (subCommandMap.get(alias) != null) ?
             subCommandMap.put(alias, subCommand);
-        }
+        //}
     }
 
     public boolean hasSubCommand(String input) {
         return !subCommandMap.isEmpty() && subCommandMap.get(input) != null;
     }
 
-    public AbstractCommand getSubCommand(String input) {
+    public AbstractSubCommand getSubCommand(String input) {
         return subCommandMap.get(input);
     }
 
@@ -51,7 +51,7 @@ public abstract class AbstractCommand implements CommandExecutor {
         return aliases;
     }
 
-    public Map<String, AbstractCommand> getSubCommandMap() {
+    public Map<String, AbstractSubCommand> getSubCommandMap() {
         return subCommandMap;
     }
 }

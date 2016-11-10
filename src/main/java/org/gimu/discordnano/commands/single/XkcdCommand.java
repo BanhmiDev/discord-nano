@@ -18,7 +18,7 @@ package org.gimu.discordnano.commands.single;
 
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
-import org.gimu.discordnano.util.JSON;
+import org.gimu.discordnano.util.JSONUtil;
 import org.gimu.discordnano.lib.NanoMessage;
 import org.json.JSONObject;
 
@@ -36,7 +36,7 @@ public class XkcdCommand extends AbstractCommand {
         String response = "";
         JSONObject latestJSON = null;
         try {
-            latestJSON = JSON.readJsonFromUrl("http://xkcd.com/info.0.json");
+            latestJSON = JSONUtil.readJsonFromUrl("http://xkcd.com/info.0.json");
         } catch (Exception e) {
             response = "Unable to fetch xkcd comic.";
         }
@@ -67,7 +67,7 @@ public class XkcdCommand extends AbstractCommand {
                 rand = min + new Random().nextInt(max - min);
             }
 
-            JSONObject randJSON = JSON.readJsonFromUrl(String.format("http://xkcd.com/%d/info.0.json", rand));
+            JSONObject randJSON = JSONUtil.readJsonFromUrl(String.format("http://xkcd.com/%d/info.0.json", rand));
 
             if (randJSON != null) {
                 response = "**xkcd**: " + randJSON.getString("title") + "\n" +

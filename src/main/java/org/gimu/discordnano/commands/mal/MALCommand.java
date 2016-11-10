@@ -15,29 +15,37 @@
  */
 package org.gimu.discordnano.commands.mal;
 
-import org.gimu.discordnano.commands.CommandExecutor;
+import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.NanoMessage;
 
-public class MALExecutor {
+import java.util.Optional;
 
-    public String[] triggers = {"mal"};
-    public String description = "Search and display anime/manga from MyAnimeList";
-    public String usage = "<user|anime|manga> <query|view <index>>";
+@MainCommand(
+        alias = {"mal"},
+        description = "Fetches information from MyAnimeList",
+        usage = "<user|anime|manga> <query|view <index>>"
+)
+public class MALCommand extends AbstractCommand {
 
-    public void respond(NanoMessage message, String[] args) throws IllegalArgumentException {
+    public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
+        String response = "test";
         if (args.length == 0) {
             throw new IllegalArgumentException();
         }
 
         String command = args[0].toLowerCase();
-        if (command.equals("user")) {
-            message.replyFramed("MyAnimeList Profile", UserCommand.respond(args));
+        /*if (command.equals("user")) {
+            response = "MyAnimeList Profile\n" + UserSubCommand.respond(args);
         } else if (command.equals("anime")) {
-            message.reply(AnimeCommand.respond(args));
+            AnimeSubCommand asc = new AnimeSubCommand();
+            response = new AnimeSubCommand().execute(message, args);
         } else if (command.equals("manga")) {
-            message.reply(MangaCommand.respond(args));
+            response = new MangaSubCommand().execute(message, args);
         } else {
             throw new IllegalArgumentException();
-        }
+        }*/
+
+        return Optional.of(response);
     }
 }
