@@ -47,9 +47,8 @@ public class CommandListener extends ListenerAdapter {
     public void onReady(ReadyEvent event) {
         DiscordNano.jda.getAccountManager().setGame(DiscordNano.DEFAULT_STATUS);
 
-        NanoLogger.debug("Initializing main commands");
-
         // Init commands
+        NanoLogger.debug("Initializing main commands");
         Reflections reflections = new Reflections("org.gimu.discordnano.commands");
         Set<Class<? extends AbstractCommand>> allCommands = reflections.getSubTypesOf(AbstractCommand.class);
 
@@ -74,6 +73,7 @@ public class CommandListener extends ListenerAdapter {
         }
 
         // Init sub commands
+        NanoLogger.debug("Initializing sub commands");
         Set<Class<? extends AbstractSubCommand>> allSubCommands = reflections.getSubTypesOf(AbstractSubCommand.class);
 
         for (Class<? extends AbstractSubCommand> command : allSubCommands) {

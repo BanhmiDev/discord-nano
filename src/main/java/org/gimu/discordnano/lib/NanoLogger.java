@@ -32,7 +32,7 @@ public class NanoLogger {
 
     public static void warning(String message) {
         if (DiscordNano.VERBOSE) {
-            System.out.println(ANSI_YELLOW + "[DEBUG] " + message + ANSI_RESET);
+            System.out.println(ANSI_YELLOW + "[WARNING] " + message + ANSI_RESET);
         }
     }
 

@@ -57,9 +57,7 @@ public class CommandHandler {
             // Sub command parsing
             AbstractSubCommand subCommand = mainCommand.getSubCommand(subcommandString);
 
-            System.out.println("subcommnad..." + subcommandString);
             if (subCommand != null) {
-                System.out.println("subcommnad...");
                 try {
                     args = (sections.length >= 2) ? Arrays.copyOfRange(sections, 2, sections.length) : new String[0]; // Only arguments (excludes sub command alias)
                     response = subCommand.execute(nanoMessage, args);

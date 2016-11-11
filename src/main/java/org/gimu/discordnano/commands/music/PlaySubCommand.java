@@ -22,6 +22,7 @@ import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractSubCommand;
 import org.gimu.discordnano.commands.SubCommand;
 import org.gimu.discordnano.lib.MusicStreamer;
+import org.gimu.discordnano.lib.NanoLogger;
 import org.gimu.discordnano.lib.NanoMessage;
 
 import java.util.Arrays;
@@ -68,7 +69,8 @@ public class PlaySubCommand extends AbstractSubCommand {
                 // Direct playback
                 RemoteSource remoteSource = new RemoteSource(source);
                 if (remoteSource.getInfo().getError() != null) {
-                    System.out.println(remoteSource.getInfo().getError());
+                    //System.out.println(remoteSource.getInfo().getError());
+                    NanoLogger.error("Failed to play RemoteSource");
                     response = "I fucked up!";
                 } else if (remoteSource.getInfo().isLive()) {
                     response = "I don't play livestreams.";
