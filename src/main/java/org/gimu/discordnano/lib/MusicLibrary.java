@@ -16,63 +16,41 @@
 
 package org.gimu.discordnano.lib;
 
+import com.google.gson.Gson;
 import net.dv8tion.jda.entities.User;
 import net.dv8tion.jda.player.source.AudioInfo;
 import net.dv8tion.jda.player.source.AudioSource;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.json.JSONObject;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.*;
 
 public class MusicLibrary {
 
-    public static LinkedHashMap<String, JSONObject> musicLibraryMap = new LinkedHashMap<>();
-
-    private static JSONObject musicLibrary;
-
-    public MusicLibrary() {
-        // Init library
-        /*try {
-            FileReader fileReader = new FileReader("music_library.json");
-            musicLibrary = (JSONObject) jsonParser.parse(fileReader);
-        } catch (Exception e) {
-            System.out.println("Fucked up initializing music library");
-            System.out.println(e.getMessage());
-        }
-
-        // Fill library
-        Iterator<?> keys = musicLibrary.keys();
-        while (keys.hasNext()) {
-            String key = (String) keys.next();
-            if (musicLibrary.get(key) instanceof JSONObject) {
-                musicLibraryMap.put(key, (JSONObject) musicLibrary.get(key));
-            }
-        }*/
-    }
-
-    private static String convertStreamToString(java.io.InputStream inputStream) {
-        java.util.Scanner s = new java.util.Scanner(inputStream).useDelimiter("\\A");
-        return s.hasNext() ? s.next() : "";
-    }
+    private LinkedHashMap<String, MusicObject> libraryMap = new LinkedHashMap<String, MusicObject>();
 
     public void add(MusicStreamer streamer, User author, AudioSource src, boolean persist) {
         // Adds to given streamer queue
-        System.out.println("OK");
         AudioInfo srcInfo = src.getInfo();
         if (srcInfo.getError() == null && !srcInfo.isLive()) {
             streamer.add(src, new MusicInfo(author));
 
-            System.out.println("OK2");
             // Save to library
             if (persist) {
-                System.out.println("persist");
                 AudioInfo info = src.getInfo();
-                JSONObject json = new JSONObject();
-                //json.put("url", info.getOrigin());
-                //musicLibraryMap.put(info.getTitle(), json);
-                //System.out.println("test" +json.toJSONString());
-                //System.out.println("before save: " + musicLibrary.toJSONString());
-                //save();
+                MusicObject musicObject = new MusicObject(info.getOrigin());
+
+                boolean isDuplicate = false;
+
+                // Don't allow duplicate URLs
+                for (Map.Entry<String, MusicObject> entry : libraryMap.entrySet()) {
+                    if (entry.getValue().getURL().equals(musicObject.getURL())) {
+                        isDuplicate = true;
+                    }
+                }
+                if (!isDuplicate) libraryMap.put(info.getTitle(), musicObject);
+                save();
             }
 
             if (streamer.getIdle()) {
@@ -82,8 +60,7 @@ public class MusicLibrary {
                 streamer.play();
             }
         } else {
-            String err = srcInfo.getError();
-            System.err.println(err);
+            NanoLogger.error("Invalid audio source\n" + srcInfo.getError());
         }
     }
 
@@ -91,39 +68,45 @@ public class MusicLibrary {
         if (NumberUtils.isNumber(query)) {
             // Search based on index
             int iterator = 0;
-            for (Map.Entry<String, JSONObject> entry : musicLibraryMap.entrySet()) {
+            for (Map.Entry<String, MusicObject> entry : libraryMap.entrySet()) {
                 if (iterator == Integer.parseInt(query)) {
-                    return (String)entry.getValue().get("url");
+                    return entry.getValue().getURL();
                 }
                 iterator++;
             }
         } else {
             // Search based on string
             String found = "";
-            for (String key : musicLibraryMap.keySet()) {
+            for (String key : libraryMap.keySet()) {
                 if (key.matches(".*(?i)"+query+".*")) {
                     found = key;
                     break;
                 }
             }
             if (!found.equals("")) {
-                return (String)musicLibraryMap.get(found).get("url");
+                return libraryMap.get(found).getURL();
             }
         }
         return "-1";
     }
 
     public void save() {
-        /*JSONObject json = new JSONObject();
-        for (Map.Entry<String, JSONObject> entry : musicLibraryMap.entrySet()) {
-            json.put(entry.getKey(), entry.getValue());
-        }
+        // Serialization
+        Gson gson = new Gson();
+        String json = gson.toJson(this);
 
-        try (Writer writer = new FileWriter("music_library.json")) {
-            Gson gson = new GsonBuilder().create();
-            gson.toJson(, writer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
+        try (PrintWriter out = new PrintWriter("music_library.json")) {
+            out.println(json);
+        } catch (FileNotFoundException e) {
+            NanoLogger.error("Couldn't save music library (file not found)");
+        }
+    }
+
+    public int size() {
+        return libraryMap.size();
+    }
+
+    public LinkedHashMap<String, MusicObject> getLibraryMap() {
+        return libraryMap;
     }
 }

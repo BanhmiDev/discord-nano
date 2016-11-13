@@ -16,7 +16,6 @@
 package org.gimu.discordnano.commands.music;
 
 import net.dv8tion.jda.entities.Message;
-import net.dv8tion.jda.entities.User;
 import net.dv8tion.jda.player.Playlist;
 import net.dv8tion.jda.player.source.AudioInfo;
 import net.dv8tion.jda.player.source.AudioSource;
@@ -66,7 +65,7 @@ public class PlaylistSubCommand extends AbstractSubCommand {
             RemoteSource remoteSource = new RemoteSource(source);
             MusicCommand.threadPool.submit(() -> {
                 message.deleteMessage();
-                MusicCommand.musicLibrary.add(streamer, message.getAuthor(), remoteSource, false);
+                DiscordNano.musicLibrary.add(streamer, message.getAuthor(), remoteSource, false);
             });
         } else {
             // Multiple sources
@@ -84,7 +83,7 @@ public class PlaylistSubCommand extends AbstractSubCommand {
                             return;
                         }
 
-                        MusicCommand.musicLibrary.add(streamer, message.getAuthor(), audioSource, false);
+                        DiscordNano.musicLibrary.add(streamer, message.getAuthor(), audioSource, false);
                     });
                     playlistLoader.remove(message.getChannelId());
                     message.deleteMessage();

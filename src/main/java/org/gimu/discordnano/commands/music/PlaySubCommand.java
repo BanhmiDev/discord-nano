@@ -15,7 +15,6 @@
  */
 package org.gimu.discordnano.commands.music;
 
-import net.dv8tion.jda.entities.User;
 import net.dv8tion.jda.player.source.RemoteSource;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.gimu.discordnano.DiscordNano;
@@ -25,7 +24,6 @@ import org.gimu.discordnano.lib.MusicStreamer;
 import org.gimu.discordnano.lib.NanoLogger;
 import org.gimu.discordnano.lib.NanoMessage;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 @SubCommand(
@@ -59,11 +57,11 @@ public class PlaySubCommand extends AbstractSubCommand {
             String source = args[0];
             if (NumberUtils.isNumber(source) || !source.contains("http")) {
                 // Fetch from library
-                String urlFromLibrary = MusicCommand.musicLibrary.get(source);
+                String urlFromLibrary = DiscordNano.musicLibrary.get(source);
                 if (urlFromLibrary.equals("-1")) {
                     response = "Couldn't find music from the library.";
                 } else {
-                    MusicCommand.musicLibrary.add(streamer, message.getAuthor(), new RemoteSource(urlFromLibrary), false);
+                    DiscordNano.musicLibrary.add(streamer, message.getAuthor(), new RemoteSource(urlFromLibrary), false);
                 }
             } else {
                 // Direct playback
@@ -76,7 +74,7 @@ public class PlaySubCommand extends AbstractSubCommand {
                     response = "I don't play livestreams.";
                 } else {
                     MusicCommand.threadPool.submit(() -> {
-                        MusicCommand.musicLibrary.add(streamer, message.getAuthor(), remoteSource, false);
+                        DiscordNano.musicLibrary.add(streamer, message.getAuthor(), remoteSource, false);
                     });
                 }
             }

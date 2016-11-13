@@ -15,9 +15,14 @@
  */
 package org.gimu.discordnano.commands;
 
+import com.google.gson.Gson;
 import org.gimu.discordnano.DiscordNano;
+import org.gimu.discordnano.lib.MusicLibrary;
+import org.gimu.discordnano.lib.NanoLogger;
 import org.gimu.discordnano.lib.NanoMessage;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.*;
 
 public class CommandHandler {
@@ -46,10 +51,12 @@ public class CommandHandler {
         String[] args;
         String message = nanoMessage.getRawContent();
         String[] sections = message.split(" "); // Split message by whitespace
-        String commandString = sections[0].replace(DiscordNano.prefix, ""); // Main command
+        String commandString = sections[0].replace(DiscordNano.PREFIX, ""); // Main command
         String subcommandString = (sections.length >= 2) ? sections[1] : ""; // Sub command
 
         Optional<String> response = null;
+
+        nanoMessage.getChannel().sendTyping(); // Typing animation
 
         // Main command parsing
         AbstractCommand mainCommand = mainCommandMap.get(commandString.toLowerCase());

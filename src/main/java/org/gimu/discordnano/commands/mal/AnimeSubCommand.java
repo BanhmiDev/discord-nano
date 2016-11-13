@@ -169,7 +169,7 @@ public class AnimeSubCommand extends AbstractSubCommand {
                 }
             }
 
-            return "__Query result__\n\n" + result.toString() + "\nList temporarily saved. Write `" + DiscordNano.prefix + "mal anime view <index>` to examine an entry.";
+            return "__Query result__\n\n" + result.toString() + "\nList temporarily saved. Write `" + DiscordNano.PREFIX + "mal anime view <index>` to examine an entry.";
         } catch (Exception e) {
             //System.out.println(e.getMessage());
             return "I couldn't find an entry fitting that phrase.";

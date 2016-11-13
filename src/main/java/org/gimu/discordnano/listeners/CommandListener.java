@@ -45,7 +45,7 @@ public class CommandListener extends ListenerAdapter {
 
     @Override
     public void onReady(ReadyEvent event) {
-        DiscordNano.jda.getAccountManager().setGame(DiscordNano.DEFAULT_STATUS);
+        DiscordNano.JDA.getAccountManager().setGame(DiscordNano.DEFAULT_STATUS);
 
         // Init commands
         NanoLogger.debug("Initializing main commands");
@@ -105,7 +105,7 @@ public class CommandListener extends ListenerAdapter {
         String messageContent = message.getRawContent();
         User author = event.getAuthor();
 
-        if (DiscordNano.TESTMODE && !channel.getId().equals(DiscordNano.TESTCHANNEL_ID)) {
+        if (!DiscordNano.PRODUCTION && !channel.getId().equals(DiscordNano.TESTCHANNEL_ID)) {
             channel.sendMessage("Currently in test-mode, not accepting commands from you .( ̵˃﹏˂̵ )");
             return;
         /*} else if (!whitelist.contains(channel.getId())) {
@@ -114,7 +114,7 @@ public class CommandListener extends ListenerAdapter {
         }
 
         // Conversation (CleverBot)
-        if (message.isMentioned(DiscordNano.jda.getSelfInfo())) {
+        if (message.isMentioned(DiscordNano.JDA.getSelfInfo())) {
             try {
                 bot = factory.create(ChatterBotType.CLEVERBOT);
             } catch (Exception e) {
@@ -131,7 +131,7 @@ public class CommandListener extends ListenerAdapter {
             message.getChannel().sendMessage(response);
         }
 
-        if (!messageContent.startsWith(DiscordNano.prefix) || author.isBot() || author == jda.getSelfInfo()) return;
+        if (!messageContent.startsWith(DiscordNano.PREFIX) || author.isBot() || author == jda.getSelfInfo()) return;
 
         commandHandler.parseMessage(new NanoMessage(message, event.getGuild()));
 

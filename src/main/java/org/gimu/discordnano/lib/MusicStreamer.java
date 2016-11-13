@@ -24,7 +24,6 @@ import net.dv8tion.jda.player.source.AudioInfo;
 import net.dv8tion.jda.player.source.AudioSource;
 import net.dv8tion.jda.player.source.RemoteSource;
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.commands.music.MusicCommand;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,7 +62,7 @@ public class MusicStreamer extends MusicPlayer {
     public void stop() {
         if (am != null) {
             musicQueue.remove(super.getPreviousAudioSource());
-            DiscordNano.jda.getAccountManager().setGame(DiscordNano.DEFAULT_STATUS);
+            DiscordNano.JDA.getAccountManager().setGame(DiscordNano.DEFAULT_STATUS);
             super.stop();
             am.closeAudioConnection();
         }
@@ -78,7 +77,7 @@ public class MusicStreamer extends MusicPlayer {
         if (src == null) {
             if (DiscordNano.RANDOM_MUSIC && vc.getUsers().size() > 1) { // Random music whenever someone is listening
                 setIdle(true);
-                src = new RemoteSource(MusicCommand.musicLibrary.get(String.valueOf((int) (Math.random() * MusicCommand.musicLibrary.musicLibraryMap.size()))));
+                src = new RemoteSource(DiscordNano.musicLibrary.get(String.valueOf((int) (Math.random() * DiscordNano.musicLibrary.size()))));
                 AudioInfo srcInfo = src.getInfo();
                 if (srcInfo.getError() == null) {
 
@@ -95,12 +94,12 @@ public class MusicStreamer extends MusicPlayer {
                 }
             } else {
                 setIdle(false);
-                DiscordNano.jda.getAccountManager().setGame(DiscordNano.DEFAULT_STATUS);
+                DiscordNano.JDA.getAccountManager().setGame(DiscordNano.DEFAULT_STATUS);
                 am.closeAudioConnection();
             }
         } else {
             message.reply("**Now playing**: `" + src.getInfo().getTitle() + "` \\(ﾉ´ヮ´)ﾉ*:･ﾟ");
-            DiscordNano.jda.getAccountManager().setGame(src.getInfo().getTitle());
+            DiscordNano.JDA.getAccountManager().setGame(src.getInfo().getTitle());
         }
     }
 
@@ -128,6 +127,6 @@ public class MusicStreamer extends MusicPlayer {
         AudioSource audioSource = super.getCurrentAudioSource();
         AudioInfo audioInfo = audioSource.getInfo();
         message.reply("**Now playing**: `" + audioInfo.getTitle() + "`");
-        DiscordNano.jda.getAccountManager().setGame(audioInfo.getTitle());
+        DiscordNano.JDA.getAccountManager().setGame(audioInfo.getTitle());
     }
 }

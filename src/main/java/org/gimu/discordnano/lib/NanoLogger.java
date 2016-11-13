@@ -25,19 +25,19 @@ public class NanoLogger {
     public static final String ANSI_YELLOW = "\u001B[33m";
 
     public static void debug(String message) {
-        if (DiscordNano.VERBOSE) {
+        if (DiscordNano.DEBUG) {
             System.out.println(ANSI_GREEN + "[DEBUG] " + message + ANSI_RESET);
         }
     }
 
     public static void warning(String message) {
-        if (DiscordNano.VERBOSE) {
+        if (DiscordNano.DEBUG) {
             System.out.println(ANSI_YELLOW + "[WARNING] " + message + ANSI_RESET);
         }
     }
 
     public static void error(String message) {
-        if (DiscordNano.VERBOSE) {
+        if (DiscordNano.DEBUG) {
             System.out.println(ANSI_RED + "[ERROR] " + message + ANSI_RESET);
         }
     }

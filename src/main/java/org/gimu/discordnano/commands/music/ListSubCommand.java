@@ -15,11 +15,13 @@
  */
 package org.gimu.discordnano.commands.music;
 
+import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractSubCommand;
 import org.gimu.discordnano.commands.SubCommand;
+import org.gimu.discordnano.lib.MusicObject;
+import org.gimu.discordnano.lib.NanoLogger;
 import org.gimu.discordnano.lib.NanoMessage;
 import org.gimu.discordnano.util.HastebinUtil;
-import org.json.JSONObject;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -34,21 +36,21 @@ import java.util.Optional;
 public class ListSubCommand extends AbstractSubCommand {
 
     public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
-        LinkedHashMap<String, JSONObject> musicLibraryMap = MusicCommand.musicLibrary.musicLibraryMap;
+        LinkedHashMap<String, MusicObject> musicLibraryMap = DiscordNano.musicLibrary.getLibraryMap();
 
         StringBuilder response = new StringBuilder("__Music Library Status__ (Entries: " + musicLibraryMap.size() + ")\n\n");
         int iterator = 0;
         if (musicLibraryMap.size() == 0) {
             response.append("The music library is empty.");
         } else if (musicLibraryMap.size() <= 10) {
-            for (Map.Entry<String, JSONObject> entry : musicLibraryMap.entrySet()) {
-                response.append("**" + iterator + "** " + entry.getKey() + " **<" + entry.getValue().get("url") + ">**\n");
+            for (Map.Entry<String, MusicObject> entry : musicLibraryMap.entrySet()) {
+                response.append("**" + iterator + "** " + entry.getKey() + " **<" + entry.getValue().getURL() + ">**\n");
                 iterator++;
             }
         } else {
             StringBuilder body = new StringBuilder();
-            for (Map.Entry<String, JSONObject> entry : musicLibraryMap.entrySet()) {
-                body.append("**" + iterator + "** " + entry.getKey() + " **<" + entry.getValue().get("url") + ">**\n");
+            for (Map.Entry<String, MusicObject> entry : musicLibraryMap.entrySet()) {
+                body.append("**" + iterator + "** " + entry.getKey() + " **<" + entry.getValue().getURL() + ">**\n");
                 iterator++;
             }
             response.append(HastebinUtil.post(body.deleteCharAt(body.length()-1).toString()));

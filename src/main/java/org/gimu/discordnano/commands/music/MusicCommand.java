@@ -24,11 +24,8 @@ import net.dv8tion.jda.player.source.RemoteSource;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
-import org.gimu.discordnano.lib.MusicLibrary;
-import org.gimu.discordnano.lib.MusicStreamer;
+import org.gimu.discordnano.lib.*;
 import org.gimu.discordnano.util.MusicUtil;
-import org.gimu.discordnano.lib.NanoMessage;
-import org.gimu.discordnano.lib.MusicInfo;
 
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -42,7 +39,6 @@ public class MusicCommand extends AbstractCommand {
 
     // TODO: each guild one streamer, up to one library for all?
     public static MusicStreamer musicStreamer;
-    public static MusicLibrary musicLibrary = new MusicLibrary();
     public static final ExecutorService threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
 
     protected static final String NO_DJ_REPLY = "You are not the DJ (ノдヽ)";
@@ -83,7 +79,7 @@ public class MusicCommand extends AbstractCommand {
                 break;
             case "add":
                 if (inputArgs.length() != 0) {
-                    musicLibrary.add(musicStreamer, author, new RemoteSource(inputArgs), true);
+                    DiscordNano.musicLibrary.add(musicStreamer, author, new RemoteSource(inputArgs), true);
                     threadPool.submit(() -> {
                         // Delete request message
                         message.deleteMessage();
@@ -153,7 +149,7 @@ public class MusicCommand extends AbstractCommand {
                     musicStreamer.setIdle(false);
                     musicStreamer.pause();
                     message.reply("I paused the music stream.");
-                    DiscordNano.jda.getAccountManager().setGame(DiscordNano.DEFAULT_STATUS);
+                    DiscordNano.JDA.getAccountManager().setGame(DiscordNano.DEFAULT_STATUS);
                 }
                 break;
             case "resume":
