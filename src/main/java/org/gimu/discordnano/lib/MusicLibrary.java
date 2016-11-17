@@ -17,10 +17,13 @@
 package org.gimu.discordnano.lib;
 
 import com.google.gson.Gson;
-import net.dv8tion.jda.entities.User;
-import net.dv8tion.jda.player.source.AudioInfo;
 import net.dv8tion.jda.player.source.AudioSource;
+import net.dv8tion.jda.player.source.RemoteSource;
 import org.apache.commons.lang3.math.NumberUtils;
+import sx.blah.discord.handle.impl.obj.Message;
+import sx.blah.discord.util.DiscordException;
+import sx.blah.discord.util.MissingPermissionsException;
+import sx.blah.discord.util.RateLimitException;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -28,63 +31,49 @@ import java.util.*;
 
 public class MusicLibrary {
 
-    private LinkedHashMap<String, MusicObject> libraryMap = new LinkedHashMap<String, MusicObject>();
+    // <title, url>
+    private LinkedHashMap<String, String> libraryMap = new LinkedHashMap<String, String>();
 
-    public void add(MusicStreamer streamer, User author, AudioSource src, boolean persist) {
-        // Adds to given streamer queue
-        AudioInfo srcInfo = src.getInfo();
-        if (srcInfo.getError() == null && !srcInfo.isLive()) {
-            streamer.add(src, new MusicInfo(author));
-
-            // Save to library
-            if (persist) {
-                AudioInfo info = src.getInfo();
-                MusicObject musicObject = new MusicObject(info.getOrigin());
-
-                boolean isDuplicate = false;
-
-                // Don't allow duplicate URLs
-                for (Map.Entry<String, MusicObject> entry : libraryMap.entrySet()) {
-                    if (entry.getValue().getURL().equals(musicObject.getURL())) {
-                        isDuplicate = true;
-                    }
-                }
-                if (!isDuplicate) libraryMap.put(info.getTitle(), musicObject);
-                save();
-            }
-
-            if (streamer.getIdle()) {
-                streamer.skipToNext();
-                streamer.setIdle(false);
-            } else if (!streamer.isPlaying()) {
-                streamer.play();
-            }
-        } else {
-            NanoLogger.error("Invalid audio source\n" + srcInfo.getError());
+    public boolean add(String url, Message message) throws RateLimitException, DiscordException, MissingPermissionsException {
+        if (!url.contains("http")) {
+            message.reply("Invalid source!");
+            return false;
         }
+        String guildId = message.getGuild().getID();
+
+        // Add music source to library
+        boolean isDuplicate = false;
+
+        // Don't allow duplicate URLs
+        for (Map.Entry<String, String> entry : libraryMap.entrySet()) {
+            if (entry.getValue().equals(url)) {
+                isDuplicate = true;
+            }
+        }
+        if (!isDuplicate) {
+            AudioSource audioSource = new RemoteSource(url, guildId);
+            libraryMap.put(audioSource.getInfo().getTitle(), url);
+            save();
+        }
+        return isDuplicate;
     }
 
     public String get(String query) {
         if (NumberUtils.isNumber(query)) {
             // Search based on index
             int iterator = 0;
-            for (Map.Entry<String, MusicObject> entry : libraryMap.entrySet()) {
+            for (Map.Entry<String, String> entry : libraryMap.entrySet()) {
                 if (iterator == Integer.parseInt(query)) {
-                    return entry.getValue().getURL();
+                    return entry.getValue();
                 }
                 iterator++;
             }
         } else {
             // Search based on string
-            String found = "";
             for (String key : libraryMap.keySet()) {
                 if (key.matches(".*(?i)"+query+".*")) {
-                    found = key;
-                    break;
+                    return libraryMap.get(key);
                 }
-            }
-            if (!found.equals("")) {
-                return libraryMap.get(found).getURL();
             }
         }
         return "-1";
@@ -106,7 +95,7 @@ public class MusicLibrary {
         return libraryMap.size();
     }
 
-    public LinkedHashMap<String, MusicObject> getLibraryMap() {
+    public LinkedHashMap<String, String> getLibraryMap() {
         return libraryMap;
     }
 }

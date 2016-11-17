@@ -16,12 +16,15 @@
 package org.gimu.discordnano;
 
 import com.google.gson.Gson;
-import net.dv8tion.jda.JDA;
-import net.dv8tion.jda.JDABuilder;
 import org.gimu.discordnano.lib.MusicLibrary;
 import org.gimu.discordnano.lib.NanoLogger;
 import org.gimu.discordnano.listeners.CommandListener;
 import org.json.JSONObject;
+import sx.blah.discord.api.ClientBuilder;
+import sx.blah.discord.api.IDiscordClient;
+import sx.blah.discord.api.events.EventDispatcher;
+import sx.blah.discord.util.DiscordException;
+
 import javax.security.auth.login.LoginException;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -48,8 +51,6 @@ public class DiscordNano {
 
     public static MusicLibrary musicLibrary;
 
-    public static JDA JDA;
-
     public static void main(String[] args) throws LoginException {
         // Init library
         // Deserialization
@@ -75,17 +76,22 @@ public class DiscordNano {
         DEBUG = config.getBoolean("debug");
 
         RANDOM_MUSIC = config.getBoolean("random_music");
-        DEFAULT_VOLUME = config.getLong("default_volume");
+        DEFAULT_VOLUME = Float.parseFloat(config.getString("default_volume"));
 
         VOICECHANNEL_ID = config.getString("voicechannel");
         TESTCHANNEL_ID = config.getString("testchannel");
 
         // Spawn our bot
-        JDA = new JDABuilder()
-                .setBotToken(config.getString("token"))
-                .addListener(new CommandListener())
-                .buildAsync();
-
+        ClientBuilder clientBuilder = new ClientBuilder(); // Creates the ClientBuilder instance
+        clientBuilder.withToken(config.getString("token")); // Adds the login info to the builder
+        IDiscordClient c = null;
+        try {
+            c = clientBuilder.login(); // Creates the client instance and logs the client in
+        } catch (DiscordException e) {
+            e.printStackTrace();
+        }
+        EventDispatcher dispatcher = c.getDispatcher();
+        dispatcher.registerListener(new CommandListener());
     }
 
 }

@@ -15,14 +15,12 @@
  */
 package org.gimu.discordnano.commands;
 
-import com.google.gson.Gson;
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.lib.MusicLibrary;
-import org.gimu.discordnano.lib.NanoLogger;
-import org.gimu.discordnano.lib.NanoMessage;
+import sx.blah.discord.handle.impl.obj.Message;
+import sx.blah.discord.util.DiscordException;
+import sx.blah.discord.util.MissingPermissionsException;
+import sx.blah.discord.util.RateLimitException;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.*;
 
 public class CommandHandler {
@@ -47,19 +45,18 @@ public class CommandHandler {
         return false;
     }
 
-    public void parseMessage(NanoMessage nanoMessage) {
+    public void parseMessage(Message message) throws RateLimitException, DiscordException, MissingPermissionsException {
         String[] args;
-        String message = nanoMessage.getRawContent();
-        String[] sections = message.split(" "); // Split message by whitespace
+        String messageRaw = message.getContent();
+        String[] sections = messageRaw.split(" "); // Split message by whitespace
         String commandString = sections[0].replace(DiscordNano.PREFIX, ""); // Main command
         String subcommandString = (sections.length >= 2) ? sections[1] : ""; // Sub command
 
         Optional<String> response = null;
 
-        nanoMessage.getChannel().sendTyping(); // Typing animation
-
         // Main command parsing
         AbstractCommand mainCommand = mainCommandMap.get(commandString.toLowerCase());
+
         if (mainCommand != null) {
             // Sub command parsing
             AbstractSubCommand subCommand = mainCommand.getSubCommand(subcommandString);
@@ -67,16 +64,16 @@ public class CommandHandler {
             if (subCommand != null) {
                 try {
                     args = (sections.length >= 2) ? Arrays.copyOfRange(sections, 2, sections.length) : new String[0]; // Only arguments (excludes sub command alias)
-                    response = subCommand.execute(nanoMessage, args);
+                    response = subCommand.execute(message, args);
                 } catch (IllegalArgumentException e) {
-                    nanoMessage.reply(mainCommand.getUsage());
+                    message.reply(mainCommand.getUsage());
                 }
             } else {
                 try {
                     args = (sections.length >= 1) ? Arrays.copyOfRange(sections, 1, sections.length) : new String[0]; // Only arguments (excludes main command alias)
-                    response = mainCommand.execute(nanoMessage, args);
+                    response = mainCommand.execute(message, args);
                 } catch (IllegalArgumentException e) {
-                    nanoMessage.reply(mainCommand.getUsage());
+                    message.getChannel().sendMessage(mainCommand.getUsage());
                 }
             }
         }
@@ -84,7 +81,7 @@ public class CommandHandler {
         if (response != null && response.isPresent()) {
             String responseString = response.get();
             if (responseString.trim().length() > 0) {
-                nanoMessage.reply(responseString);
+                message.getChannel().sendMessage(responseString);
             }
         }
     }

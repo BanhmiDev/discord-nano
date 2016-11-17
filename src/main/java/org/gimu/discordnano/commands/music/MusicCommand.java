@@ -15,21 +15,16 @@
  */
 package org.gimu.discordnano.commands.music;
 
-import net.dv8tion.jda.JDA;
-import net.dv8tion.jda.entities.*;
-import net.dv8tion.jda.managers.AudioManager;
-import net.dv8tion.jda.player.MusicPlayer;
-import net.dv8tion.jda.player.source.AudioSource;
-import net.dv8tion.jda.player.source.RemoteSource;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
-import org.gimu.discordnano.lib.*;
-import org.gimu.discordnano.util.MusicUtil;
+import sx.blah.discord.handle.impl.obj.Message;
+import sx.blah.discord.handle.obj.IVoiceChannel;
+import sx.blah.discord.util.DiscordException;
+import sx.blah.discord.util.MissingPermissionsException;
+import sx.blah.discord.util.RateLimitException;
 
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @MainCommand(
         alias = {"music"},
@@ -37,123 +32,25 @@ import java.util.concurrent.Executors;
 )
 public class MusicCommand extends AbstractCommand {
 
-    // TODO: each guild one streamer, up to one library for all?
-    public static MusicStreamer musicStreamer;
-    public static final ExecutorService threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
-
-    protected static final String NO_DJ_REPLY = "You are not the DJ (ノдヽ)";
-
-    private static boolean isIdle(MusicPlayer musicStreamer, NanoMessage message) {
-        if (!musicStreamer.isPlaying()) {
-            message.reply("I'm not playing music right now.");
-            return true;
-        }
-        return false;
-    }
-
-    public Optional execute(NanoMessage message, String[] args) throws IllegalArgumentException {
+    public Optional execute(Message message, String[] args) throws IllegalArgumentException, RateLimitException, DiscordException, MissingPermissionsException {
         if (args.length == 0) {
             throw new IllegalArgumentException();
         }
 
-        JDA jda = message.getJDA();
-        User author = message.getAuthor();
-        AudioManager am = message.getGuild().getAudioManager();
-        VoiceChannel vc = jda.getVoiceChannelById(DiscordNano.VOICECHANNEL_ID);
-
-        if (am.getSendingHandler() == null || musicStreamer == null) {
-            musicStreamer = new MusicStreamer(message);
-            am.setSendingHandler(musicStreamer);
-        }
-
-        String inputArgs = args.length >= 2 ? args[1] : "";
-        AudioSource currentSource = musicStreamer.getCurrentAudioSource();
+        IVoiceChannel voicechannel = message.getGuild().getVoiceChannelByID(DiscordNano.VOICECHANNEL_ID);
 
         // Commands
         switch (args[0].toLowerCase()) {
+            case "list":
+                break;
             case "join":
-                am.openAudioConnection(vc);
+                // Get the user's voice channel
+                voicechannel.join();
+                message.reply("Joining Voicechannel `" + voicechannel.getName() + "`.");
                 break;
             case "leave":
-                musicStreamer.stop();
-                break;
-            case "add":
-                if (inputArgs.length() != 0) {
-                    DiscordNano.musicLibrary.add(musicStreamer, author, new RemoteSource(inputArgs), true);
-                    threadPool.submit(() -> {
-                        // Delete request message
-                        message.deleteMessage();
-                    });
-                }
-                break;
-            case "dj":
-                if (currentSource != null) {
-                    User currentDJ = musicStreamer.musicQueue.get(currentSource).getAuthor();
-                    message.reply("**Current DJ**: " + currentDJ.getAsMention());
-                } else {
-                    message.reply("Current DJ: (╯°□°）╯︵ ┻━┻");
-                }
-                break;
-            case "skip":
-                if (!isIdle(musicStreamer, message)) {
-                    MusicInfo s = musicStreamer.musicQueue.get(musicStreamer.getCurrentAudioSource());
-                    if (MusicUtil.isDJ(musicStreamer, author)) {
-                        message.reply("DJ skipped the song!");
-                        musicStreamer.skipToNext();
-                    } else {
-                        if (s.hasVoted(author)) {
-                            message.reply("You have already voted to skip the song!");
-                        } else {
-                            s.voteSkip(author);
-                            int voteCount = s.getVotes();
-                            int votesRequired = Math.round(message.getGuild().getAudioManager().getConnectedChannel().getUsers().size() / 2);
-                            if (voteCount >= votesRequired) {
-                                musicStreamer.skipToNext();
-                                message.reply("Skipping to the next song.");
-                            } else {
-                                message.reply(author.getUsername().replace("`", "\\`") + " has voted to skip the song! " + voteCount + "/" + votesRequired + "");
-                            }
-                        }
-                    }
-                }
-                break;
-            case "stop":
-            case "clear":
-            case "reset":
-                if (!MusicUtil.isDJ(musicStreamer, author)) {
-                    message.reply("I don't think so, " + author.getUsername().replace("`", "\\`"));
-                } else {
-                    musicStreamer.stop();
-                    message.reply("(ノಠ益ಠ)ノ彡┻━┻");
-                }
-                break;
-            case "shuffle":
-                if (!MusicUtil.isDJ(musicStreamer, author)) {
-                    message.reply(NO_DJ_REPLY);
-                } else {
-                    boolean shuffle = musicStreamer.isShuffle();
-                    if (inputArgs.equals("")) {
-                        musicStreamer.setShuffle(!shuffle);
-                        if (shuffle) {
-                            message.reply("Disabled shuffling.");
-                        } else {
-                            message.reply("Enabled shuffling.");
-                        }
-                    }
-                }
-                break;
-            case "pause":
-                if (isIdle(musicStreamer, message) || !MusicUtil.isDJ(musicStreamer, author)) {
-                    message.reply(NO_DJ_REPLY);
-                } else {
-                    musicStreamer.setIdle(false);
-                    musicStreamer.pause();
-                    message.reply("I paused the music stream.");
-                    DiscordNano.JDA.getAccountManager().setGame(DiscordNano.DEFAULT_STATUS);
-                }
-                break;
-            case "resume":
-                if (!musicStreamer.isPlaying()) musicStreamer.play();
+                message.reply("Leaving Voicechannel `" + voicechannel.getName() + "`.");
+                voicechannel.leave();
                 break;
         }
 

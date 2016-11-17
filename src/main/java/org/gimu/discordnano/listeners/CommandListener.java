@@ -17,24 +17,25 @@ package org.gimu.discordnano.listeners;
 
 import com.google.code.chatterbotapi.ChatterBot;
 import com.google.code.chatterbotapi.ChatterBotFactory;
-import com.google.code.chatterbotapi.ChatterBotSession;
-import com.google.code.chatterbotapi.ChatterBotType;
-import net.dv8tion.jda.JDA;
-import net.dv8tion.jda.entities.*;
-import net.dv8tion.jda.events.ReadyEvent;
-import net.dv8tion.jda.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.hooks.ListenerAdapter;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.*;
 import org.gimu.discordnano.lib.NanoLogger;
-import org.gimu.discordnano.lib.NanoMessage;
 import org.reflections.Reflections;
+import sx.blah.discord.api.events.EventSubscriber;
+import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
+import sx.blah.discord.handle.impl.events.ReadyEvent;
+import sx.blah.discord.handle.impl.obj.Message;
+import sx.blah.discord.handle.obj.IChannel;
+import sx.blah.discord.handle.obj.IMessage;
+import sx.blah.discord.util.DiscordException;
+import sx.blah.discord.util.MissingPermissionsException;
+import sx.blah.discord.util.RateLimitException;
 
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
 
-public class CommandListener extends ListenerAdapter {
+public class CommandListener {
 
     private CommandHandler commandHandler = new CommandHandler();
 
@@ -43,9 +44,9 @@ public class CommandListener extends ListenerAdapter {
     private ChatterBot bot = null;
 
 
-    @Override
+    @EventSubscriber
     public void onReady(ReadyEvent event) {
-        DiscordNano.JDA.getAccountManager().setGame(DiscordNano.DEFAULT_STATUS);
+        //DiscordNano.JDA.getAccountManager().setGame(DiscordNano.DEFAULT_STATUS);
 
         // Init commands
         NanoLogger.debug("Initializing main commands");
@@ -84,6 +85,7 @@ public class CommandListener extends ListenerAdapter {
                     SubCommand myAnnotation = (SubCommand) annotation;
 
                     for (String alias : myAnnotation.alias()) {
+
                         try {
                             commandHandler.addSubCommand(alias, myAnnotation.mainCommandAlias(), command.newInstance());
                         } catch (InstantiationException e) {
@@ -97,16 +99,20 @@ public class CommandListener extends ListenerAdapter {
         }
     }
 
-    @Override
-    public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
-        TextChannel channel = event.getChannel();
-        JDA jda = event.getJDA();
-        Message message = event.getMessage();
-        String messageContent = message.getRawContent();
-        User author = event.getAuthor();
-
-        if (!DiscordNano.PRODUCTION && !channel.getId().equals(DiscordNano.TESTCHANNEL_ID)) {
-            channel.sendMessage("Currently in test-mode, not accepting commands from you .( ̵˃﹏˂̵ )");
+    @EventSubscriber
+    public void onMessageReceivedEvent(MessageReceivedEvent event) {
+        IChannel channel = event.getMessage().getChannel();
+        Message message = (Message)event.getMessage();
+        if (!DiscordNano.PRODUCTION && !channel.getID().equals(DiscordNano.TESTCHANNEL_ID)) {
+            try {
+                channel.sendMessage("Currently in test-mode, not accepting commands from you .( ̵˃﹏˂̵ )");
+            } catch (MissingPermissionsException e) {
+                e.printStackTrace();
+            } catch (RateLimitException e) {
+                e.printStackTrace();
+            } catch (DiscordException e) {
+                e.printStackTrace();
+            }
             return;
         /*} else if (!whitelist.contains(channel.getId())) {
             channel.sendMessage("Server is not whitelisted .( ̵˃﹏˂̵ )");
@@ -114,7 +120,7 @@ public class CommandListener extends ListenerAdapter {
         }
 
         // Conversation (CleverBot)
-        if (message.isMentioned(DiscordNano.JDA.getSelfInfo())) {
+        /*if (message.isMentioned(DiscordNano.JDA.getSelfInfo())) {
             try {
                 bot = factory.create(ChatterBotType.CLEVERBOT);
             } catch (Exception e) {
@@ -129,11 +135,19 @@ public class CommandListener extends ListenerAdapter {
                 e.printStackTrace();
             }
             message.getChannel().sendMessage(response);
+        }*/
+
+        if (!message.getContent().startsWith(DiscordNano.PREFIX) || message.getAuthor().isBot()) return;
+
+        try {
+            commandHandler.parseMessage(message);
+        } catch (RateLimitException e) {
+            e.printStackTrace();
+        } catch (DiscordException e) {
+            e.printStackTrace();
+        } catch (MissingPermissionsException e) {
+            e.printStackTrace();
         }
-
-        if (!messageContent.startsWith(DiscordNano.PREFIX) || author.isBot() || author == jda.getSelfInfo()) return;
-
-        commandHandler.parseMessage(new NanoMessage(message, event.getGuild()));
 
         /*
             while (channel.getHistory().retrieve(100) != null) {
