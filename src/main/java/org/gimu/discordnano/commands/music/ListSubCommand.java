@@ -30,9 +30,13 @@ import java.util.Optional;
         mainCommandAlias = "music",
         alias = {"list"},
         description = "List the music library",
-        usage = ""
+        usage = "music list"
 )
 public class ListSubCommand extends AbstractSubCommand {
+
+    public ListSubCommand(String description, String usage) {
+        super(description, usage);
+    }
 
     public Optional execute(Message message, String[] args) throws IllegalArgumentException {
         LinkedHashMap<String, String> musicLibraryMap = DiscordNano.musicLibrary.getLibraryMap();

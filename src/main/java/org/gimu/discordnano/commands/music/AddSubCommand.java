@@ -36,9 +36,13 @@ import java.util.Optional;
         mainCommandAlias = "music",
         alias = {"add"},
         description = "Add music to the library",
-        usage = ""
+        usage = "music add <source>"
 )
 public class AddSubCommand extends AbstractSubCommand {
+
+    public AddSubCommand(String description, String usage) {
+        super(description, usage);
+    }
 
     public Optional execute(Message message, String[] args) throws IllegalArgumentException, RateLimitException, DiscordException, MissingPermissionsException {
         if (args.length == 0) {

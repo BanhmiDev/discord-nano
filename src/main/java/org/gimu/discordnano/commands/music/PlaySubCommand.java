@@ -39,10 +39,14 @@ import java.util.Optional;
 @SubCommand(
         mainCommandAlias = "music",
         alias = {"play"},
-        description = "The music module",
-        usage = ""
+        description = "Music play subcommand",
+        usage = "music play <index|source>"
 )
 public class PlaySubCommand extends AbstractSubCommand {
+
+    public PlaySubCommand(String description, String usage) {
+        super(description, usage);
+    }
 
     private void playSource(Message message, Playlist playlist) throws RateLimitException, DiscordException, MissingPermissionsException {
         List<AudioSource> sources = new LinkedList(playlist.getSources());

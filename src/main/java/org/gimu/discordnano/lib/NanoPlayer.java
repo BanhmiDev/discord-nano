@@ -38,7 +38,6 @@ public class NanoPlayer extends AbstractMusicPlayer implements IAudioProvider {
 
     @Override
     public byte[] provide() {
-
         try {
             int amountRead = currentAudioStream.read(buffer, 0, buffer.length);
             if (amountRead > -1) {
@@ -60,7 +59,6 @@ public class NanoPlayer extends AbstractMusicPlayer implements IAudioProvider {
                 return noData;
             }
         } catch (IOException e) {
-            LOG.warn("A source closed unexpectantly? Oh well I guess...");
             sourceFinished();
         }
         return noData;

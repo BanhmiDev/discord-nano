@@ -26,12 +26,12 @@ import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.impl.obj.Message;
 import sx.blah.discord.handle.obj.IChannel;
-import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,8 +46,6 @@ public class CommandListener {
 
     @EventSubscriber
     public void onReady(ReadyEvent event) {
-        //DiscordNano.JDA.getAccountManager().setGame(DiscordNano.DEFAULT_STATUS);
-
         // Init commands
         NanoLogger.debug("Initializing main commands");
         Reflections reflections = new Reflections("org.gimu.discordnano.commands");
@@ -58,14 +56,12 @@ public class CommandListener {
 
             for (Annotation annotation : annotations) {
                 if (annotation instanceof MainCommand) {
-                    MainCommand myAnnotation = (MainCommand) annotation;
+                    MainCommand mainAnnotation = (MainCommand) annotation;
 
-                    for (String alias : myAnnotation.alias()) {
+                    for (String alias : mainAnnotation.alias()) {
                         try {
-                            commandHandler.addMainCommand(alias, command.newInstance());
-                        } catch (InstantiationException e) {
-                            e.printStackTrace();
-                        } catch (IllegalAccessException e) {
+                            commandHandler.addMainCommand(alias, command.getDeclaredConstructor(String.class, String.class).newInstance(mainAnnotation.description(), mainAnnotation.usage()));
+                        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                             e.printStackTrace();
                         }
                     }
@@ -82,15 +78,13 @@ public class CommandListener {
 
             for (Annotation annotation : annotations) {
                 if (annotation instanceof SubCommand) {
-                    SubCommand myAnnotation = (SubCommand) annotation;
+                    SubCommand subAnnotation = (SubCommand) annotation;
 
-                    for (String alias : myAnnotation.alias()) {
+                    for (String alias : subAnnotation.alias()) {
 
                         try {
-                            commandHandler.addSubCommand(alias, myAnnotation.mainCommandAlias(), command.newInstance());
-                        } catch (InstantiationException e) {
-                            e.printStackTrace();
-                        } catch (IllegalAccessException e) {
+                            commandHandler.addSubCommand(alias, subAnnotation.mainCommandAlias(), command.getDeclaredConstructor(String.class, String.class).newInstance(subAnnotation.description(), subAnnotation.usage()));
+                        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                             e.printStackTrace();
                         }
                     }
@@ -149,10 +143,5 @@ public class CommandListener {
             e.printStackTrace();
         }
 
-        /*
-            while (channel.getHistory().retrieve(100) != null) {
-                channel.deleteMessages(channel.getHistory().retrieve(100));
-            }
-        }*/
     }
 }

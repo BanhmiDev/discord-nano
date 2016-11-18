@@ -50,12 +50,15 @@ public class MusicLibrary {
                 isDuplicate = true;
             }
         }
-        if (!isDuplicate) {
-            AudioSource audioSource = new RemoteSource(url, guildId);
-            libraryMap.put(audioSource.getInfo().getTitle(), url);
-            save();
+        if (isDuplicate) {
+            message.reply("Duplicate!");
+            return false;
         }
-        return isDuplicate;
+
+        AudioSource audioSource = new RemoteSource(url, guildId);
+        libraryMap.put(audioSource.getInfo().getTitle(), url);
+        save();
+        return true;
     }
 
     public String get(String query) {

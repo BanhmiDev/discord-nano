@@ -23,6 +23,11 @@ public abstract class AbstractSubCommand implements CommandExecutor {
     private String usage;
     private List<String> aliases;
 
+    public AbstractSubCommand(String description, String usage) {
+        this.description = description;
+        this.usage = usage;
+    }
+
     public String getDescription() {
         return description;
     }

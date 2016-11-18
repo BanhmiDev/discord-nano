@@ -66,14 +66,14 @@ public class CommandHandler {
                     args = (sections.length >= 2) ? Arrays.copyOfRange(sections, 2, sections.length) : new String[0]; // Only arguments (excludes sub command alias)
                     response = subCommand.execute(message, args);
                 } catch (IllegalArgumentException e) {
-                    message.reply(mainCommand.getUsage());
+                    if (!subCommand.getUsage().isEmpty()) message.getChannel().sendMessage("`" + DiscordNano.PREFIX + subCommand.getUsage() + "`");
                 }
             } else {
                 try {
                     args = (sections.length >= 1) ? Arrays.copyOfRange(sections, 1, sections.length) : new String[0]; // Only arguments (excludes main command alias)
                     response = mainCommand.execute(message, args);
                 } catch (IllegalArgumentException e) {
-                    message.getChannel().sendMessage(mainCommand.getUsage());
+                    if (!mainCommand.getUsage().isEmpty()) message.getChannel().sendMessage("`" + DiscordNano.PREFIX + mainCommand.getUsage() + "`");
                 }
             }
         }
