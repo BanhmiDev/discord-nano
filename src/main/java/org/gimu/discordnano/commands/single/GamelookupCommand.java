@@ -33,7 +33,7 @@ import java.util.StringJoiner;
 
 @MainCommand(
         alias = {"gamelookup"},
-        description = "Looks up a game",
+        description = "Look up a video-game",
         usage = "gamelookup <query>"
 )
 public class GamelookupCommand extends AbstractCommand {

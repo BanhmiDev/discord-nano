@@ -38,7 +38,7 @@ import java.util.Optional;
 
 @MainCommand(
         alias = {"ehentai"},
-        description = "Displays a random e-hentai entry",
+        description = "Display random e-hentai entry",
         usage = "ehentai"
 )
 public class EHentaiCommand extends AbstractCommand {

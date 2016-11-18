@@ -32,7 +32,7 @@ import java.util.Random;
 
 @MainCommand(
         alias = {"rule34"},
-        description = "Fetches image from rule34.xxx",
+        description = "Fetch image from rule34.xxx",
         usage = "rule34 <query>"
 )
 public class Rule34Command extends AbstractCommand {

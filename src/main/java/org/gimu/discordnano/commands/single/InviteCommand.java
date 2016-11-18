@@ -27,7 +27,7 @@ import java.util.Optional;
 
 @MainCommand(
         alias = {"invite"},
-        description = "Get invite link for Nano",
+        description = "Get Nano's invite link",
         usage = "invite"
 )
 public class InviteCommand extends AbstractCommand {

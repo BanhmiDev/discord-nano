@@ -26,7 +26,7 @@ import java.util.Optional;
 
 @MainCommand(
         alias = {"serverinfo"},
-        description = "Gets server information",
+        description = "Get server information",
         usage = "serverinfo"
 )
 public class ServerinfoCommand extends AbstractCommand {

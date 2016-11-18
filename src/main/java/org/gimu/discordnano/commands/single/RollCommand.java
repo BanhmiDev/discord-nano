@@ -26,7 +26,7 @@ import java.util.Random;
 
 @MainCommand(
         alias = {"roll"},
-        description = "Rolls a dice",
+        description = "Roll a dice",
         usage = "roll [faces]"
 )
 public class RollCommand extends AbstractCommand {
