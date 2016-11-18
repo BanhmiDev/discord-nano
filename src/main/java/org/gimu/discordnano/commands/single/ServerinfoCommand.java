@@ -35,7 +35,7 @@ public class ServerinfoCommand extends AbstractCommand {
         super(description, usage);
     }
 
-    public Optional execute(Message message, String[] args) throws IllegalArgumentException {
+    public Optional execute(Message message, String[] args) {
         IGuild guild = message.getGuild();
         StringBuilder response = new StringBuilder();
         response.append("**Server**: " + guild.getName() + "\n");
@@ -44,7 +44,8 @@ public class ServerinfoCommand extends AbstractCommand {
         response.append("**Roles**: ");
         LinkedList<IRole> roles = new LinkedList<IRole>(guild.getRoles());
         for (int i = 0; i < roles.size()-1; i++) {
-            response.append(roles.get(i) + ", ");
+            System.out.println(roles.get(i));
+            if (!roles.get(i).toString().equals("@everyone")) response.append(roles.get(i) + ", ");
         }
         response.append(roles.get(roles.size()-1) + "\n");
         response.append("**Owner**: " + guild.getOwner().getName() + "#" + guild.getOwner().getDiscriminator() + "\n");

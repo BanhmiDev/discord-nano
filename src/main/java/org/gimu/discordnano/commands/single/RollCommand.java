@@ -20,9 +20,6 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
 import sx.blah.discord.handle.impl.obj.Message;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
 
 import java.util.Optional;
 import java.util.Random;
@@ -38,7 +35,7 @@ public class RollCommand extends AbstractCommand {
         super(description, usage);
     }
 
-    public Optional execute(Message message, String[] args) throws IllegalArgumentException, RateLimitException, DiscordException, MissingPermissionsException {
+    public Optional execute(Message message, String[] args) throws IllegalArgumentException {
         String response;
         Random random = new Random();
         int rolled;

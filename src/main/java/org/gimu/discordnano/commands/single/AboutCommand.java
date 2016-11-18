@@ -19,9 +19,6 @@ package org.gimu.discordnano.commands.single;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
 import sx.blah.discord.handle.impl.obj.Message;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
 
 import java.util.Optional;
 import java.util.StringJoiner;
@@ -37,9 +34,7 @@ public class AboutCommand extends AbstractCommand {
         super(description, usage);
     }
 
-    public Optional execute(Message message, String[] args) throws IllegalArgumentException, RateLimitException, DiscordException, MissingPermissionsException {
-        StringJoiner response = new StringJoiner("\n");
-        response.add("I am Nano");
-        return Optional.of(response.toString());
+    public Optional execute(Message message, String[] args) throws IllegalArgumentException {
+        return Optional.of("I am Nano");
     }
 }

@@ -22,9 +22,6 @@ import org.gimu.discordnano.util.HTTPUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import sx.blah.discord.handle.impl.obj.Message;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -42,7 +39,7 @@ public class OsuCommand extends AbstractCommand {
         super(description, usage);
     }
 
-    public Optional execute(Message message, String[] args) throws IllegalArgumentException, RateLimitException, DiscordException, MissingPermissionsException {
+    public Optional execute(Message message, String[] args) throws IllegalArgumentException {
         if (args.length == 0) {
             throw new IllegalArgumentException();
         }
@@ -74,6 +71,5 @@ public class OsuCommand extends AbstractCommand {
         }
 
         return Optional.of("__osu! Profile__\n" + sb.toString());
-
     }
 }

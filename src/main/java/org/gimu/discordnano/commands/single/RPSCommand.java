@@ -23,24 +23,31 @@ import sx.blah.discord.handle.impl.obj.Message;
 import java.util.Optional;
 
 @MainCommand(
-        alias = {"flip", "coin"},
-        description = "Flip a coin",
-        usage = "<flip|coin>"
+        alias = {"rps"},
+        description = "Play rock-paper-scissors",
+        usage = "rps <rock|paper|scissors>"
 )
-public class FlipCommand extends AbstractCommand {
+public class RPSCommand extends AbstractCommand {
 
-    public FlipCommand(String description, String usage) {
+    public RPSCommand(String description, String usage) {
         super(description, usage);
     }
 
     public Optional execute(Message message, String[] args) throws IllegalArgumentException {
-        String response;
-        double random = Math.random();
-        if (random < 0.5) {
-            response = "**Tails!**";
+        String response = "";
+        if (args.length == 0 || (!args[0].equalsIgnoreCase("rock") && !args[0].equalsIgnoreCase("paper") && !args[0].equalsIgnoreCase("scissors"))) {
+            throw new IllegalArgumentException();
         } else {
-            response = "**Heads!**";
+            int choice = (int) Math.floor(Math.random() * 3);
+            if (choice == 0) {
+                response = "You picked " + args[0] + ".\nI picked **rock**!";
+            } else if (choice == 1) {
+                response = "You picked " + args[0] + "\nI picked **paper**!";
+            } else if (choice == 2) {
+                response = "You picked " + args[0] + "\nI picked **scissors**!";
+            }
         }
+
         return Optional.of(response);
     }
 }
