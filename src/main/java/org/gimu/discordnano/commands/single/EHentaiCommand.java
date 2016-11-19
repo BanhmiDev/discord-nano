@@ -99,19 +99,19 @@ public class EHentaiCommand extends AbstractCommand {
             JSONObject first = array.getJSONObject(0);
 
             StringBuilder sb = new StringBuilder();
-            sb.append("**Title (English)**: " + first.getString("title") + "\n");
-            if (first.getString("title_jpn").length() > 0) sb.append("**Title (Japanese)**: " + first.getString("title_jpn") + "\n");
-            sb.append("**Category**: " + first.getString("category") + "\n");
-            sb.append("**Files**: " + first.getString("filecount") + "\n");
-            sb.append("**Rating**: " + first.getString("rating") + "\n");
+            sb.append(first.getString("title"));
+            if (first.getString("title_jpn").length() > 0) sb.append(" / " + first.getString("title_jpn"));
+            sb.append("\nCategory: **" + first.getString("category") + "** | ");
+            sb.append("Files: **" + first.getString("filecount") + "** | ");
+            sb.append("Rating: **" + first.getString("rating") + "**\n");
 
             JSONArray tags = first.getJSONArray("tags");
             if (tags.length() >= 2) {
-                sb.append("**Tags**: [");
+                sb.append("Tags: **[");
                 for (int i = 0; i < tags.length() - 1; i++) {
-                    sb.append(tags.get(i) + ", ");
+                    sb.append(cleanTag(tags.get(i).toString()) + ", ");
                 }
-                sb.append(tags.get(tags.length() - 1) + "]");
+                sb.append(cleanTag(tags.get(tags.length() - 1).toString()) + "]**");
             }
             sb.append("\n\n**<http://g.e-hentai.org/g/" + first.getInt("gid") + "/" + first.getString("token") + ">**");
             sb.append("\n\n" + first.getString("thumb"));
@@ -120,5 +120,9 @@ public class EHentaiCommand extends AbstractCommand {
             ex.printStackTrace();
         }
         return Optional.empty();
+    }
+
+    private String cleanTag(String tag) {
+        return tag.substring(tag.lastIndexOf(':') + 1);
     }
 }

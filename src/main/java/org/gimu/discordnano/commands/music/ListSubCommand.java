@@ -41,7 +41,7 @@ public class ListSubCommand extends AbstractSubCommand {
     public Optional execute(Message message, String[] args) throws IllegalArgumentException {
         LinkedHashMap<String, String> musicLibraryMap = DiscordNano.musicLibrary.getLibraryMap();
 
-        StringBuilder response = new StringBuilder("__Music Library Status__ (Entries: " + musicLibraryMap.size() + ")\n\n");
+        StringBuilder response = new StringBuilder("The music library has " + musicLibraryMap.size() + " entries.\n\n");
         int iterator = 0;
         if (musicLibraryMap.size() == 0) {
             response.append("The music library is empty.");

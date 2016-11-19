@@ -74,7 +74,7 @@ public class XkcdCommand extends AbstractCommand {
             JSONObject randJSON = JSONUtil.readJsonFromUrl(String.format("http://xkcd.com/%d/info.0.json", rand));
 
             if (randJSON != null) {
-                response = "**xkcd**: " + randJSON.getString("title") + "\n**No**: " + randJSON.getInt("num") + "\n" + randJSON.getString("img").replaceAll("\\\\/", "/");
+                response = randJSON.getString("title") + "\nNumber: **" + randJSON.getInt("num") + "**\n\n" + randJSON.getString("img").replaceAll("\\\\/", "/");
             }
         }
 

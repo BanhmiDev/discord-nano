@@ -63,7 +63,7 @@ public class AddSubCommand extends AbstractSubCommand {
             AudioInfo info = audioSource.getInfo();
             if (info.getError() == null) {
                 player.getAudioQueue().add(audioSource);
-                message.reply("Added `" + info.getTitle() + "` to library and current queue!");
+                message.getChannel().sendMessage("Added `" + info.getTitle() + "` to library and current queue!");
             }
         }
 

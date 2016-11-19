@@ -24,9 +24,11 @@ import org.gimu.discordnano.commands.AbstractSubCommand;
 import org.gimu.discordnano.commands.SubCommand;
 import org.gimu.discordnano.lib.NanoLogger;
 import org.gimu.discordnano.lib.NanoPlayer;
+import org.gimu.discordnano.listeners.CommandListener;
 import sx.blah.discord.handle.audio.IAudioManager;
 import sx.blah.discord.handle.audio.impl.DefaultProvider;
 import sx.blah.discord.handle.impl.obj.Message;
+import sx.blah.discord.handle.obj.IVoiceChannel;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
@@ -79,7 +81,7 @@ public class PlaySubCommand extends AbstractSubCommand {
                         }
                     }
                     try {
-                        message.reply("Finished queuing provided playlist. Successfully queued **" + sources.size() + "** sources");
+                        message.getChannel().sendMessage("Finished queuing provided playlist. Successfully queued **" + sources.size() + "** sources");
                     } catch (Exception e) {
                         // ...
                     }
@@ -94,9 +96,9 @@ public class PlaySubCommand extends AbstractSubCommand {
                 if (player.isStopped()) {
                     player.play();
                 }
-                message.reply("Added `" + info.getTitle() + "` to the music queue.");
+                message.getChannel().sendMessage("Added `" + info.getTitle() + "` to the music queue.");
             } else {
-                message.reply("There was an error while loading the provided URL.");
+                message.getChannel().sendMessage("There was an error while loading the provided URL.");
                 NanoLogger.error("Playback error\n" + info.getError());
             }
         }
@@ -105,6 +107,11 @@ public class PlaySubCommand extends AbstractSubCommand {
     public Optional execute(Message message, String[] args) throws IllegalArgumentException, RateLimitException, DiscordException, MissingPermissionsException {
         if (args.length == 0) {
             throw new IllegalArgumentException();
+        }
+
+        IVoiceChannel voicechannel = message.getGuild().getVoiceChannelByID(DiscordNano.VOICECHANNEL_ID);
+        if (!CommandListener.client.getConnectedVoiceChannels().contains(voicechannel)) {
+            return Optional.of("Nano is not in a voice channel, use `!music join` first.");
         }
 
         String response = "";
@@ -116,10 +123,12 @@ public class PlaySubCommand extends AbstractSubCommand {
             if (urlFromLibrary.equals("-1")) {
                 response = "Couldn't find music from the library.";
             } else {
+                message.getChannel().setTypingStatus(true);
                 playSource(message, Playlist.getPlaylist(urlFromLibrary, message.getGuild().getID()));
             }
         } else {
             // Playback with source
+            message.getChannel().setTypingStatus(true);
             playSource(message, Playlist.getPlaylist(source, message.getGuild().getID()));
         }
 

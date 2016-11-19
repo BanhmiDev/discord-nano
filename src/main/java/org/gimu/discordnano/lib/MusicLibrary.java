@@ -36,7 +36,7 @@ public class MusicLibrary {
 
     public boolean add(String url, Message message) throws RateLimitException, DiscordException, MissingPermissionsException {
         if (!url.contains("http")) {
-            message.reply("Invalid source!");
+            message.getChannel().sendMessage("Invalid source!");
             return false;
         }
         String guildId = message.getGuild().getID();
@@ -51,7 +51,7 @@ public class MusicLibrary {
             }
         }
         if (isDuplicate) {
-            message.reply("Duplicate!");
+            message.getChannel().sendMessage("Duplicate!");
             return false;
         }
 

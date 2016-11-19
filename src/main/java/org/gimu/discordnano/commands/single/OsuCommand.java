@@ -70,6 +70,6 @@ public class OsuCommand extends AbstractCommand {
             return Optional.of("osu! Profile not found.");
         }
 
-        return Optional.of("__osu! Profile__\n" + sb.toString());
+        return Optional.of(sb.toString());
     }
 }

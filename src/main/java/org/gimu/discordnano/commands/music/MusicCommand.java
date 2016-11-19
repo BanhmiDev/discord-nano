@@ -20,10 +20,12 @@ import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.NanoPlayer;
+import org.gimu.discordnano.listeners.CommandListener;
 import sx.blah.discord.handle.audio.IAudioManager;
 import sx.blah.discord.handle.audio.impl.DefaultProvider;
 import sx.blah.discord.handle.impl.obj.Message;
 import sx.blah.discord.handle.obj.IVoiceChannel;
+import sx.blah.discord.handle.obj.Status;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
@@ -63,34 +65,47 @@ public class MusicCommand extends AbstractCommand {
             case "repeat":
                 if (player.isRepeat()) {
                     player.setRepeat(false);
-                    message.reply("Disabled music repeat mode.");
+                    message.getChannel().sendMessage("Disabled music repeat mode.");
                 } else {
                     player.setRepeat(true);
-                    message.reply("Enabled music repeat mode.");
+                    message.getChannel().sendMessage("Enabled music repeat mode.");
                 }
                 break;
             case "shuffle":
                 if (player.isShuffle()) {
                     player.setShuffle(false);
-                    message.reply("Disabled music shuffle mode.");
+                    message.getChannel().sendMessage("Disabled music shuffle mode.");
                 } else {
                     player.setShuffle(true);
-                    message.reply("Enabled music shuffle mode.");
+                    message.getChannel().sendMessage("Enabled music shuffle mode.");
                 }
                 break;
+            case "now":
             case "queue":
                 LinkedList<AudioSource> queue = player.getAudioQueue();
-                for (AudioSource audioSource : queue) {
-                    System.out.println("in queue: " + audioSource.getInfo().getTitle());
+                StringBuilder sb = new StringBuilder("Current music queue has " + queue.size() + " entries.\n\n");
+
+                AudioSource currentSource = player.getCurrentAudioSource();
+                if (currentSource != null) {
+                    sb.append("**Current song**: " + currentSource.getInfo().getTitle());
+                    sb.append(" <" + currentSource.getInfo().getOrigin() + ">\n");
                 }
+
+                for (AudioSource audioSource : queue) {
+                    sb.append(audioSource.getInfo().getTitle() + "\n");
+                }
+                message.getChannel().sendMessage(sb.toString());
+                break;
+            case "skip":
+                player.skipToNext();
                 break;
             case "join":
                 // Get the user's voice channel
                 voicechannel.join();
-                message.reply("Joining Voicechannel `" + voicechannel.getName() + "`.");
+                message.getChannel().sendMessage("Joined voice channel `" + voicechannel.getName() + "`.");
                 break;
             case "leave":
-                message.reply("Leaving Voicechannel `" + voicechannel.getName() + "`.");
+                message.getChannel().sendMessage("Left voice channel `" + voicechannel.getName() + "`.");
                 voicechannel.leave();
                 break;
         }
