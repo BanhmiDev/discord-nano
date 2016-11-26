@@ -109,8 +109,10 @@ public class PlaySubCommand extends AbstractSubCommand {
             throw new IllegalArgumentException();
         }
 
-        IVoiceChannel voicechannel = message.getGuild().getVoiceChannelByID(DiscordNano.VOICECHANNEL_ID);
-        if (!CommandListener.client.getConnectedVoiceChannels().contains(voicechannel)) {
+        IVoiceChannel voicechannel = message.getGuild().getVoiceChannelByID(message.getGuild().getID()); // TODO: every command has reference to the nanoguild object
+        if (voicechannel == null) {
+            return Optional.of("Voice channel not set for this guild, use `!mod voicechannel <id>` first.");
+        } else if (!CommandListener.client.getConnectedVoiceChannels().contains(voicechannel)) {
             return Optional.of("Nano is not in a voice channel, use `!music join` first.");
         }
 
@@ -123,12 +125,10 @@ public class PlaySubCommand extends AbstractSubCommand {
             if (urlFromLibrary.equals("-1")) {
                 response = "Couldn't find music from the library.";
             } else {
-                message.getChannel().setTypingStatus(true);
                 playSource(message, Playlist.getPlaylist(urlFromLibrary, message.getGuild().getID()));
             }
         } else {
             // Playback with source
-            message.getChannel().setTypingStatus(true);
             playSource(message, Playlist.getPlaylist(source, message.getGuild().getID()));
         }
 

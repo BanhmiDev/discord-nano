@@ -17,8 +17,10 @@ package org.gimu.discordnano;
 
 import com.google.gson.Gson;
 import org.gimu.discordnano.lib.MusicLibrary;
+import org.gimu.discordnano.lib.NanoGuildLibrary;
 import org.gimu.discordnano.lib.NanoLogger;
 import org.gimu.discordnano.listeners.CommandListener;
+import org.gimu.discordnano.listeners.ConversationListener;
 import org.json.JSONObject;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
@@ -34,22 +36,19 @@ public class DiscordNano {
     // ffmpeg:
     // http://johnvansickle.com/ffmpeg/builds/ffmpeg-git-32bit-static.tar.xz
     public static final long START_TIME = System.currentTimeMillis();
-    public static final String AUTHOR_ID = "211615203115139072";
     public static final String DEFAULT_STATUS = "";
     public static final JSONObject config = Configurator.getConfig();
 
-    public static String PREFIX;
-
-    public static boolean DEBUG;
-    public static boolean PRODUCTION;
-
-    public static boolean RANDOM_MUSIC;
-    public static float DEFAULT_VOLUME = 0.25f;
-
-    public static String VOICECHANNEL_ID;
-    public static String TESTCHANNEL_ID;
-
     public static MusicLibrary musicLibrary;
+    public static NanoGuildLibrary guildLibrary = new NanoGuildLibrary();
+
+    public static String PREFIX;
+    public static boolean DEBUG;
+    public static boolean RANDOM_MUSIC;
+    public static float DEFAULT_VOLUME;
+    public static String DB_USER;
+    public static String DB_PASS;
+    public static String BOT_OWNER = "211615203115139072";
 
     public static void main(String[] args) throws LoginException {
         // Init library
@@ -65,33 +64,29 @@ public class DiscordNano {
             e.printStackTrace();
         }
         musicLibrary = gson.fromJson(fileReader, MusicLibrary.class);
-        if (musicLibrary == null) { // Empty JSON file
+        if (musicLibrary == null) { // Empty JSON file, TODO: move to database
             musicLibrary = new MusicLibrary();
         }
 
         // Configuration
         PREFIX = config.getString("prefix");
-
-        PRODUCTION = config.getBoolean("production");
         DEBUG = config.getBoolean("debug");
-
+        DB_USER = config.getString("db_user");
+        DB_PASS = config.getString("db_pass");
         RANDOM_MUSIC = config.getBoolean("random_music");
         DEFAULT_VOLUME = Float.parseFloat(config.getString("default_volume"));
-
-        VOICECHANNEL_ID = config.getString("voicechannel");
-        TESTCHANNEL_ID = config.getString("testchannel");
 
         // Spawn our bot
         ClientBuilder clientBuilder = new ClientBuilder(); // Creates the ClientBuilder instance
         clientBuilder.withToken(config.getString("token")); // Adds the login info to the builder
-        IDiscordClient c = null;
+        IDiscordClient client = null;
         try {
-            c = clientBuilder.login(); // Creates the client instance and logs the client in
+            client = clientBuilder.login(); // Creates the client instance and logs the client in
         } catch (DiscordException e) {
             e.printStackTrace();
         }
-        EventDispatcher dispatcher = c.getDispatcher();
-        dispatcher.registerListener(new CommandListener());
+        EventDispatcher dispatcher = client.getDispatcher();
+        dispatcher.registerListener(new CommandListener(client));
+        dispatcher.registerListener(new ConversationListener(client));
     }
-
 }

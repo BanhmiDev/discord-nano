@@ -48,7 +48,11 @@ public class MusicCommand extends AbstractCommand {
             throw new IllegalArgumentException();
         }
 
-        IVoiceChannel voicechannel = message.getGuild().getVoiceChannelByID(DiscordNano.VOICECHANNEL_ID);
+        String temp = DiscordNano.guildLibrary.get(message.getGuild().getID()).getVoicechannel();
+        IVoiceChannel voicechannel = message.getGuild().getVoiceChannelByID(temp); // todo nanoguild reference
+        if (voicechannel == null) {
+            return Optional.of("Voice channel not set for this guild, use `!mod voicechannel <id>` first.");
+        }
 
         IAudioManager manager = message.getGuild().getAudioManager();
         NanoPlayer player;

@@ -18,9 +18,9 @@ package org.gimu.discordnano.commands.admin;
 
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.util.PermissionUtil;
 import sx.blah.discord.handle.impl.obj.Message;
 import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MessageList;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
 
@@ -38,9 +38,16 @@ public class ClearCommand extends AbstractCommand {
 	}
 
 	public Optional execute(Message message, String[] args) throws IllegalArgumentException, RateLimitException, DiscordException, MissingPermissionsException {
-		MessageList messages = message.getChannel().getMessages();
-        messages.bulkDelete(messages);
-		message.delete();
-		return Optional.empty();
+		if (!PermissionUtil.isAdmin(message.getAuthor(), message.getGuild())) return Optional.of("I don't listen to you.");
+		/*MessageList messages = message.getChannel().getMessages();
+		messages.stream().limit(50).forEach(iMessage -> {
+			try {
+				iMessage.delete();
+			} catch (MissingPermissionsException | RateLimitException | DiscordException e) {
+				// ...
+			}
+		});
+		message.delete();*/
+		return Optional.of("fuck you");
 	}
 }

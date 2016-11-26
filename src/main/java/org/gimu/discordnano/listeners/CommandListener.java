@@ -19,33 +19,73 @@ import com.google.code.chatterbotapi.ChatterBot;
 import com.google.code.chatterbotapi.ChatterBotFactory;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.*;
+import org.gimu.discordnano.lib.NanoDatabase;
+import org.gimu.discordnano.lib.NanoGuild;
+import org.gimu.discordnano.lib.NanoGuildLibrary;
 import org.gimu.discordnano.lib.NanoLogger;
 import org.reflections.Reflections;
+import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
+import sx.blah.discord.handle.impl.events.DiscordDisconnectedEvent;
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.impl.obj.Message;
 import sx.blah.discord.handle.obj.IChannel;
+import sx.blah.discord.handle.obj.IGuild;
+import sx.blah.discord.handle.obj.Status;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class CommandListener {
 
     private CommandHandler commandHandler = new CommandHandler();
 
-    private Set<String> whitelist = new HashSet<String>();
-    private ChatterBotFactory factory = new ChatterBotFactory();
-    private ChatterBot bot = null;
+    public static IDiscordClient client;
 
+    public CommandListener(IDiscordClient client) {
+        this.client = client;
+    }
 
     @EventSubscriber
     public void onReady(ReadyEvent event) {
+        //CommandListener.client.changeStatus(Status.game("nothing"));
+
+        // Init guild stuff
+        NanoLogger.debug("Initializing guild library");
+
+        Connection conn = NanoDatabase.getConnection();
+        try {
+            // Add guilds from database
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery("SELECT guild_id, textchannel, voicechannel FROM NanoGuilds");
+            while (rs.next()) {
+                if (!rs.getString("textchannel").isEmpty()) {
+                    DiscordNano.guildLibrary.add(rs.getString("guild_id"), new NanoGuild(rs.getString("textchannel"), rs.getString("voicechannel")));
+                    NanoLogger.debug("Registering from DB: " + rs.getString("guild_id") + " - " + rs.getString("textchannel"));
+                } else {
+                    DiscordNano.guildLibrary.remove(rs.getString("guild_id"));
+                    NanoLogger.debug("Corrupt guild information, removing from database");
+                }
+            }
+        } catch (SQLException ex) {
+            // ...
+        }
+
+        // Add possible new guilds
+        List<IGuild> guilds = event.getClient().getGuilds();
+        guilds.forEach(guild -> {
+            // Set the first text channel for Nano
+            DiscordNano.guildLibrary.add(guild.getID(), guild.getChannels().get(0).getID());
+        });
+
         // Init commands
         NanoLogger.debug("Initializing main commands");
         Reflections reflections = new Reflections("org.gimu.discordnano.commands");
@@ -97,41 +137,12 @@ public class CommandListener {
     public void onMessageReceivedEvent(MessageReceivedEvent event) {
         IChannel channel = event.getMessage().getChannel();
         Message message = (Message)event.getMessage();
-        if (!DiscordNano.PRODUCTION && !channel.getID().equals(DiscordNano.TESTCHANNEL_ID)) {
-            try {
-                channel.sendMessage("Currently in test-mode, not accepting commands from you .( ̵˃﹏˂̵ )");
-            } catch (MissingPermissionsException e) {
-                e.printStackTrace();
-            } catch (RateLimitException e) {
-                e.printStackTrace();
-            } catch (DiscordException e) {
-                e.printStackTrace();
-            }
-            return;
         /*} else if (!whitelist.contains(channel.getId())) {
             channel.sendMessage("Server is not whitelisted .( ̵˃﹏˂̵ )");
             return;*/
-        }
 
-        // Conversation (CleverBot)
-        /*if (message.isMentioned(DiscordNano.JDA.getSelfInfo())) {
-            try {
-                bot = factory.create(ChatterBotType.CLEVERBOT);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            ChatterBotSession botSession = bot.createSession();
-
-            String response = "";
-            try {
-                response = botSession.think(message.getRawContent());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            message.getChannel().sendMessage(response);
-        }*/
-
-        if (!message.getContent().startsWith(DiscordNano.PREFIX) || message.getAuthor().isBot()) return;
+        NanoGuild nanoGuild = DiscordNano.guildLibrary.get(message.getGuild().getID());
+        if (!message.getContent().startsWith(DiscordNano.PREFIX) || !message.getChannel().getID().equals(nanoGuild.getTextchannel()) || message.getAuthor().isBot()) return;
 
         try {
             commandHandler.parseMessage(message);

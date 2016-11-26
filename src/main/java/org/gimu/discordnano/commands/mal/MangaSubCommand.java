@@ -100,7 +100,7 @@ public class MangaSubCommand extends AbstractSubCommand {
 			return "Not a valid index or no recent queries saved!";
 		}
         return (entry.title
-                + (entry.english.length() != 0 ? " / " + entry.english : "")
+                + (entry.english.length() != 0 ? "\n" + entry.english : "")
                 + "**\n**Type:** " + entry.type
                 + " **| Chapters:** " + entry.episodes
                 + " **| Status:** " + entry.status
@@ -161,8 +161,8 @@ public class MangaSubCommand extends AbstractSubCommand {
                     result.append("**[" + i + "]** " + title);
                     if (english.length() != 0) result.append(" / " + english);
 
+                    result.append("\n");
                     if (synopsis.length() > 0) {
-                        result.append("\n");
                         if (synopsis.length() > 500) {
                             synopsis = synopsis.substring(0, 500) + "...";
                         }
@@ -174,7 +174,7 @@ public class MangaSubCommand extends AbstractSubCommand {
                 }
             }
 
-            return "__Query result__\n\n" + result.toString() + "\nList temporarily saved. Write `" + DiscordNano.PREFIX + "mal manga view <index>` to examine an entry.";
+            return "Manga query result\n\n" + result.toString() + "\nList temporarily saved. Write `" + DiscordNano.PREFIX + "mal manga view <index>` to examine an entry.";
         } catch (Exception e) {
             //System.out.println(e.getMessage());
             return "I couldn't find an entry fitting that phrase.";

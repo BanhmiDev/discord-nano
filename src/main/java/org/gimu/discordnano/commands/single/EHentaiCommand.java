@@ -100,7 +100,7 @@ public class EHentaiCommand extends AbstractCommand {
 
             StringBuilder sb = new StringBuilder();
             sb.append(first.getString("title"));
-            if (first.getString("title_jpn").length() > 0) sb.append(" / " + first.getString("title_jpn"));
+            if (first.getString("title_jpn").length() > 0) sb.append("\n" + first.getString("title_jpn"));
             sb.append("\nCategory: **" + first.getString("category") + "** | ");
             sb.append("Files: **" + first.getString("filecount") + "** | ");
             sb.append("Rating: **" + first.getString("rating") + "**\n");

@@ -57,6 +57,8 @@ public class CommandHandler {
         // Main command parsing
         AbstractCommand mainCommand = mainCommandMap.get(commandString.toLowerCase());
 
+        message.getChannel().setTypingStatus(true);
+
         if (mainCommand != null) {
             // Sub command parsing
             AbstractSubCommand subCommand = mainCommand.getSubCommand(subcommandString);
@@ -84,5 +86,7 @@ public class CommandHandler {
                 message.getChannel().sendMessage(responseString);
             }
         }
+
+        message.getChannel().setTypingStatus(false);
     }
 }

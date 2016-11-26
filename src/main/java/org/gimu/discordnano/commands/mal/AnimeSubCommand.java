@@ -99,7 +99,7 @@ public class AnimeSubCommand extends AbstractSubCommand {
 			return "Not a valid index or no recent queries saved!";
 		}
         return (entry.title
-                + (entry.english.length() != 0 ? " / " + entry.english : "")
+                + (entry.english.length() != 0 ? "\n" + entry.english : "")
                 + "**\n**Type:** " + entry.type
                 + " **| Episodes:** " + entry.episodes
                 + " **| Status:** " + entry.status
@@ -127,7 +127,6 @@ public class AnimeSubCommand extends AbstractSubCommand {
         try {
             String parameters = "q=" + URLEncoder.encode(query, "UTF-8");
             InputStream response = HTTPUtil.sendAuthGet("https://myanimelist.net/api/anime/search.xml", parameters, MAL_USER, MAL_PASS);
-            System.out.println(response);
 
             String id = "", title = "", english = "", episodes = "", score = "", type = "", status = "", synopsis = "";
 
@@ -161,8 +160,8 @@ public class AnimeSubCommand extends AbstractSubCommand {
                     result.append("**[" + i + "]** " + title);
                     if (english.length() != 0) result.append(" / " + english);
 
+                    result.append("\n");
                     if (synopsis.length() > 0) {
-                        result.append("\n");
                         if (synopsis.length() > 500) {
                             synopsis = synopsis.substring(0, 500) + "...";
                         }
@@ -174,7 +173,7 @@ public class AnimeSubCommand extends AbstractSubCommand {
                 }
             }
 
-            return "__Query result__\n\n" + result.toString() + "\nList temporarily saved. Write `" + DiscordNano.PREFIX + "mal anime view <index>` to examine an entry.";
+            return "Anime query result\n\n" + result.toString() + "\nList temporarily saved. Write `" + DiscordNano.PREFIX + "mal anime view <index>` to examine an entry.";
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return "I couldn't find an entry fitting that phrase.";
