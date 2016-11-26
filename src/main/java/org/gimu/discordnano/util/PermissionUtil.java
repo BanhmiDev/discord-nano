@@ -22,7 +22,7 @@ import sx.blah.discord.handle.obj.IUser;
 
 public class PermissionUtil {
 
-    public static boolean isAdmin(IUser author, IGuild guildOwner) {
-        return (author.getID().equals(guildOwner) || guildOwner.getOwner().getID().equals(DiscordNano.BOT_OWNER));
+    public static boolean isAdmin(IUser author, IGuild guild) {
+        return (author.getID().equals(guild.getOwnerID()) || author.getID().equals(DiscordNano.BOT_OWNER));
     }
 }
