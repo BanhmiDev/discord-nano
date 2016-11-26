@@ -28,8 +28,8 @@ public class HTTPUtil {
 
 	public static InputStream sendAuthGet(String target, String parameters, String username, String password) throws Exception {
 		URL url = new URL(target + "?" + parameters);
-		System.out.println(url);
 		URLConnection uc = url.openConnection();
+		uc.setRequestProperty("User-Agent", USER_AGENT);
 		String preAuth = username + ":" + password;
 		String basicAuth = "Basic " + new String(new Base64().encode(preAuth.getBytes()));
 		uc.setRequestProperty("Authorization", basicAuth);
@@ -38,11 +38,7 @@ public class HTTPUtil {
 	}
 
 	public static InputStream sendGet(String url) throws Exception {
-		URL object = new URL(url);
-		HttpURLConnection connection = (HttpURLConnection)object.openConnection();
-		connection.setRequestMethod("GET");
-		connection.setRequestProperty("User-Agent", USER_AGENT);
-		return connection.getInputStream();
+		return sendGet(url, "");
 	}
 
 	public static InputStream sendGet(String url, String parameters) throws Exception {
@@ -51,6 +47,10 @@ public class HTTPUtil {
 		connection.setRequestMethod("GET");
 		connection.setRequestProperty("User-Agent", USER_AGENT);
 		return connection.getInputStream();
+	}
+
+	public static InputStream sendPost(String url) throws Exception {
+		return sendPost(url, "");
 	}
 
 	public static InputStream sendPost(String url, String parameters) throws Exception {
