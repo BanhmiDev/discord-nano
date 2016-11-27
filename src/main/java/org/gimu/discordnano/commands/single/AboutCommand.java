@@ -16,12 +16,14 @@
 
 package org.gimu.discordnano.commands.single;
 
+import net.dv8tion.jda.core.entities.Message;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
-import sx.blah.discord.handle.impl.obj.Message;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
+import java.text.NumberFormat;
 import java.util.Optional;
-import java.util.StringJoiner;
 
 @MainCommand(
         alias = {"about"},
@@ -35,6 +37,13 @@ public class AboutCommand extends AbstractCommand {
     }
 
     public Optional execute(Message message, String[] args) throws IllegalArgumentException {
-        return Optional.of("I am Nano");
+        OperatingSystemMXBean bean = (com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("**Environment**: " + bean.getName() + " " + bean.getVersion() + "\n");
+        sb.append("**Architecture**: " + bean.getArch() + "\n");
+        sb.append("**Available processors**: " + bean.getAvailableProcessors() + "\n");
+        sb.append("**Average load**: " + bean.getSystemLoadAverage() + "% \n");
+        return Optional.of(sb.toString());
     }
 }

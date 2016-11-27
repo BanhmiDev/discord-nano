@@ -15,14 +15,16 @@
  */
 package org.gimu.discordnano.util;
 
+import com.mashape.unirest.http.Unirest;
+
 public class HastebinUtil {
 
     public static String post(String input) {
         String response = "ERROR";
         try {
-            /*response = HTTPUtil.post("http://hastebin.com/documents")
+            response = Unirest.post("http://hastebin.com/documents")
                     .body(input)
-                    .asJson().getBody().getObject().getString("key");*/
+                    .asJson().getBody().getObject().getString("key");
         } catch (Exception e) {
             e.printStackTrace();
         }

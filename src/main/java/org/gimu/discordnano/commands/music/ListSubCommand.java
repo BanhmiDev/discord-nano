@@ -16,11 +16,11 @@
 
 package org.gimu.discordnano.commands.music;
 
+import net.dv8tion.jda.core.entities.Message;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractSubCommand;
 import org.gimu.discordnano.commands.SubCommand;
 import org.gimu.discordnano.util.HastebinUtil;
-import sx.blah.discord.handle.impl.obj.Message;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -58,6 +58,7 @@ public class ListSubCommand extends AbstractSubCommand {
             }
             response.append(HastebinUtil.post(body.deleteCharAt(body.length()-1).toString()));
         }
-        return Optional.of(response.toString());
+
+        return Optional.of("Music module disabled.");
     }
 }

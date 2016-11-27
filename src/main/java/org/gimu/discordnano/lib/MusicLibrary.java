@@ -16,48 +16,52 @@
 
 package org.gimu.discordnano.lib;
 
-import com.google.gson.Gson;
 import net.dv8tion.jda.player.source.AudioSource;
 import net.dv8tion.jda.player.source.RemoteSource;
-import org.apache.commons.lang3.math.NumberUtils;
-import sx.blah.discord.handle.impl.obj.Message;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
+import org.apache.commons.lang.math.NumberUtils;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import java.sql.*;
 import java.util.*;
 
 public class MusicLibrary {
 
-    // <title, url>
     private LinkedHashMap<String, String> libraryMap = new LinkedHashMap<String, String>();
 
-    public boolean add(String url, Message message) throws RateLimitException, DiscordException, MissingPermissionsException {
-        if (!url.contains("http")) {
-            message.getChannel().sendMessage("Invalid source!");
-            return false;
-        }
-        String guildId = message.getGuild().getID();
-
-        // Add music source to library
-        boolean isDuplicate = false;
-
+    public boolean add(String musicSource) {
         // Don't allow duplicate URLs
+        boolean isDuplicate = false;
         for (Map.Entry<String, String> entry : libraryMap.entrySet()) {
-            if (entry.getValue().equals(url)) {
+            if (entry.getValue().equals(musicSource)) {
                 isDuplicate = true;
             }
         }
-        if (isDuplicate) {
-            message.getChannel().sendMessage("Duplicate!");
-            return false;
+        if (isDuplicate) return false;
+
+        // Prepare to save to map and database
+        AudioSource audioSource = new RemoteSource(musicSource, "");
+        String musicTitle = audioSource.getInfo().getTitle();
+
+        // Save to map
+        libraryMap.put(musicTitle, musicSource);
+
+        // Save to database
+        Connection conn = NanoDatabase.getConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement("SELECT id FROM MusicLibrary WHERE title = ?");
+            ps.setString(1, musicTitle);
+            ResultSet rs = ps.executeQuery();
+            if (!rs.next()) {
+                ps = conn.prepareStatement("INSERT INTO MusicLibrary (title, source) VALUES(?, ?)");
+                ps.setString(1, musicTitle);
+                ps.setString(2, musicSource);
+                ps.executeUpdate();
+            }
+            ps.close();
+            conn.close();
+        } catch (SQLException e) {
+            NanoLogger.error(e.getMessage());
         }
 
-        AudioSource audioSource = new RemoteSource(url, guildId);
-        libraryMap.put(audioSource.getInfo().getTitle(), url);
-        save();
         return true;
     }
 
@@ -80,22 +84,6 @@ public class MusicLibrary {
             }
         }
         return "-1";
-    }
-
-    public void save() {
-        // Serialization
-        Gson gson = new Gson();
-        String json = gson.toJson(this);
-
-        try (PrintWriter out = new PrintWriter("music_library.json")) {
-            out.println(json);
-        } catch (FileNotFoundException e) {
-            NanoLogger.error("Couldn't save music library (file not found)");
-        }
-    }
-
-    public int size() {
-        return libraryMap.size();
     }
 
     public LinkedHashMap<String, String> getLibraryMap() {

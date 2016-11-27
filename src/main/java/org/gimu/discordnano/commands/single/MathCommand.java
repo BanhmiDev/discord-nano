@@ -16,11 +16,12 @@
 
 package org.gimu.discordnano.commands.single;
 
-import org.apache.commons.lang3.StringUtils;
+import net.dv8tion.jda.core.entities.Message;
+import org.apache.commons.lang.StringUtils;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.lib.NanoLogger;
 import org.gimu.discordnano.util.MathUtil;
-import sx.blah.discord.handle.impl.obj.Message;
 
 import java.text.DecimalFormat;
 import java.util.Optional;
@@ -48,6 +49,7 @@ public class MathCommand extends AbstractCommand {
         try {
             result = new MathUtil(exp).eval();
         } catch (RuntimeException e) {
+            NanoLogger.error(e.getMessage());
             return Optional.of("I'm too stupid for that");
         }
         return Optional.of("Final answer for `" + exp + "`: `" + formatter.format(result) + "`");

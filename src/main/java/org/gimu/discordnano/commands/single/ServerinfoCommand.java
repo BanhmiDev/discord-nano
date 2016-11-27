@@ -15,11 +15,11 @@
  */
 package org.gimu.discordnano.commands.single;
 
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.Role;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
-import sx.blah.discord.handle.impl.obj.Message;
-import sx.blah.discord.handle.obj.IGuild;
-import sx.blah.discord.handle.obj.IRole;
 
 import java.util.LinkedList;
 import java.util.Optional;
@@ -36,19 +36,18 @@ public class ServerinfoCommand extends AbstractCommand {
     }
 
     public Optional execute(Message message, String[] args) {
-        IGuild guild = message.getGuild();
+        Guild guild = message.getGuild();
         StringBuilder response = new StringBuilder();
         response.append("**Server**: " + guild.getName() + "\n");
-        response.append("**ID**: " + guild.getID() + "\n");
-        response.append("**Creation**: " + guild.getCreationDate() + "\n");
+        response.append("**ID**: " + guild.getId() + "\n");
+        response.append("**Creation**: " + guild.getCreationTime() + "\n");
         response.append("**Roles**: ");
-        LinkedList<IRole> roles = new LinkedList<IRole>(guild.getRoles());
+        LinkedList<Role> roles = new LinkedList<Role>(guild.getRoles());
         for (int i = 0; i < roles.size()-1; i++) {
-            System.out.println(roles.get(i));
-            if (!roles.get(i).toString().equals("@everyone")) response.append(roles.get(i) + ", ");
+            response.append(roles.get(i) + ", ");
         }
         response.append(roles.get(roles.size()-1) + "\n");
-        response.append("**Owner**: " + guild.getOwner().getName() + "#" + guild.getOwner().getDiscriminator() + "\n");
+        response.append("**Owner**: " + guild.getOwner().getEffectiveName() + "\n");
         response.append("**Region**: " + guild.getRegion());
         return Optional.of(response.toString());
     }

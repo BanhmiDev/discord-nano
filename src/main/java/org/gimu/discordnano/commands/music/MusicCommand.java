@@ -15,20 +15,12 @@
  */
 package org.gimu.discordnano.commands.music;
 
+import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.player.source.AudioSource;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.NanoPlayer;
-import org.gimu.discordnano.listeners.CommandListener;
-import sx.blah.discord.handle.audio.IAudioManager;
-import sx.blah.discord.handle.audio.impl.DefaultProvider;
-import sx.blah.discord.handle.impl.obj.Message;
-import sx.blah.discord.handle.obj.IVoiceChannel;
-import sx.blah.discord.handle.obj.Status;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
 
 import java.util.LinkedList;
 import java.util.Optional;
@@ -43,8 +35,8 @@ public class MusicCommand extends AbstractCommand {
         super(description, usage);
     }
 
-    public Optional execute(Message message, String[] args) throws IllegalArgumentException, RateLimitException, DiscordException, MissingPermissionsException {
-        if (args.length == 0) {
+    public Optional execute(Message message, String[] args) throws IllegalArgumentException {
+        /*if (args.length == 0) {
             throw new IllegalArgumentException();
         }
 
@@ -112,8 +104,8 @@ public class MusicCommand extends AbstractCommand {
                 message.getChannel().sendMessage("Left voice channel `" + voicechannel.getName() + "`.");
                 voicechannel.leave();
                 break;
-        }
+        }*/
 
-        return Optional.empty();
+        return Optional.of("Music module disabled.");
     }
 }

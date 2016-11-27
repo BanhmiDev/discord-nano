@@ -16,14 +16,13 @@
 
 package org.gimu.discordnano.commands.admin;
 
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.TextChannel;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractSubCommand;
 import org.gimu.discordnano.commands.SubCommand;
 import org.gimu.discordnano.lib.NanoGuild;
 import org.gimu.discordnano.lib.NanoGuildLibrary;
-import org.gimu.discordnano.util.PermissionUtil;
-import sx.blah.discord.handle.impl.obj.Message;
-import sx.blah.discord.handle.obj.IChannel;
 
 import java.util.Optional;
 
@@ -40,12 +39,11 @@ public class TextchannelSubCommand extends AbstractSubCommand {
     }
 
     public Optional execute(Message message, String[] args) {
-        if (!PermissionUtil.isAdmin(message.getAuthor(), message.getGuild())) return Optional.of("I don't listen to you.");
-
+        // TODO: introduce permission bound commands
         String response = "Invalid voice channel ID. Right-click on a voice channel to get its ID!";
         NanoGuildLibrary guildLibrary = DiscordNano.guildLibrary; // TODO: Better reference?
-        NanoGuild currentGuild = guildLibrary.get(message.getGuild().getID()); // The nano guild
-        IChannel currentTextchannel = message.getGuild().getChannelByID(currentGuild.getTextchannel()); // Previous textchannel (if set)
+        NanoGuild currentGuild = guildLibrary.get(message.getGuild().getId()); // The nano guild
+        TextChannel currentTextchannel = message.getGuild().getTextChannelById(currentGuild.getTextchannel()); // Previous textchannel (if set)
 
         if (args.length == 0) {
             if (currentTextchannel == null) {
@@ -54,12 +52,14 @@ public class TextchannelSubCommand extends AbstractSubCommand {
                 response = "Current text channel is `" + currentTextchannel.getName() + "`";
             }
         } else { // Possible voice channel in argument
-            IChannel newTextchannel = message.getGuild().getChannelByID(args[0]); // Get new text channel
-            if (newTextchannel != null) { // Found
-                if (currentGuild.getTextchannel() != null && currentGuild.getTextchannel().equals(args[0])) {
+            TextChannel newTextchannel = message.getGuild().getTextChannelById(args[0]);
+
+            // Found our new textchannel
+            if (newTextchannel != null) {
+                if (!currentGuild.getTextchannel().isEmpty() && currentGuild.getTextchannel().equals(args[0])) {
                     response = "Text channel is already set to that one!";
                 } else {
-                    guildLibrary.setTextchannel(message.getGuild().getID(), args[0]);
+                    guildLibrary.setTextchannel(message.getGuild().getId(), args[0]);
                     response = "Set text channel to `" + newTextchannel.getName() + "`";
                 }
             }

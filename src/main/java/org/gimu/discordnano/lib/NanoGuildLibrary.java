@@ -16,49 +16,51 @@
 
 package org.gimu.discordnano.lib;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import net.dv8tion.jda.core.entities.Guild;
+
+import java.sql.*;
 import java.util.LinkedHashMap;
 
 public class NanoGuildLibrary {
 
     private LinkedHashMap<String, NanoGuild> libraryMap = new LinkedHashMap<String, NanoGuild>();
 
-    public void add(String guildID, String textchannel) {
-        add(guildID, new NanoGuild(textchannel, ""));
-    }
+    public void add(Guild guild) {
+        NanoGuild nanoGuild = new NanoGuild("", "");
+        String guildID = guild.getId();
 
-    public void add(String guildID) {
-        add(guildID, new NanoGuild());
-    }
-
-    public void add(String guildID, NanoGuild nanoGuild) {
+        // Add if not already present in map
         if (libraryMap.get(guildID) == null) {
-            libraryMap.put(guildID, nanoGuild);
-
             Connection conn = NanoDatabase.getConnection();
             try {
                 Statement st = conn.createStatement();
-                if (!st.executeQuery("SELECT id FROM NanoGuilds WHERE guild_id = " + guildID).next()) {
-                    // Add to database if not already in it
+                ResultSet rs = st.executeQuery("SELECT id, textchannel, voicechannel FROM NanoGuilds WHERE guild_id = '" + guildID + "'");
+                if (!rs.first()) {
+                    // Add to database
+                    // set first textchannel to be main one
                     PreparedStatement ps = conn.prepareStatement("INSERT INTO NanoGuilds (guild_id, textchannel, voicechannel) VALUES(?, ?, ?)");
                     ps.setString(1, guildID);
                     ps.setString(2, nanoGuild.getTextchannel());
                     ps.setString(3, nanoGuild.getVoicechannel());
                     ps.executeUpdate();
                     ps.close();
+
                 }
+
+                // Already in database
+                if (rs.first()) {
+                    // Fetch data prior to adding to the map
+                    nanoGuild.setTextchannel(rs.getString("textchannel"));
+                    nanoGuild.setVoicechannel(rs.getString("voicechannel"));
+                }
+
+                // Finally add to the map
+                libraryMap.put(guildID, nanoGuild);
                 conn.close();
-            } catch (SQLException ex) {
-                // ..
+            } catch (SQLException e) {
+                NanoLogger.error(e.getMessage());
             }
         }
-    }
-
-    public void remove(String guildID) {
-        libraryMap.remove(guildID);
     }
 
     public NanoGuild get(String guildID) {
@@ -66,6 +68,7 @@ public class NanoGuildLibrary {
     }
 
     public void setTextchannel(String guildID, String textchannel) {
+        // Update in map and database
         if (libraryMap.get(guildID) != null) {
             libraryMap.get(guildID).setTextchannel(textchannel);
 
@@ -77,13 +80,14 @@ public class NanoGuildLibrary {
                 ps.executeUpdate();
                 ps.close();
                 conn.close();
-            } catch (SQLException ex) {
-                // ..
+            } catch (SQLException e) {
+                NanoLogger.error(e.getMessage());
             }
         }
     }
 
     public void setVoicechannel(String guildID, String voicechannel) {
+        // Update in map and database
         if (libraryMap.get(guildID) != null) {
             libraryMap.get(guildID).setVoicechannel(voicechannel);
 
@@ -95,8 +99,8 @@ public class NanoGuildLibrary {
                 ps.executeUpdate();
                 ps.close();
                 conn.close();
-            } catch (SQLException ex) {
-                // ...
+            } catch (SQLException e) {
+                NanoLogger.error(e.getMessage());
             }
         }
     }

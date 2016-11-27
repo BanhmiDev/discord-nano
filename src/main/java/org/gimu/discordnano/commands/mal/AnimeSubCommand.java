@@ -15,18 +15,18 @@
  */
 package org.gimu.discordnano.commands.mal;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.math.NumberUtils;
+import net.dv8tion.jda.core.entities.Message;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractSubCommand;
 import org.gimu.discordnano.commands.SubCommand;
+import org.gimu.discordnano.lib.NanoLogger;
 import org.gimu.discordnano.util.HTTPUtil;
 import org.gimu.discordnano.util.MALInfo;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import sx.blah.discord.handle.impl.obj.Message;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -95,7 +95,8 @@ public class AnimeSubCommand extends AbstractSubCommand {
 
 	private String viewEntry(String index) {
 		MALInfo entry = animeMap.get(Integer.parseInt(index));
-		if (!NumberUtils.isNumber(index) || entry == null) {
+
+        if (index.matches("^\\d+$") || entry == null) {
 			return "Not a valid index or no recent queries saved!";
 		}
         return (entry.title
@@ -165,7 +166,7 @@ public class AnimeSubCommand extends AbstractSubCommand {
                         if (synopsis.length() > 500) {
                             synopsis = synopsis.substring(0, 500) + "...";
                         }
-                        synopsis = StringEscapeUtils.unescapeHtml4(synopsis);
+                        synopsis = StringEscapeUtils.unescapeHtml(synopsis);
                         synopsis = synopsis.replaceAll("<br[^>]*>", " ").replaceAll("\\[/?i\\]", "*").replaceAll("\\[/?b\\]", "**").replaceAll("\\[([^\\]]+)\\]", "");
                     }
 
@@ -175,7 +176,7 @@ public class AnimeSubCommand extends AbstractSubCommand {
 
             return "Anime query result\n\n" + result.toString() + "\nList temporarily saved. Write `" + DiscordNano.PREFIX + "mal anime view <index>` to examine an entry.";
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            NanoLogger.error(e.getMessage());
             return "I couldn't find an entry fitting that phrase.";
         }
 	}

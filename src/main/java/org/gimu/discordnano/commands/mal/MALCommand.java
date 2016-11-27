@@ -15,9 +15,9 @@
  */
 package org.gimu.discordnano.commands.mal;
 
+import net.dv8tion.jda.core.entities.Message;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
-import sx.blah.discord.handle.impl.obj.Message;
 
 import java.util.Optional;
 

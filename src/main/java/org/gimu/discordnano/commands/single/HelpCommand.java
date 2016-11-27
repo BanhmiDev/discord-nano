@@ -16,12 +16,9 @@
 
 package org.gimu.discordnano.commands.single;
 
+import net.dv8tion.jda.core.entities.Message;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
-import sx.blah.discord.handle.impl.obj.Message;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
 
 import java.util.Optional;
 
@@ -36,8 +33,8 @@ public class HelpCommand extends AbstractCommand {
         super(description, usage);
     }
 
-    public Optional execute(Message message, String[] args) throws IllegalArgumentException, RateLimitException, DiscordException, MissingPermissionsException {
-        message.getAuthor().getOrCreatePMChannel().sendMessage("Hi there!\nVisit https://gimu.org/discord-nano for a list of commands!");
+    public Optional execute(Message message, String[] args) throws IllegalArgumentException {
+        message.getAuthor().getPrivateChannel().sendMessage("Visit https://www.gimu.org/discord-nano for a list of commands!");
         return Optional.of("Sent (ﾉ´ヮ´)ﾉ*:･ﾟ✧");
     }
 }

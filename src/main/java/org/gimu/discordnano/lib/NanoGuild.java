@@ -21,11 +21,6 @@ public class NanoGuild {
     private String voicechannel; // Main voice channel to join/leave
     private String textchannel; // Main channel to listen for
 
-    public NanoGuild() {
-        this.textchannel = "";
-        this.voicechannel = "";
-    }
-
     public NanoGuild(String textchannel, String voicechannel) {
         this.textchannel = textchannel;
         this.voicechannel = voicechannel;

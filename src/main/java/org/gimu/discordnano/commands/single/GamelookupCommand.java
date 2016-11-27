@@ -19,14 +19,15 @@ package org.gimu.discordnano.commands.single;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
-import org.apache.commons.lang3.StringUtils;
+import net.dv8tion.jda.core.entities.Message;
+import org.apache.commons.lang.StringUtils;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.lib.NanoLogger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import sx.blah.discord.handle.impl.obj.Message;
 
 import java.util.Optional;
 import java.util.StringJoiner;
@@ -79,7 +80,7 @@ public class GamelookupCommand extends AbstractCommand {
 
             return Optional.of(response.toString());
         } catch (Exception e) {
-            e.printStackTrace();
+            NanoLogger.error(e.getMessage());
         }
         return Optional.empty();
     }

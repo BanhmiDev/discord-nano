@@ -16,19 +16,22 @@
 
 package org.gimu.discordnano.commands.single;
 
+import net.dv8tion.jda.core.entities.Message;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.lib.NanoLogger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import sx.blah.discord.handle.impl.obj.Message;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -116,8 +119,8 @@ public class EHentaiCommand extends AbstractCommand {
             sb.append("\n\n**<http://g.e-hentai.org/g/" + first.getInt("gid") + "/" + first.getString("token") + ">**");
             sb.append("\n\n" + first.getString("thumb"));
             return Optional.of(sb.toString());
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception e) {
+            NanoLogger.error(e.getMessage());
         }
         return Optional.empty();
     }

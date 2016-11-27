@@ -15,13 +15,14 @@
  */
 package org.gimu.discordnano.commands.single;
 
+import net.dv8tion.jda.core.entities.Message;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.lib.NanoLogger;
 import org.gimu.discordnano.util.HTTPUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import sx.blah.discord.handle.impl.obj.Message;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -67,6 +68,7 @@ public class OsuCommand extends AbstractCommand {
             sb.append("**Country_rank**: " + jsonResponse.getString("pp_country_rank"));
 
         } catch (Exception e) {
+            NanoLogger.error(e.getMessage());
             return Optional.of("osu! Profile not found.");
         }
 

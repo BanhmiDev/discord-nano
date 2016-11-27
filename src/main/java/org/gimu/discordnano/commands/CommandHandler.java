@@ -15,11 +15,8 @@
  */
 package org.gimu.discordnano.commands;
 
+import net.dv8tion.jda.core.entities.Message;
 import org.gimu.discordnano.DiscordNano;
-import sx.blah.discord.handle.impl.obj.Message;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
 
 import java.util.*;
 
@@ -45,7 +42,7 @@ public class CommandHandler {
         return false;
     }
 
-    public void parseMessage(Message message) throws RateLimitException, DiscordException, MissingPermissionsException {
+    public void parseMessage(Message message) {
         String[] args;
         String messageRaw = message.getContent();
         String[] sections = messageRaw.split(" "); // Split message by whitespace
@@ -54,10 +51,10 @@ public class CommandHandler {
 
         Optional<String> response = null;
 
+        message.getChannel().sendTyping().queue();
+
         // Main command parsing
         AbstractCommand mainCommand = mainCommandMap.get(commandString.toLowerCase());
-
-        message.getChannel().setTypingStatus(true);
 
         if (mainCommand != null) {
             // Sub command parsing
@@ -68,14 +65,14 @@ public class CommandHandler {
                     args = (sections.length >= 2) ? Arrays.copyOfRange(sections, 2, sections.length) : new String[0]; // Only arguments (excludes sub command alias)
                     response = subCommand.execute(message, args);
                 } catch (IllegalArgumentException e) {
-                    if (!subCommand.getUsage().isEmpty()) message.getChannel().sendMessage("`" + DiscordNano.PREFIX + subCommand.getUsage() + "`");
+                    if (!subCommand.getUsage().isEmpty()) message.getChannel().sendMessage("`" + DiscordNano.PREFIX + subCommand.getUsage() + "`").queue();
                 }
             } else {
                 try {
                     args = (sections.length >= 1) ? Arrays.copyOfRange(sections, 1, sections.length) : new String[0]; // Only arguments (excludes main command alias)
                     response = mainCommand.execute(message, args);
                 } catch (IllegalArgumentException e) {
-                    if (!mainCommand.getUsage().isEmpty()) message.getChannel().sendMessage("`" + DiscordNano.PREFIX + mainCommand.getUsage() + "`");
+                    if (!mainCommand.getUsage().isEmpty()) message.getChannel().sendMessage("`" + DiscordNano.PREFIX + mainCommand.getUsage() + "`").queue();
                 }
             }
         }
@@ -83,10 +80,8 @@ public class CommandHandler {
         if (response != null && response.isPresent()) {
             String responseString = response.get();
             if (responseString.trim().length() > 0) {
-                message.getChannel().sendMessage(responseString);
+                message.getChannel().sendMessage(responseString).queue();
             }
         }
-
-        message.getChannel().setTypingStatus(false);
     }
 }

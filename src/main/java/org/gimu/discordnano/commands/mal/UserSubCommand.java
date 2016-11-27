@@ -15,14 +15,15 @@
  */
 package org.gimu.discordnano.commands.mal;
 
+import net.dv8tion.jda.core.entities.Message;
 import org.gimu.discordnano.commands.AbstractSubCommand;
 import org.gimu.discordnano.commands.SubCommand;
+import org.gimu.discordnano.lib.NanoLogger;
 import org.gimu.discordnano.util.HTTPUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import sx.blah.discord.handle.impl.obj.Message;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -73,7 +74,7 @@ public class UserSubCommand extends AbstractSubCommand {
                 sb.append("**Wasted**: " + element.getElementsByTagName("user_days_spent_watching").item(0).getTextContent() + " Days\n");
             }
         } catch (Exception e) {
-            // TODO
+            NanoLogger.error(e.getMessage());
         }
 
         return Optional.of(sb.toString());

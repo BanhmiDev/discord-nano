@@ -15,15 +15,12 @@
  */
 package org.gimu.discordnano.commands;
 
-import sx.blah.discord.handle.impl.obj.Message;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
+import net.dv8tion.jda.core.entities.Message;
 
 import java.util.Optional;
 
 @FunctionalInterface
 public interface CommandExecutor {
-    Optional<String> execute(Message message, String[] args) throws IllegalArgumentException, RateLimitException, DiscordException, MissingPermissionsException;
+    Optional<String> execute(Message message, String[] args) throws IllegalArgumentException;
 }
 

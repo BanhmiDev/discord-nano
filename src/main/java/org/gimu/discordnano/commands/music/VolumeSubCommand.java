@@ -16,19 +16,9 @@
 
 package org.gimu.discordnano.commands.music;
 
-import net.dv8tion.jda.player.source.AudioInfo;
-import net.dv8tion.jda.player.source.AudioSource;
-import net.dv8tion.jda.player.source.RemoteSource;
-import org.gimu.discordnano.DiscordNano;
+import net.dv8tion.jda.core.entities.Message;
 import org.gimu.discordnano.commands.AbstractSubCommand;
 import org.gimu.discordnano.commands.SubCommand;
-import org.gimu.discordnano.lib.NanoPlayer;
-import sx.blah.discord.handle.audio.IAudioManager;
-import sx.blah.discord.handle.audio.impl.DefaultProvider;
-import sx.blah.discord.handle.impl.obj.Message;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
 
 import java.util.Optional;
 
@@ -44,8 +34,8 @@ public class VolumeSubCommand extends AbstractSubCommand {
         super(description, usage);
     }
 
-    public Optional execute(Message message, String[] args) throws IllegalArgumentException, RateLimitException, DiscordException, MissingPermissionsException {
-        IAudioManager manager = message.getGuild().getAudioManager();
+    public Optional execute(Message message, String[] args) throws IllegalArgumentException {
+        /*IAudioManager manager = message.getGuild().getAudioManager();
         NanoPlayer player;
         if (manager.getAudioProvider() instanceof DefaultProvider) {
             player = new NanoPlayer();
@@ -65,8 +55,8 @@ public class VolumeSubCommand extends AbstractSubCommand {
             } else {
                 throw new IllegalArgumentException();
             }
-        }
+        }*/
 
-        return Optional.empty();
+        return Optional.of("Music module disabled.");
     }
 }

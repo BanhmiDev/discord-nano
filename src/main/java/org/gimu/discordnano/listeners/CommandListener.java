@@ -15,75 +15,58 @@
  */
 package org.gimu.discordnano.listeners;
 
-import com.google.code.chatterbotapi.ChatterBot;
-import com.google.code.chatterbotapi.ChatterBotFactory;
+import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.events.ReadyEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.*;
 import org.gimu.discordnano.lib.NanoDatabase;
 import org.gimu.discordnano.lib.NanoGuild;
-import org.gimu.discordnano.lib.NanoGuildLibrary;
 import org.gimu.discordnano.lib.NanoLogger;
 import org.reflections.Reflections;
-import sx.blah.discord.api.IDiscordClient;
-import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.DiscordDisconnectedEvent;
-import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
-import sx.blah.discord.handle.impl.events.ReadyEvent;
-import sx.blah.discord.handle.impl.obj.Message;
-import sx.blah.discord.handle.obj.IChannel;
-import sx.blah.discord.handle.obj.IGuild;
-import sx.blah.discord.handle.obj.Status;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class CommandListener {
+public class CommandListener extends ListenerAdapter {
 
     private CommandHandler commandHandler = new CommandHandler();
 
-    public static IDiscordClient client;
+    public static JDA jda;
 
-    public CommandListener(IDiscordClient client) {
-        this.client = client;
+    public CommandListener(JDA jda) {
+        this.jda = jda;
     }
 
-    @EventSubscriber
+    @Override
     public void onReady(ReadyEvent event) {
-        //CommandListener.client.changeStatus(Status.game("nothing"));
+        // Init music library
+        NanoLogger.debug("Initializing music library");
 
-        // Init guild stuff
-        NanoLogger.debug("Initializing guild library");
-
-        Connection conn = NanoDatabase.getConnection();
+        Connection conn = NanoDatabase.getConnection(); // Create database connection
         try {
             // Add guilds from database
             Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery("SELECT guild_id, textchannel, voicechannel FROM NanoGuilds");
+            ResultSet rs = st.executeQuery("SELECT source FROM MusicLibrary");
             while (rs.next()) {
-                if (!rs.getString("textchannel").isEmpty()) {
-                    DiscordNano.guildLibrary.add(rs.getString("guild_id"), new NanoGuild(rs.getString("textchannel"), rs.getString("voicechannel")));
-                    NanoLogger.debug("Registering from DB: " + rs.getString("guild_id") + " - " + rs.getString("textchannel"));
-                } else {
-                    DiscordNano.guildLibrary.remove(rs.getString("guild_id"));
-                    NanoLogger.debug("Corrupt guild information, removing from database");
-                }
+                DiscordNano.musicLibrary.add(rs.getString("source"));
             }
         } catch (SQLException ex) {
-            // ...
+            System.out.println(ex.getMessage());
         }
 
-        // Add possible new guilds
-        List<IGuild> guilds = event.getClient().getGuilds();
+        // Init guild stuff
+        NanoLogger.debug("Initializing guild library");
+        List<Guild> guilds = jda.getGuilds();
         guilds.forEach(guild -> {
-            // Set the first text channel for Nano
-            DiscordNano.guildLibrary.add(guild.getID(), guild.getChannels().get(0).getID());
+            DiscordNano.guildLibrary.add(guild);
         });
 
         // Init commands
@@ -133,26 +116,14 @@ public class CommandListener {
         }
     }
 
-    @EventSubscriber
-    public void onMessageReceivedEvent(MessageReceivedEvent event) {
-        IChannel channel = event.getMessage().getChannel();
-        Message message = (Message)event.getMessage();
-        /*} else if (!whitelist.contains(channel.getId())) {
-            channel.sendMessage("Server is not whitelisted .( ̵˃﹏˂̵ )");
-            return;*/
+    @Override
+    public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+        MessageChannel channel = event.getMessage().getChannel();
+        Message message = event.getMessage();
 
-        NanoGuild nanoGuild = DiscordNano.guildLibrary.get(message.getGuild().getID());
-        if (!message.getContent().startsWith(DiscordNano.PREFIX) || !message.getChannel().getID().equals(nanoGuild.getTextchannel()) || message.getAuthor().isBot()) return;
+        NanoGuild nanoGuild = DiscordNano.guildLibrary.get(message.getGuild().getId());
+        if (!message.getContent().startsWith(DiscordNano.PREFIX) || !message.getChannel().getId().equals(nanoGuild.getTextchannel()) || message.getAuthor().isBot()) return;
 
-        try {
-            commandHandler.parseMessage(message);
-        } catch (RateLimitException e) {
-            e.printStackTrace();
-        } catch (DiscordException e) {
-            e.printStackTrace();
-        } catch (MissingPermissionsException e) {
-            e.printStackTrace();
-        }
-
+        commandHandler.parseMessage(message);
     }
 }

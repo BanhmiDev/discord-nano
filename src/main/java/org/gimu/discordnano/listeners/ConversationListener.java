@@ -20,33 +20,29 @@ import com.google.code.chatterbotapi.ChatterBot;
 import com.google.code.chatterbotapi.ChatterBotFactory;
 import com.google.code.chatterbotapi.ChatterBotSession;
 import com.google.code.chatterbotapi.ChatterBotType;
-import org.gimu.discordnano.DiscordNano;
-import sx.blah.discord.api.IDiscordClient;
-import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
+import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
-public class ConversationListener {
+public class ConversationListener extends ListenerAdapter {
 
-    public static IDiscordClient client;
+    public static JDA jda;
 
     private ChatterBotFactory factory = new ChatterBotFactory();
     private ChatterBot bot = null;
 
-    public ConversationListener(IDiscordClient client) {
-        this.client = client;
+    public ConversationListener(JDA jda) {
+        this.jda = jda;
     }
 
-    @EventSubscriber
-    public void onMessageReceivedEvent(MessageReceivedEvent event) {
-        IMessage message = event.getMessage();
+    @Override
+    public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+        Message message = event.getMessage();
 
         // Conversation (CleverBot)
-        if (message.getMentions().contains(client.getOurUser())) {
-            message.getChannel().setTypingStatus(true);
+        if (message.isMentioned(jda.getSelfUser())) {
+            message.getChannel().sendTyping().queue();
             try {
                 bot = factory.create(ChatterBotType.CLEVERBOT);
             } catch (Exception e) {
@@ -61,16 +57,7 @@ public class ConversationListener {
                 e.printStackTrace();
             }
 
-            try {
-                message.getChannel().sendMessage(response);
-                message.getChannel().setTypingStatus(false);
-            } catch (MissingPermissionsException e) {
-                e.printStackTrace();
-            } catch (RateLimitException e) {
-                e.printStackTrace();
-            } catch (DiscordException e) {
-                e.printStackTrace();
-            }
+            message.getChannel().sendMessage(response).queue();
         }
     }
 }

@@ -15,33 +15,28 @@
  */
 package org.gimu.discordnano;
 
-import com.google.gson.Gson;
+import net.dv8tion.jda.core.AccountType;
+import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.core.exceptions.RateLimitedException;
 import org.gimu.discordnano.lib.MusicLibrary;
 import org.gimu.discordnano.lib.NanoGuildLibrary;
 import org.gimu.discordnano.lib.NanoLogger;
 import org.gimu.discordnano.listeners.CommandListener;
 import org.gimu.discordnano.listeners.ConversationListener;
 import org.json.JSONObject;
-import sx.blah.discord.api.ClientBuilder;
-import sx.blah.discord.api.IDiscordClient;
-import sx.blah.discord.api.events.EventDispatcher;
-import sx.blah.discord.util.DiscordException;
 
 import javax.security.auth.login.LoginException;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 
 public class DiscordNano {
 
-    // ffmpeg:
-    // http://johnvansickle.com/ffmpeg/builds/ffmpeg-git-32bit-static.tar.xz
     public static final long START_TIME = System.currentTimeMillis();
-    public static final String DEFAULT_STATUS = "";
     public static final JSONObject config = Configurator.getConfig();
 
-    public static MusicLibrary musicLibrary;
+    public static MusicLibrary musicLibrary = new MusicLibrary();
     public static NanoGuildLibrary guildLibrary = new NanoGuildLibrary();
 
+    public static String DEFAULT_STATUS;
     public static String PREFIX;
     public static boolean DEBUG;
     public static boolean RANDOM_MUSIC;
@@ -55,20 +50,8 @@ public class DiscordNano {
         // Deserialization
         NanoLogger.debug("Initializing music library");
 
-        Gson gson = new Gson();
-        FileReader fileReader = null;
-        try {
-            fileReader = new FileReader("music_library.json");
-        } catch (FileNotFoundException e) {
-            NanoLogger.error("Couldn't load music library (file not found)");
-            e.printStackTrace();
-        }
-        musicLibrary = gson.fromJson(fileReader, MusicLibrary.class);
-        if (musicLibrary == null) { // Empty JSON file, TODO: move to database
-            musicLibrary = new MusicLibrary();
-        }
-
         // Configuration
+        DEFAULT_STATUS = config.getString("default_status");
         PREFIX = config.getString("prefix");
         DEBUG = config.getBoolean("debug");
         DB_USER = config.getString("db_user");
@@ -76,17 +59,13 @@ public class DiscordNano {
         RANDOM_MUSIC = config.getBoolean("random_music");
         DEFAULT_VOLUME = Float.parseFloat(config.getString("default_volume"));
 
-        // Spawn our bot
-        ClientBuilder clientBuilder = new ClientBuilder(); // Creates the ClientBuilder instance
-        clientBuilder.withToken(config.getString("token")); // Adds the login info to the builder
-        IDiscordClient client = null;
+        JDA jda = null;
         try {
-            client = clientBuilder.login(); // Creates the client instance and logs the client in
-        } catch (DiscordException e) {
+            jda = new JDABuilder(AccountType.BOT).setToken(config.getString("token")).buildAsync();
+        } catch (RateLimitedException e) {
             e.printStackTrace();
         }
-        EventDispatcher dispatcher = client.getDispatcher();
-        dispatcher.registerListener(new CommandListener(client));
-        dispatcher.registerListener(new ConversationListener(client));
+        jda.addEventListener(new CommandListener(jda));
+        jda.addEventListener(new ConversationListener(jda));
     }
 }

@@ -16,11 +16,12 @@
 
 package org.gimu.discordnano.commands.single;
 
+import net.dv8tion.jda.core.entities.Message;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.lib.NanoLogger;
 import org.gimu.discordnano.util.JSONUtil;
 import org.json.JSONObject;
-import sx.blah.discord.handle.impl.obj.Message;
 
 import java.util.Optional;
 import java.util.Random;
@@ -42,7 +43,8 @@ public class XkcdCommand extends AbstractCommand {
         try {
             latestJSON = JSONUtil.readJsonFromUrl("http://xkcd.com/info.0.json");
         } catch (Exception e) {
-            response = "Unable to fetch xkcd comic.";
+            NanoLogger.error(e.getMessage());
+            return Optional.of("Unable to fetch xkcd comic.");
         }
 
         if (latestJSON != null) {

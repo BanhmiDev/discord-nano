@@ -16,9 +16,9 @@
 
 package org.gimu.discordnano.commands.admin;
 
+import net.dv8tion.jda.core.entities.Message;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
-import sx.blah.discord.handle.impl.obj.Message;
 
 import java.util.Optional;
 
@@ -33,6 +33,7 @@ public class ModCommand extends AbstractCommand {
     }
 
     public Optional execute(Message message, String[] args) throws IllegalArgumentException {
+        // TODO: introduce permission bound commands
         return Optional.empty();
     }
 }

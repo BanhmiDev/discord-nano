@@ -16,8 +16,10 @@
 
 package org.gimu.discordnano.commands.single;
 
+import net.dv8tion.jda.core.entities.Message;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.lib.NanoLogger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Attributes;
@@ -25,7 +27,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
-import sx.blah.discord.handle.impl.obj.Message;
 
 import java.util.Optional;
 import java.util.Random;
@@ -58,7 +59,7 @@ public class Rule34Command extends AbstractCommand {
                 }
             }
         } catch (Exception e) {
-            // ...
+            NanoLogger.error(e.getMessage());
         }
 
         try {
@@ -78,7 +79,8 @@ public class Rule34Command extends AbstractCommand {
 
             response = "http:" + url;
         } catch (Exception e) {
-            response = "I couldn't find anything.";
+            NanoLogger.error(e.getMessage());
+            return Optional.of("I couldn't find anything.");
         }
 
         return Optional.of(response);

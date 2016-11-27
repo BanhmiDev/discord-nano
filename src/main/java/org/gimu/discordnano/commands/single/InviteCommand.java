@@ -16,12 +16,9 @@
 
 package org.gimu.discordnano.commands.single;
 
+import net.dv8tion.jda.core.entities.Message;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
-import sx.blah.discord.handle.impl.obj.Message;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
 
 import java.util.Optional;
 
@@ -36,7 +33,8 @@ public class InviteCommand extends AbstractCommand {
         super(description, usage);
     }
 
-    public Optional execute(Message message, String[] args) throws IllegalArgumentException, RateLimitException, DiscordException, MissingPermissionsException {
-        return Optional.of("http://discord.gg/" + message.getChannel().createInvite(1800, 0, false).getInviteCode());
+    public Optional execute(Message message, String[] args) throws IllegalArgumentException {
+        // TODO: JDA 3.0
+        return Optional.empty();
     }
 }

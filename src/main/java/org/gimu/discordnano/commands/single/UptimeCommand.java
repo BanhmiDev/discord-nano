@@ -16,10 +16,10 @@
 
 package org.gimu.discordnano.commands.single;
 
+import net.dv8tion.jda.core.entities.Message;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
-import sx.blah.discord.handle.impl.obj.Message;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -49,16 +49,16 @@ public class UptimeCommand extends AbstractCommand {
         long seconds = TimeUnit.SECONDS.toSeconds(duration);
 
         StringBuilder response = new StringBuilder( );
-        if (days!=0) {
+        if (days != 0) {
             response.append(days + " day(s) ");
         }
-        if (hours!=0) {
+        if (hours != 0) {
             response.append(hours + " hours(s) ");
         }
-        if (minutes!=0) {
+        if (minutes != 0) {
             response.append(minutes + " minutes(s) ");
         }
-        if (seconds!=0) {
+        if (seconds != 0) {
             response.append(seconds + " seconds(s)");
         }
 
