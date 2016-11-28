@@ -18,37 +18,46 @@ package org.gimu.discordnano.commands.single;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
+
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.lib.EmbedFieldListBuilder;
+import org.gimu.discordnano.lib.MessageUtil;
 
 import java.util.LinkedList;
 import java.util.Optional;
 
 @MainCommand(
-        alias = {"serverinfo"},
+        alias = "serverinfo",
         description = "Get server information",
         usage = "serverinfo"
 )
 public class ServerinfoCommand extends AbstractCommand {
 
-    public ServerinfoCommand(String description, String usage) {
-        super(description, usage);
+    public ServerinfoCommand(String description, String usage, String alias) {
+        super(description, usage, alias);
     }
 
     public Optional execute(Message message, String[] args) {
         Guild guild = message.getGuild();
-        StringBuilder response = new StringBuilder();
-        response.append("**Server**: " + guild.getName() + "\n");
-        response.append("**ID**: " + guild.getId() + "\n");
-        response.append("**Creation**: " + guild.getCreationTime() + "\n");
-        response.append("**Roles**: ");
+
+        EmbedFieldListBuilder builder = new EmbedFieldListBuilder();
+        builder.append("Server", guild.getName());
+        builder.append("ID", guild.getId());
+        builder.append("Creation", guild.getCreationTime().toString());
+
         LinkedList<Role> roles = new LinkedList<Role>(guild.getRoles());
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < roles.size()-1; i++) {
-            response.append(roles.get(i) + ", ");
+            sb.append(roles.get(i).getName() + ", ");
         }
-        response.append(roles.get(roles.size()-1) + "\n");
-        response.append("**Owner**: " + guild.getOwner().getEffectiveName() + "\n");
-        response.append("**Region**: " + guild.getRegion());
-        return Optional.of(response.toString());
+        sb.append(roles.get(roles.size()-1).getName());
+        builder.append("Roles", sb.toString());
+
+        builder.append("Owner", guild.getOwner().getEffectiveName());
+        builder.append("Region", guild.getRegion().getName());
+
+        Message response = MessageUtil.frameMessage("Displaying server information", builder.build(), true);
+        return Optional.of(response);
     }
 }

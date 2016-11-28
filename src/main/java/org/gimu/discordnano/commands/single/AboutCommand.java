@@ -17,8 +17,11 @@
 package org.gimu.discordnano.commands.single;
 
 import net.dv8tion.jda.core.entities.Message;
+import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.lib.EmbedFieldListBuilder;
+import org.gimu.discordnano.lib.MessageUtil;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
@@ -26,24 +29,28 @@ import java.text.NumberFormat;
 import java.util.Optional;
 
 @MainCommand(
-        alias = {"about"},
+        alias = "about",
         description = "About Nano",
         usage = "about"
 )
 public class AboutCommand extends AbstractCommand {
 
-    public AboutCommand(String description, String usage) {
-        super(description, usage);
+    public AboutCommand(String description, String usage, String alias) {
+        super(description, usage, alias);
     }
 
     public Optional execute(Message message, String[] args) throws IllegalArgumentException {
         OperatingSystemMXBean bean = (com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+        EmbedFieldListBuilder builder = new EmbedFieldListBuilder();
+        String content = "About me";
+        builder.append("Environment", bean.getName() + " " + bean.getVersion());
+        builder.append("Architecture", bean.getArch());
+        builder.append("Available processors", Integer.toString(bean.getAvailableProcessors()));
+        builder.append("Average load", bean.getSystemLoadAverage() + "%");
+        builder.append("Guilds connected", Integer.toString(DiscordNano.guildLibrary.getLibraryMap().size()) + " total guilds");
+        builder.append("Creator", "Gimu#8616");
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("**Environment**: " + bean.getName() + " " + bean.getVersion() + "\n");
-        sb.append("**Architecture**: " + bean.getArch() + "\n");
-        sb.append("**Available processors**: " + bean.getAvailableProcessors() + "\n");
-        sb.append("**Average load**: " + bean.getSystemLoadAverage() + "% \n");
-        return Optional.of(sb.toString());
+        Message response = MessageUtil.frameMessage(content, builder.build(), true);
+        return Optional.of(response);
     }
 }

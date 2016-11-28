@@ -13,23 +13,21 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.commands;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package org.gimu.discordnano.lib;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface MainCommand {
+import java.util.LinkedList;
+import java.util.List;
 
-    String alias();
+public class EmbedFieldListBuilder {
 
-    String description() default "No description";
+    private List<Pair<String, String>> embedFieldList = new LinkedList<Pair<String, String>>();
 
-    String usage() default "";
+    public void append(String header, String content) {
+        embedFieldList.add(new Pair<String, String>(header, content));
+    }
 
-    boolean isEnabled() default true;
-
+    public List<Pair<String, String>> build() {
+        return embedFieldList;
+    }
 }

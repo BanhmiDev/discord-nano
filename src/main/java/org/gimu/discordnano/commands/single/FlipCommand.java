@@ -19,28 +19,31 @@ package org.gimu.discordnano.commands.single;
 import net.dv8tion.jda.core.entities.Message;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.lib.MessageUtil;
 
 import java.util.Optional;
 
 @MainCommand(
-        alias = {"flip", "coin"},
+        alias = "flip",
         description = "Flip a coin",
         usage = "<flip|coin>"
 )
 public class FlipCommand extends AbstractCommand {
 
-    public FlipCommand(String description, String usage) {
-        super(description, usage);
+    public FlipCommand(String description, String usage, String alias) {
+        super(description, usage, alias);
     }
 
     public Optional execute(Message message, String[] args) throws IllegalArgumentException {
-        String response;
+        String content;
         double random = Math.random();
         if (random < 0.5) {
-            response = "**Tails!**";
+            content = "Tails!";
         } else {
-            response = "**Heads!**";
+            content = "Heads!";
         }
+
+        Message response = MessageUtil.frameMessage(content, true);
         return Optional.of(response);
     }
 }

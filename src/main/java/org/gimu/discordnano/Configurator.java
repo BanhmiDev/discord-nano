@@ -30,19 +30,17 @@ class Configurator {
         if (!config.exists()) {
             try {
                 Configurator.create();
-
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
 
-            System.out.println("Created a configuration file. Please fill the login credentials!");
+            System.out.println("Created a configuration file, edit it as you need!");
             System.exit(0);
         }
 
         JSONObject object = null;
         try {
             object = Configurator.load();
-
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -53,22 +51,28 @@ class Configurator {
     private static void create() throws IOException {
         Files.write(Paths.get(config.getPath()),
                 new JSONObject()
-                        .put("appId", "")
-                        .put("token", "")
-                        .put("prefix", "-")
-                        .toString(4).getBytes());
+                        .put("prefix", "!")
+                        .put("token", "EDIT THIS")
+                        .put("debug", false)
+                        .put("default_volume", "0.25")
+                        .put("random_music", true)
+                        .put("db_user", "EDIT THIS")
+                        .put("db_pass", "EDIT THIS")
+                        .put("mal_user", "EDIT THIS")
+                        .put("mal_pass", "EDIT THIS")
+                        .put("x_mashape_key", "EDIT THIS")
+                        .put("osu_api_key", "EDIT THIS")
+                        .toString(11).getBytes());
     }
 
     private static JSONObject load() throws IOException {
         JSONObject object = new JSONObject(new String(Files.readAllBytes(Paths.get(config.getPath())), "UTF-8"));
 
-        if (object.has("appId") && object.has("token") && object.has("prefix"))
-            return object;
+        //if (object.has("token") && object.has("token") && object.has("prefix")) TODO
+        return object;
 
-        Configurator.create();
+        /*Configurator.create();
         System.err.println("The config file was missing a value! Regenerating...");
-        System.exit(1);
-
-        return null;
+        return null;*/
     }
 }

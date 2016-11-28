@@ -19,6 +19,8 @@ package org.gimu.discordnano.commands.single;
 import net.dv8tion.jda.core.entities.Message;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.lib.EmbedFieldListBuilder;
+import org.gimu.discordnano.lib.MessageUtil;
 import org.gimu.discordnano.lib.NanoLogger;
 import org.gimu.discordnano.util.JSONUtil;
 import org.json.JSONObject;
@@ -27,24 +29,27 @@ import java.util.Optional;
 import java.util.Random;
 
 @MainCommand(
-        alias = {"xkcd"},
+        alias = "xkcd",
         description = "Display xkcd comic",
         usage = "xkcd [number|latest]"
 )
 public class XkcdCommand extends AbstractCommand {
 
-    public XkcdCommand(String description, String usage) {
-        super(description, usage);
+    public XkcdCommand(String description, String usage, String alias) {
+        super(description, usage, alias);
     }
 
     public Optional execute(Message message, String[] args) {
-        String response = "";
+        EmbedFieldListBuilder builder = new EmbedFieldListBuilder();
+        String content = "Displaying xkcd comic";
+        String imageUrl = null;
+
         JSONObject latestJSON = null;
         try {
-            latestJSON = JSONUtil.readJsonFromUrl("http://xkcd.com/info.0.json");
+            latestJSON = JSONUtil.readJsonFromUrl("https://xkcd.com/info.0.json");
         } catch (Exception e) {
+            content = "Unable to fetch xkcd comic.";
             NanoLogger.error(e.getMessage());
-            return Optional.of("Unable to fetch xkcd comic.");
         }
 
         if (latestJSON != null) {
@@ -58,7 +63,7 @@ public class XkcdCommand extends AbstractCommand {
                     input = Integer.valueOf(args[0]);
 
                     if (input > max || input < 1) {
-                        response = "xkcd does not have a comic for that number.";
+                        content = "xkcd does not have a comic for that number.";
                     }
 
                     rand = input;
@@ -66,20 +71,22 @@ public class XkcdCommand extends AbstractCommand {
                     if (args[0].equalsIgnoreCase("latest")) {
                         rand = max;
                     } else {
-                        response = "You didn't enter a valid number.";
+                        content = "You didn't enter a valid number.";
                     }
                 }
             } else {
                 rand = min + new Random().nextInt(max - min);
             }
 
-            JSONObject randJSON = JSONUtil.readJsonFromUrl(String.format("http://xkcd.com/%d/info.0.json", rand));
-
+            JSONObject randJSON = JSONUtil.readJsonFromUrl(String.format("https://xkcd.com/%d/info.0.json", rand));
             if (randJSON != null) {
-                response = randJSON.getString("title") + "\nNumber: **" + randJSON.getInt("num") + "**\n\n" + randJSON.getString("img").replaceAll("\\\\/", "/");
+                builder.append("Title", randJSON.getString("title"));
+                builder.append("Number", Integer.toString(randJSON.getInt("num")));
+                imageUrl = randJSON.getString("img").replaceAll("\\\\/", "/");
             }
         }
 
+        Message response = MessageUtil.frameMessage(content, builder.build(), imageUrl, true);
         return Optional.of(response);
     }
 }

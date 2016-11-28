@@ -24,6 +24,8 @@ import org.apache.commons.lang.StringUtils;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.lib.EmbedFieldListBuilder;
+import org.gimu.discordnano.lib.MessageUtil;
 import org.gimu.discordnano.lib.NanoLogger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,14 +35,14 @@ import java.util.Optional;
 import java.util.StringJoiner;
 
 @MainCommand(
-        alias = {"gamelookup"},
+        alias = "gamelookup",
         description = "Look up a video-game",
         usage = "gamelookup <query>"
 )
 public class GamelookupCommand extends AbstractCommand {
 
-    public GamelookupCommand(String description, String usage) {
-        super(description, usage);
+    public GamelookupCommand(String description, String usage, String alias) {
+        super(description, usage, alias);
     }
 
     public Optional execute(Message message, String[] args) throws IllegalArgumentException {
@@ -48,6 +50,9 @@ public class GamelookupCommand extends AbstractCommand {
            throw new IllegalArgumentException();
         }
 
+        EmbedFieldListBuilder builder = new EmbedFieldListBuilder();
+        String content = "Displaying game information";
+        String imageUrl = null;
         try {
             String query = StringUtils.join(args, "+");
 
@@ -57,9 +62,8 @@ public class GamelookupCommand extends AbstractCommand {
                     .asJson();
 
             JSONArray jsa = httpResponse.getBody().getArray();
-
             if (jsa.length() == 0) {
-                return Optional.of("I couldn't find a game with that title.");
+                content = "I couldn't find a game with that title.";
             }
 
             JSONObject jso = new JSONObject(jsa.getJSONObject(0).toString()) {
@@ -70,18 +74,16 @@ public class GamelookupCommand extends AbstractCommand {
                 }
             };
 
-            StringJoiner response = new StringJoiner("\n");
-
-            response.add("**Title**: " + jso.getString("title"));
-            response.add("**Publisher**: " + jso.getString("publisher"));
-            response.add("**Rating**: " + jso.getString("score"));
-            response.add("\n" + jso.getString("short_description"));
-            response.add("\n**" + jso.getString("thumb") + "**");
-
-            return Optional.of(response.toString());
+            builder.append("Title", jso.getString("title"));
+            builder.append("Publisher", jso.getString("publisher"));
+            builder.append("Rating", jso.getString("score"));
+            builder.append("Description", jso.getString("short_description"));
+            //imageUrl = jso.getString("thumb"); TODO: does not support https?
         } catch (Exception e) {
             NanoLogger.error(e.getMessage());
         }
-        return Optional.empty();
+
+        Message response = MessageUtil.frameMessage(content, builder.build(), imageUrl, true);
+        return Optional.of(response);
     }
 }

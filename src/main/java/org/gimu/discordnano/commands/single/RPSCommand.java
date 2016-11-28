@@ -19,35 +19,37 @@ package org.gimu.discordnano.commands.single;
 import net.dv8tion.jda.core.entities.Message;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.lib.MessageUtil;
 
 import java.util.Optional;
 
 @MainCommand(
-        alias = {"rps"},
+        alias = "rps",
         description = "Play rock-paper-scissors",
         usage = "rps <rock|paper|scissors>"
 )
 public class RPSCommand extends AbstractCommand {
 
-    public RPSCommand(String description, String usage) {
-        super(description, usage);
+    public RPSCommand(String description, String usage, String alias) {
+        super(description, usage, alias);
     }
 
     public Optional execute(Message message, String[] args) throws IllegalArgumentException {
-        String response = "";
+        String content = "";
         if (args.length == 0 || (!args[0].equalsIgnoreCase("rock") && !args[0].equalsIgnoreCase("paper") && !args[0].equalsIgnoreCase("scissors"))) {
             throw new IllegalArgumentException();
         } else {
             int choice = (int) Math.floor(Math.random() * 3);
             if (choice == 0) {
-                response = "You picked " + args[0] + ".\nI picked **rock**!";
+                content = "You picked " + args[0] + ".\nI picked **rock**!";
             } else if (choice == 1) {
-                response = "You picked " + args[0] + "\nI picked **paper**!";
+                content = "You picked " + args[0] + "\nI picked **paper**!";
             } else if (choice == 2) {
-                response = "You picked " + args[0] + "\nI picked **scissors**!";
+                content = "You picked " + args[0] + "\nI picked **scissors**!";
             }
         }
 
+        Message response = MessageUtil.frameMessage(content, true);
         return Optional.of(response);
     }
 }

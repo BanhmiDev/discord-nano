@@ -18,6 +18,7 @@ package org.gimu.discordnano;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 import org.gimu.discordnano.lib.MusicLibrary;
 import org.gimu.discordnano.lib.NanoGuildLibrary;
@@ -29,6 +30,8 @@ import org.json.JSONObject;
 import javax.security.auth.login.LoginException;
 
 public class DiscordNano {
+
+    public static JDA bot = null;
 
     public static final long START_TIME = System.currentTimeMillis();
     public static final JSONObject config = Configurator.getConfig();
@@ -59,13 +62,13 @@ public class DiscordNano {
         RANDOM_MUSIC = config.getBoolean("random_music");
         DEFAULT_VOLUME = Float.parseFloat(config.getString("default_volume"));
 
-        JDA jda = null;
+        bot = null;
         try {
-            jda = new JDABuilder(AccountType.BOT).setToken(config.getString("token")).buildAsync();
+            bot = new JDABuilder(AccountType.BOT).setToken(config.getString("token")).buildAsync();
         } catch (RateLimitedException e) {
             e.printStackTrace();
         }
-        jda.addEventListener(new CommandListener(jda));
-        jda.addEventListener(new ConversationListener(jda));
+        bot.addEventListener(new CommandListener(bot));
+        bot.addEventListener(new ConversationListener(bot));
     }
 }

@@ -20,19 +20,21 @@ import net.dv8tion.jda.player.source.AudioSource;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.lib.MessageUtil;
 import org.gimu.discordnano.lib.NanoPlayer;
 
 import java.util.LinkedList;
 import java.util.Optional;
 
 @MainCommand(
-        alias = {"music"},
-        description = "Plays music"
+        alias = "music",
+        description = "Plays music",
+        isEnabled = false
 )
 public class MusicCommand extends AbstractCommand {
 
-    public MusicCommand(String description, String usage) {
-        super(description, usage);
+    public MusicCommand(String description, String usage, String alias) {
+        super(description, usage, alias);
     }
 
     public Optional execute(Message message, String[] args) throws IllegalArgumentException {
@@ -106,6 +108,7 @@ public class MusicCommand extends AbstractCommand {
                 break;
         }*/
 
-        return Optional.of("Music module disabled.");
+        Message response = MessageUtil.frameMessage("disabled", true);
+        return Optional.of(response);
     }
 }

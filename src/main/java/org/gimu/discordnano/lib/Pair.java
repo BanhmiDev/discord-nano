@@ -13,23 +13,34 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.commands;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package org.gimu.discordnano.lib;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface MainCommand {
+import java.util.Map;
 
-    String alias();
+public class Pair<K, V> implements Map.Entry<K, V> {
+    private final K key;
+    private V value;
 
-    String description() default "No description";
+    public Pair(K key, V value) {
+        this.key = key;
+        this.value = value;
+    }
 
-    String usage() default "";
+    @Override
+    public K getKey() {
+        return key;
+    }
 
-    boolean isEnabled() default true;
+    @Override
+    public V getValue() {
+        return value;
+    }
 
+    @Override
+    public V setValue(V value) {
+        V old = this.value;
+        this.value = value;
+        return old;
+    }
 }

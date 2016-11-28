@@ -17,24 +17,41 @@
 package org.gimu.discordnano.commands.single;
 
 import net.dv8tion.jda.core.entities.Message;
+import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractCommand;
+import org.gimu.discordnano.commands.CommandHandler;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.lib.EmbedFieldListBuilder;
+import org.gimu.discordnano.lib.MessageUtil;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @MainCommand(
-        alias = {"help"},
+        alias = "help",
         description = "Command help",
         usage = ""
 )
 public class HelpCommand extends AbstractCommand {
 
-    public HelpCommand(String description, String usage) {
-        super(description, usage);
+    public HelpCommand(String description, String usage, String alias) {
+        super(description, usage, alias);
     }
 
     public Optional execute(Message message, String[] args) throws IllegalArgumentException {
-        message.getAuthor().getPrivateChannel().sendMessage("Visit https://www.gimu.org/discord-nano for a list of commands!");
-        return Optional.of("Sent (ﾉ´ヮ´)ﾉ*:･ﾟ✧");
+        EmbedFieldListBuilder builder = new EmbedFieldListBuilder();
+
+        StringBuilder sb = new StringBuilder();
+        CommandHandler.mainCommandMap.entrySet().stream().filter(entry -> entry.getValue().getAlias() != null).forEach(entry -> sb.append("`" + entry.getValue().getAlias() + "` "));
+        builder.append("Enabled commands", sb.toString());
+
+        /*message.getAuthor().openPrivateChannel().queue(success -> {
+            success.sendMessage("Visit https://www.gimu.org/discord-nano for a list of commands!").queue();
+        });*/
+
+        //Check your private messages (ﾉ´ヮ´)ﾉ*:･ﾟ✧\n
+        Message response = MessageUtil.frameMessage("Command prefix is `" + DiscordNano.PREFIX + "`", builder.build(), true);
+        return Optional.of(response);
     }
 }

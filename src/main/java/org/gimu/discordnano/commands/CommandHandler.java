@@ -17,12 +17,13 @@ package org.gimu.discordnano.commands;
 
 import net.dv8tion.jda.core.entities.Message;
 import org.gimu.discordnano.DiscordNano;
+import org.gimu.discordnano.lib.NanoLogger;
 
 import java.util.*;
 
 public class CommandHandler {
 
-    private static HashMap<String, AbstractCommand> mainCommandMap = new HashMap<String, AbstractCommand>();
+    public static HashMap<String, AbstractCommand> mainCommandMap = new HashMap<String, AbstractCommand>();
 
     public boolean addMainCommand(String alias, AbstractCommand command) {
         if (mainCommandMap.get(alias) != null) {
@@ -49,9 +50,7 @@ public class CommandHandler {
         String commandString = sections[0].replace(DiscordNano.PREFIX, ""); // Main command
         String subcommandString = (sections.length >= 2) ? sections[1] : ""; // Sub command
 
-        Optional<String> response = null;
-
-        message.getChannel().sendTyping().queue();
+        Optional<Message> response = null;
 
         // Main command parsing
         AbstractCommand mainCommand = mainCommandMap.get(commandString.toLowerCase());
@@ -63,25 +62,27 @@ public class CommandHandler {
             if (subCommand != null) {
                 try {
                     args = (sections.length >= 2) ? Arrays.copyOfRange(sections, 2, sections.length) : new String[0]; // Only arguments (excludes sub command alias)
+                    //message.getChannel().sendTyping().queue();
                     response = subCommand.execute(message, args);
                 } catch (IllegalArgumentException e) {
+                    NanoLogger.error(e.getMessage());
                     if (!subCommand.getUsage().isEmpty()) message.getChannel().sendMessage("`" + DiscordNano.PREFIX + subCommand.getUsage() + "`").queue();
                 }
             } else {
                 try {
                     args = (sections.length >= 1) ? Arrays.copyOfRange(sections, 1, sections.length) : new String[0]; // Only arguments (excludes main command alias)
+                    //message.getChannel().sendTyping().queue();
                     response = mainCommand.execute(message, args);
                 } catch (IllegalArgumentException e) {
+                    NanoLogger.error(e.getMessage());
                     if (!mainCommand.getUsage().isEmpty()) message.getChannel().sendMessage("`" + DiscordNano.PREFIX + mainCommand.getUsage() + "`").queue();
                 }
             }
         }
 
         if (response != null && response.isPresent()) {
-            String responseString = response.get();
-            if (responseString.trim().length() > 0) {
-                message.getChannel().sendMessage(responseString).queue();
-            }
+            Message responseMessage = response.get();
+            message.getChannel().sendMessage(responseMessage).queue();
         }
     }
 }

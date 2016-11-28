@@ -23,13 +23,14 @@ import org.gimu.discordnano.commands.MainCommand;
 import java.util.Optional;
 
 @MainCommand(
-        alias = {"mod"},
-        description = "Moderation commands"
+        alias = "mod",
+        description = "Moderation commands",
+        isEnabled = false
 )
 public class ModCommand extends AbstractCommand {
 
-    public ModCommand(String description, String usage) {
-        super(description, usage);
+    public ModCommand(String description, String usage, String alias) {
+        super(description, usage, alias);
     }
 
     public Optional execute(Message message, String[] args) throws IllegalArgumentException {

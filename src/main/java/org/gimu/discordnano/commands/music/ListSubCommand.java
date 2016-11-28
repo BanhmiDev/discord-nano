@@ -20,6 +20,7 @@ import net.dv8tion.jda.core.entities.Message;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractSubCommand;
 import org.gimu.discordnano.commands.SubCommand;
+import org.gimu.discordnano.lib.MessageUtil;
 import org.gimu.discordnano.util.HastebinUtil;
 
 import java.util.LinkedHashMap;
@@ -41,13 +42,13 @@ public class ListSubCommand extends AbstractSubCommand {
     public Optional execute(Message message, String[] args) throws IllegalArgumentException {
         LinkedHashMap<String, String> musicLibraryMap = DiscordNano.musicLibrary.getLibraryMap();
 
-        StringBuilder response = new StringBuilder("The music library has " + musicLibraryMap.size() + " entries.\n\n");
+        StringBuilder content = new StringBuilder("The music library has " + musicLibraryMap.size() + " entries.\n\n");
         int iterator = 0;
         if (musicLibraryMap.size() == 0) {
-            response.append("The music library is empty.");
+            content.append("The music library is empty.");
         } else if (musicLibraryMap.size() <= 10) {
             for (Map.Entry<String, String> entry : musicLibraryMap.entrySet()) {
-                response.append("**[" + iterator + "]** " + entry.getKey() + " **<" + entry.getValue() + ">**\n");
+                content.append("**[" + iterator + "]** " + entry.getKey() + " **<" + entry.getValue() + ">**\n");
                 iterator++;
             }
         } else {
@@ -56,9 +57,10 @@ public class ListSubCommand extends AbstractSubCommand {
                 body.append("[" + iterator + "] " + entry.getKey() + " <" + entry.getValue() + ">\n");
                 iterator++;
             }
-            response.append(HastebinUtil.post(body.deleteCharAt(body.length()-1).toString()));
+            content.append(HastebinUtil.post(body.deleteCharAt(body.length()-1).toString()));
         }
 
-        return Optional.of("Music module disabled.");
+        Message response = MessageUtil.frameMessage("disabled", true);
+        return Optional.of(response);
     }
 }

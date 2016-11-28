@@ -21,6 +21,6 @@ import java.util.Optional;
 
 @FunctionalInterface
 public interface CommandExecutor {
-    Optional<String> execute(Message message, String[] args) throws IllegalArgumentException;
+    Optional<Message> execute(Message message, String[] args) throws IllegalArgumentException;
 }
 

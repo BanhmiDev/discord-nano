@@ -81,9 +81,10 @@ public class CommandListener extends ListenerAdapter {
                 if (annotation instanceof MainCommand) {
                     MainCommand mainAnnotation = (MainCommand) annotation;
 
-                    for (String alias : mainAnnotation.alias()) {
+                    if (mainAnnotation.isEnabled()) {
+                        String alias = mainAnnotation.alias();
                         try {
-                            commandHandler.addMainCommand(alias, command.getDeclaredConstructor(String.class, String.class).newInstance(mainAnnotation.description(), mainAnnotation.usage()));
+                            commandHandler.addMainCommand(alias, command.getDeclaredConstructor(String.class, String.class, String.class).newInstance(mainAnnotation.description(), mainAnnotation.usage(), mainAnnotation.alias()));
                         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                             e.printStackTrace();
                         }

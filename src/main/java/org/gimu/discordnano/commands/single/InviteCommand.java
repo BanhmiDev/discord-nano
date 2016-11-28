@@ -19,22 +19,24 @@ package org.gimu.discordnano.commands.single;
 import net.dv8tion.jda.core.entities.Message;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.lib.MessageUtil;
 
 import java.util.Optional;
 
 @MainCommand(
-        alias = {"invite"},
+        alias = "invite",
         description = "Get Nano's invite link",
         usage = "invite"
 )
 public class InviteCommand extends AbstractCommand {
 
-    public InviteCommand(String description, String usage) {
-        super(description, usage);
+    public InviteCommand(String description, String usage, String alias) {
+        super(description, usage, alias);
     }
 
     public Optional execute(Message message, String[] args) throws IllegalArgumentException {
-        // TODO: JDA 3.0
-        return Optional.empty();
+        String content = "Invite me to your guild: [invite](https://discordapp.com/oauth2/authorize?client_id=252815607416881152&scope=bot&permissions=0)";
+        Message response = MessageUtil.frameMessage(content, true);
+        return Optional.of(response);
     }
 }

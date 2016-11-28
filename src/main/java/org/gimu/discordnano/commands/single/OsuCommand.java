@@ -19,6 +19,8 @@ import net.dv8tion.jda.core.entities.Message;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.lib.EmbedFieldListBuilder;
+import org.gimu.discordnano.lib.MessageUtil;
 import org.gimu.discordnano.lib.NanoLogger;
 import org.gimu.discordnano.util.HTTPUtil;
 import org.json.JSONArray;
@@ -30,14 +32,14 @@ import java.io.InputStreamReader;
 import java.util.Optional;
 
 @MainCommand(
-        alias = {"osu"},
+        alias = "osu",
         description = "Fetch osu! profile",
         usage = "osu <user>"
 )
 public class OsuCommand extends AbstractCommand {
 
-    public OsuCommand(String description, String usage) {
-        super(description, usage);
+    public OsuCommand(String description, String usage, String alias) {
+        super(description, usage, alias);
     }
 
     public Optional execute(Message message, String[] args) throws IllegalArgumentException {
@@ -45,13 +47,14 @@ public class OsuCommand extends AbstractCommand {
             throw new IllegalArgumentException();
         }
 
+        EmbedFieldListBuilder builder = new EmbedFieldListBuilder();
+        String content = "Displaying osu! profile";
         String api = "https://osu.ppy.sh/api/get_user";
-        StringBuilder sb = new StringBuilder();
-        InputStream response = null;
+        InputStream stream;
         try {
-            response = HTTPUtil.sendGet(api, "k=" + DiscordNano.config.getString("osu_api_key") + "&u=" + args[0]);
+            stream = HTTPUtil.sendGet(api, "k=" + DiscordNano.config.getString("osu_api_key") + "&u=" + args[0]);
 
-            BufferedReader streamReader = new BufferedReader(new InputStreamReader(response, "UTF-8"));
+            BufferedReader streamReader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
             StringBuilder responseStrBuilder = new StringBuilder();
 
             String inputStr = streamReader.readLine();
@@ -60,18 +63,19 @@ public class OsuCommand extends AbstractCommand {
                 inputStr = streamReader.readLine();
             }
             JSONObject jsonResponse = new JSONArray(responseStrBuilder.toString()).getJSONObject(0);
-            sb.append("**Username**: " + jsonResponse.getString("username") + "\n");
-            sb.append("**Play count**: " + jsonResponse.getString("playcount") + "\n");
-            sb.append("**Accuracy**: " + jsonResponse.getString("accuracy") + "\n");
-            sb.append("**Level**: " + jsonResponse.getString("level") + "\n");
-            sb.append("**Country**: " + jsonResponse.getString("country") + "\n");
-            sb.append("**Country_rank**: " + jsonResponse.getString("pp_country_rank"));
+            builder.append("Username", jsonResponse.getString("username"));
+            builder.append("Play count", jsonResponse.getString("playcount"));
+            builder.append("Accuracy: ", jsonResponse.getString("accuracy"));
+            builder.append("Level: ", jsonResponse.getString("level"));
+            builder.append("Country: ", jsonResponse.getString("country"));
+            builder.append("Country_rank: ", jsonResponse.getString("pp_country_rank"));
 
         } catch (Exception e) {
             NanoLogger.error(e.getMessage());
             return Optional.of("osu! Profile not found.");
         }
 
-        return Optional.of(sb.toString());
+        Message response = MessageUtil.frameMessage(content, builder.build(), true);
+        return Optional.of(response);
     }
 }

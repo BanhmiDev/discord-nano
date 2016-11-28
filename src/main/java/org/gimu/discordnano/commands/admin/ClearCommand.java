@@ -16,38 +16,34 @@
 
 package org.gimu.discordnano.commands.admin;
 
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.exceptions.RateLimitedException;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
-import org.gimu.discordnano.util.PermissionUtil;
-import sx.blah.discord.handle.impl.obj.Message;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
 
 import java.util.Optional;
 
 @MainCommand(
-		alias = {"clear"},
+		alias = "clear",
 		description = "Clear messages",
 		usage = "clear"
 )
 public class ClearCommand extends AbstractCommand {
 
-	public ClearCommand(String description, String usage) {
-		super(description, usage);
+	public ClearCommand(String description, String usage, String alias) {
+		super(description, usage, alias);
 	}
 
-	public Optional execute(Message message, String[] args) throws IllegalArgumentException, RateLimitException, DiscordException, MissingPermissionsException {
-		if (!PermissionUtil.isAdmin(message.getAuthor(), message.getGuild())) return Optional.of("I don't listen to you.");
-		/*MessageList messages = message.getChannel().getMessages();
-		messages.stream().limit(50).forEach(iMessage -> {
-			try {
-				iMessage.delete();
-			} catch (MissingPermissionsException | RateLimitException | DiscordException e) {
-				// ...
-			}
-		});
-		message.delete();*/
-		return Optional.of("fuck you");
+	public Optional execute(Message message, String[] args) throws IllegalArgumentException {
+		// TODO: introduce permission bound commands
+		TextChannel channel = (TextChannel)message.getChannel();
+        while (channel.getHistory().retrievePast(100) != null) {
+            //channel.deleteMessages(channel.getHistory().retrieveFuture(100).block());
+        }
+
+		message.deleteMessage();
+
+		return Optional.empty();
 	}
 }

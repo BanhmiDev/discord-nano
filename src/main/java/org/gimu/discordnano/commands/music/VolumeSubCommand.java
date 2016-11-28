@@ -19,6 +19,7 @@ package org.gimu.discordnano.commands.music;
 import net.dv8tion.jda.core.entities.Message;
 import org.gimu.discordnano.commands.AbstractSubCommand;
 import org.gimu.discordnano.commands.SubCommand;
+import org.gimu.discordnano.lib.MessageUtil;
 
 import java.util.Optional;
 
@@ -57,6 +58,7 @@ public class VolumeSubCommand extends AbstractSubCommand {
             }
         }*/
 
-        return Optional.of("Music module disabled.");
+        Message response = MessageUtil.frameMessage("disabled", true);
+        return Optional.of(response);
     }
 }

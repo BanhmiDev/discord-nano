@@ -22,14 +22,15 @@ import org.gimu.discordnano.commands.MainCommand;
 import java.util.Optional;
 
 @MainCommand(
-        alias = {"mal"},
+        alias = "mal",
         description = "Fetch information from MyAnimeList",
-        usage = "mal <user|anime|manga> <query|view <index>>"
+        usage = "mal <user|anime|manga> <query|view <index>>",
+        isEnabled = false
 )
 public class MALCommand extends AbstractCommand {
 
-    public MALCommand(String description, String usage) {
-        super(description, usage);
+    public MALCommand(String description, String usage, String alias) {
+        super(description, usage, alias);
     }
 
     public Optional execute(Message message, String[] args) throws IllegalArgumentException {

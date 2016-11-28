@@ -21,6 +21,7 @@ import net.dv8tion.jda.player.Playlist;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractSubCommand;
 import org.gimu.discordnano.commands.SubCommand;
+import org.gimu.discordnano.lib.MessageUtil;
 import org.gimu.discordnano.listeners.CommandListener;
 
 import java.util.Optional;
@@ -123,6 +124,7 @@ public class PlaySubCommand extends AbstractSubCommand {
         }
 
         return Optional.of(response);*/
-        return Optional.of("Music module disabled.");
+        Message response = MessageUtil.frameMessage("disabled", true);
+        return Optional.of(response);
     }
 }

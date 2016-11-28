@@ -20,6 +20,7 @@ import net.dv8tion.jda.core.entities.Message;
 import org.apache.commons.lang.StringUtils;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.lib.MessageUtil;
 import org.gimu.discordnano.lib.NanoLogger;
 import org.gimu.discordnano.util.MathUtil;
 
@@ -27,7 +28,7 @@ import java.text.DecimalFormat;
 import java.util.Optional;
 
 @MainCommand(
-        alias = {"math"},
+        alias = "math",
         description = "Evaluates mathematical expressions",
         usage = "math <expression>"
 )
@@ -35,8 +36,8 @@ public class MathCommand extends AbstractCommand {
 
     private final DecimalFormat formatter = new DecimalFormat() {{setDecimalSeparatorAlwaysShown(false);}};
 
-    public MathCommand(String description, String usage) {
-        super(description, usage);
+    public MathCommand(String description, String usage, String alias) {
+        super(description, usage, alias);
     }
 
     public Optional execute(Message message, String[] args) throws IllegalArgumentException {
@@ -44,15 +45,17 @@ public class MathCommand extends AbstractCommand {
             throw new IllegalArgumentException();
         }
 
+        String content;
         String exp = StringUtils.join(args, " ");
         double result = 0.0;
         try {
             result = new MathUtil(exp).eval();
+            content = "Final answer for `" + exp + "`: `" + formatter.format(result) + "`";
         } catch (RuntimeException e) {
+            content = "I'm too stupid for that";
             NanoLogger.error(e.getMessage());
-            return Optional.of("I'm too stupid for that");
         }
-        return Optional.of("Final answer for `" + exp + "`: `" + formatter.format(result) + "`");
+        Message response = MessageUtil.frameMessage(content, true);
+        return Optional.of(response);
     }
-
 }

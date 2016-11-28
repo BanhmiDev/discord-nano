@@ -18,6 +18,8 @@ package org.gimu.discordnano.commands.mal;
 import net.dv8tion.jda.core.entities.Message;
 import org.gimu.discordnano.commands.AbstractSubCommand;
 import org.gimu.discordnano.commands.SubCommand;
+import org.gimu.discordnano.lib.EmbedFieldListBuilder;
+import org.gimu.discordnano.lib.MessageUtil;
 import org.gimu.discordnano.lib.NanoLogger;
 import org.gimu.discordnano.util.HTTPUtil;
 import org.w3c.dom.Document;
@@ -47,7 +49,8 @@ public class UserSubCommand extends AbstractSubCommand {
             throw new IllegalArgumentException();
         }
 
-        StringBuilder sb = new StringBuilder();
+        EmbedFieldListBuilder builder = new EmbedFieldListBuilder();
+        String content = "Displaying MyAnimeList profile";
 
         try {
             String parameters = "u=" + args[0];
@@ -65,18 +68,20 @@ public class UserSubCommand extends AbstractSubCommand {
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 Element element = (Element) node;
 
-                sb.append("**Username**: " + element.getElementsByTagName("user_name").item(0).getTextContent() + "\n");
-                sb.append("**Watching**: " + element.getElementsByTagName("user_watching").item(0).getTextContent() + "\n");
-                sb.append("**Completed**: " + element.getElementsByTagName("user_completed").item(0).getTextContent() + "\n");
-                sb.append("**Onhold**: " + element.getElementsByTagName("user_onhold").item(0).getTextContent() + "\n");
-                sb.append("**Dropped**: " + element.getElementsByTagName("user_dropped").item(0).getTextContent() + "\n");
-                sb.append("**Planned**: " + element.getElementsByTagName("user_plantowatch").item(0).getTextContent() + "\n");
-                sb.append("**Wasted**: " + element.getElementsByTagName("user_days_spent_watching").item(0).getTextContent() + " Days\n");
+                builder.append("Username", element.getElementsByTagName("user_name").item(0).getTextContent());
+                builder.append("Watching", element.getElementsByTagName("user_watching").item(0).getTextContent());
+                builder.append("Completed", element.getElementsByTagName("user_completed").item(0).getTextContent());
+                builder.append("Onhold", element.getElementsByTagName("user_onhold").item(0).getTextContent());
+                builder.append("Dropped", element.getElementsByTagName("user_dropped").item(0).getTextContent());
+                builder.append("Planned", element.getElementsByTagName("user_plantowatch").item(0).getTextContent());
+                builder.append("Wasted", element.getElementsByTagName("user_days_spent_watching").item(0).getTextContent() + " Days");
             }
         } catch (Exception e) {
+            content = "Couldn't fetch MyAnimeList profile.";
             NanoLogger.error(e.getMessage());
         }
 
-        return Optional.of(sb.toString());
+        Message response = MessageUtil.frameMessage(content, builder.build(), true);
+        return Optional.of(response);
     }
 }

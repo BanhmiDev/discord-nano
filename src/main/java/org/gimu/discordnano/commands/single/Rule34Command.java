@@ -19,6 +19,8 @@ package org.gimu.discordnano.commands.single;
 import net.dv8tion.jda.core.entities.Message;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.lib.EmbedFieldListBuilder;
+import org.gimu.discordnano.lib.MessageUtil;
 import org.gimu.discordnano.lib.NanoLogger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attribute;
@@ -32,18 +34,20 @@ import java.util.Optional;
 import java.util.Random;
 
 @MainCommand(
-        alias = {"rule34"},
+        alias = "rule34",
         description = "Fetch image from rule34.xxx",
         usage = "rule34 <query>"
 )
 public class Rule34Command extends AbstractCommand {
 
-    public Rule34Command(String description, String usage) {
-        super(description, usage);
+    public Rule34Command(String description, String usage, String alias) {
+        super(description, usage, alias);
     }
 
     public Optional execute(Message message, String[] args) throws IllegalArgumentException {
-        String response;
+        String content = "Displaying image from rule34.xxx";
+        String imageUrl = null;
+
         if (args.length == 0) {
             throw new IllegalArgumentException();
         }
@@ -77,12 +81,13 @@ public class Rule34Command extends AbstractCommand {
 
             url = att2.getValue();
 
-            response = "http:" + url;
+            imageUrl = "https:" + url;
         } catch (Exception e) {
+            content = "I couldn't find anything.";
             NanoLogger.error(e.getMessage());
-            return Optional.of("I couldn't find anything.");
         }
 
+        Message response = MessageUtil.frameMessage(content, imageUrl, true);
         return Optional.of(response);
     }
 }

@@ -20,19 +20,20 @@ import net.dv8tion.jda.core.entities.Message;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.lib.MessageUtil;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @MainCommand(
-        alias = {"uptime"},
+        alias = "uptime",
         description = "Get Nano's uptime",
         usage = "uptime"
 )
 public class UptimeCommand extends AbstractCommand {
 
-    public UptimeCommand(String description, String usage) {
-        super(description, usage);
+    public UptimeCommand(String description, String usage, String alias) {
+        super(description, usage, alias);
     }
 
     public Optional execute(Message message, String[] args) {
@@ -48,20 +49,21 @@ public class UptimeCommand extends AbstractCommand {
 
         long seconds = TimeUnit.SECONDS.toSeconds(duration);
 
-        StringBuilder response = new StringBuilder( );
+        StringBuilder sb = new StringBuilder( );
         if (days != 0) {
-            response.append(days + " day(s) ");
+            sb.append(days + " day(s) ");
         }
         if (hours != 0) {
-            response.append(hours + " hours(s) ");
+            sb.append(hours + " hours(s) ");
         }
         if (minutes != 0) {
-            response.append(minutes + " minutes(s) ");
+            sb.append(minutes + " minutes(s) ");
         }
         if (seconds != 0) {
-            response.append(seconds + " seconds(s)");
+            sb.append(seconds + " seconds(s)");
         }
 
-        return Optional.of("**Uptime**: " + response.toString());
+        Message response = MessageUtil.frameMessage("Uptime: " + sb.toString(), true);
+        return Optional.of(response);
     }
 }

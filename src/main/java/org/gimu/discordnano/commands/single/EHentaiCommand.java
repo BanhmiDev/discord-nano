@@ -26,6 +26,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.lib.MessageUtil;
 import org.gimu.discordnano.lib.NanoLogger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -40,14 +41,15 @@ import java.io.Reader;
 import java.util.Optional;
 
 @MainCommand(
-        alias = {"ehentai"},
+        alias = "ehentai",
         description = "Display random e-hentai entry",
-        usage = "ehentai"
+        usage = "ehentai",
+        isEnabled = false
 )
 public class EHentaiCommand extends AbstractCommand {
 
-    public EHentaiCommand(String description, String usage) {
-        super(description, usage);
+    public EHentaiCommand(String description, String usage, String alias) {
+        super(description, usage, alias);
     }
 
     public Optional execute(Message message, String[] args) throws IllegalArgumentException {
@@ -122,7 +124,9 @@ public class EHentaiCommand extends AbstractCommand {
         } catch (Exception e) {
             NanoLogger.error(e.getMessage());
         }
-        return Optional.empty();
+
+        Message response = MessageUtil.frameMessage("disabled", true);
+        return Optional.of(response);
     }
 
     private String cleanTag(String tag) {
