@@ -21,6 +21,7 @@ import net.dv8tion.jda.core.entities.VoiceChannel;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractSubCommand;
 import org.gimu.discordnano.commands.SubCommand;
+import org.gimu.discordnano.lib.MessageUtil;
 import org.gimu.discordnano.lib.NanoGuild;
 import org.gimu.discordnano.lib.NanoGuildLibrary;
 
@@ -40,29 +41,30 @@ public class VoicechannelSubCommand extends AbstractSubCommand {
 
     public Optional execute(Message message, String[] args) {
         // TODO: introduce permission bound commands
-        String response = "Invalid voice channel ID. Right-click on a voice channel to get its ID!";
+        String content = "Invalid voice channel ID. Right-click on a voice channel to get its ID!";
         NanoGuildLibrary guildLibrary = DiscordNano.guildLibrary; // TODO: Better reference?
         NanoGuild currentGuild = guildLibrary.get(message.getGuild().getId()); // The nano guild
         VoiceChannel currentVoicechannel = message.getGuild().getVoiceChannelById(currentGuild.getVoicechannel()); // Previous voicechannel (if set)
 
         if (args.length == 0) {
             if (currentVoicechannel == null) {
-                response = "No voice channel set for this guild, use `!mod voicechannel <id>` first.";
+                content = "No voice channel set for this guild, use `!mod voicechannel <id>` first.";
             } else {
-                response = "Current voice channel is `" + currentVoicechannel.getName() + "`";
+                content = "Current voice channel is `" + currentVoicechannel.getName() + "`";
             }
         } else { // Possible voice channel in argument
             VoiceChannel newVoicechannel = message.getGuild().getVoiceChannelById(args[0]); // Get new voice channel
             if (newVoicechannel != null) { // New voice channel was found
                 if (!currentGuild.getVoicechannel().isEmpty() && currentGuild.getVoicechannel().equals(args[0])) {
-                    response = "Voice channel is already set to that one!";
+                    content = "Voice channel is already set to that one!";
                 } else {
                     guildLibrary.setVoicechannel(message.getGuild().getId(), args[0]);
-                    response = "Set voice channel to `" + newVoicechannel.getName() + "`";
+                    content = "Set voice channel to `" + newVoicechannel.getName() + "`";
                 }
             }
         }
 
+        Message response = MessageUtil.frameMessage(content, true);
         return Optional.of(response);
     }
 }

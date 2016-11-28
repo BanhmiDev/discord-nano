@@ -21,6 +21,7 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractSubCommand;
 import org.gimu.discordnano.commands.SubCommand;
+import org.gimu.discordnano.lib.MessageUtil;
 import org.gimu.discordnano.lib.NanoGuild;
 import org.gimu.discordnano.lib.NanoGuildLibrary;
 
@@ -40,14 +41,14 @@ public class TextchannelSubCommand extends AbstractSubCommand {
 
     public Optional execute(Message message, String[] args) {
         // TODO: introduce permission bound commands
-        String response = "Invalid voice channel ID. Right-click on a voice channel to get its ID!";
+        String content = "Invalid voice channel ID. Right-click on a voice channel to get its ID!";
         NanoGuildLibrary guildLibrary = DiscordNano.guildLibrary; // TODO: Better reference?
         NanoGuild currentGuild = guildLibrary.get(message.getGuild().getId()); // The nano guild
         TextChannel currentTextchannel = message.getGuild().getTextChannelById(currentGuild.getTextchannel()); // Previous textchannel (if set)
 
         if (args.length == 0) {
             if (currentTextchannel == null) {
-                response = "No text channel set for this guild, use `!mod textchannel <id>` first.";
+                content = "No text channel set for this guild, use `!mod textchannel <id>` first.";
             } else {
                 response = "Current text channel is `" + currentTextchannel.getName() + "`";
             }
@@ -57,14 +58,15 @@ public class TextchannelSubCommand extends AbstractSubCommand {
             // Found our new textchannel
             if (newTextchannel != null) {
                 if (!currentGuild.getTextchannel().isEmpty() && currentGuild.getTextchannel().equals(args[0])) {
-                    response = "Text channel is already set to that one!";
+                    content = "Text channel is already set to that one!";
                 } else {
                     guildLibrary.setTextchannel(message.getGuild().getId(), args[0]);
-                    response = "Set text channel to `" + newTextchannel.getName() + "`";
+                    content = "Set text channel to `" + newTextchannel.getName() + "`";
                 }
             }
         }
 
+        Message response = MessageUtil.frameMessage(content, true);
         return Optional.of(response);
     }
 }

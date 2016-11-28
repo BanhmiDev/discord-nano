@@ -24,8 +24,7 @@ import java.util.Optional;
 
 @MainCommand(
         alias = "mod",
-        description = "Moderation commands",
-        isEnabled = false
+        description = "Moderation commands"
 )
 public class ModCommand extends AbstractCommand {
 
