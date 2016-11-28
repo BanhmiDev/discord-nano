@@ -26,7 +26,7 @@ public class NanoGuildLibrary {
     private LinkedHashMap<String, NanoGuild> libraryMap = new LinkedHashMap<String, NanoGuild>();
 
     public void add(Guild guild) {
-        NanoGuild nanoGuild = new NanoGuild("", "");
+        NanoGuild nanoGuild = new NanoGuild();
         String guildID = guild.getId();
 
         // Add if not already present in map
@@ -40,6 +40,10 @@ public class NanoGuildLibrary {
                     // set first textchannel to be main one
                     PreparedStatement ps = conn.prepareStatement("INSERT INTO NanoGuilds (guild_id, textchannel, voicechannel) VALUES(?, ?, ?)");
                     ps.setString(1, guildID);
+                    if (nanoGuild.getTextchannel().isEmpty()) {
+                        // Bound to first text channel
+                        nanoGuild.setTextchannel(guild.getTextChannels().get(0).getId());
+                    }
                     ps.setString(2, nanoGuild.getTextchannel());
                     ps.setString(3, nanoGuild.getVoicechannel());
                     ps.executeUpdate();
