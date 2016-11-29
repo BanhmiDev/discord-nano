@@ -23,9 +23,7 @@ import java.util.Optional;
 
 @MainCommand(
         alias = "mal",
-        description = "Fetch information from MyAnimeList",
-        usage = "mal <user|anime|manga> <query|view <index>>",
-        isEnabled = false
+        description = "Fetch information from MyAnimeList"
 )
 public class MALCommand extends AbstractCommand {
 
@@ -34,10 +32,6 @@ public class MALCommand extends AbstractCommand {
     }
 
     public Optional execute(Message message, String[] args) throws IllegalArgumentException {
-        if (args.length == 0) {
-            throw new IllegalArgumentException();
-        }
-
-        return Optional.empty();
+        throw new IllegalArgumentException();
     }
 }

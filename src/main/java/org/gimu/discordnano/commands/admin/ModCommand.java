@@ -34,6 +34,6 @@ public class ModCommand extends AbstractCommand {
 
     public Optional execute(Message message, String[] args) throws IllegalArgumentException {
         // TODO: introduce permission bound commands
-        return Optional.empty();
+        throw new IllegalArgumentException();
     }
 }

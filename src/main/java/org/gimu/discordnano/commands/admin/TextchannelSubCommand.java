@@ -50,7 +50,7 @@ public class TextchannelSubCommand extends AbstractSubCommand {
             if (currentTextchannel == null) {
                 content = "No text channel set for this guild, use `!mod textchannel <id>` first.";
             } else {
-                response = "Current text channel is `" + currentTextchannel.getName() + "`";
+                content = "Current text channel is `" + currentTextchannel.getName() + "`";
             }
         } else { // Possible voice channel in argument
             TextChannel newTextchannel = message.getGuild().getTextChannelById(args[0]);

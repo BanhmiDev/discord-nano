@@ -75,7 +75,14 @@ public class CommandHandler {
                     response = mainCommand.execute(message, args);
                 } catch (IllegalArgumentException e) {
                     NanoLogger.error(e.getMessage());
-                    if (!mainCommand.getUsage().isEmpty()) message.getChannel().sendMessage("`" + DiscordNano.PREFIX + mainCommand.getUsage() + "`").queue();
+                    if (!mainCommand.getUsage().isEmpty()) {
+                        message.getChannel().sendMessage("`" + DiscordNano.PREFIX + mainCommand.getUsage() + "`").queue();
+                    } else {
+                        // Look for usage descriptions in sub commands
+                        StringBuilder sb = new StringBuilder();
+                        mainCommand.getSubCommandMap().entrySet().stream().filter(entry -> !entry.getValue().getUsage().isEmpty()).forEach(entry -> sb.append("`" + DiscordNano.PREFIX + entry.getValue().getUsage() + "`\n"));
+                        message.getChannel().sendMessage(sb.toString()).queue();
+                    }
                 }
             }
         }

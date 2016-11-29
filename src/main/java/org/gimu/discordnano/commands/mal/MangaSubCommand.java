@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractSubCommand;
 import org.gimu.discordnano.commands.SubCommand;
+import org.gimu.discordnano.lib.MessageUtil;
 import org.gimu.discordnano.lib.NanoLogger;
 import org.gimu.discordnano.util.HTTPUtil;
 import org.gimu.discordnano.util.MALInfo;
@@ -40,7 +41,7 @@ import java.util.Optional;
         mainCommandAlias = "mal",
         alias = {"manga"},
         description = "",
-        usage = ""
+        usage = "mal manga (<query> | view [index])"
 )
 public class MangaSubCommand extends AbstractSubCommand {
 
@@ -55,90 +56,93 @@ public class MangaSubCommand extends AbstractSubCommand {
     }
 
     public Optional execute(Message message, String[] args) throws IllegalArgumentException {
-		if (args.length == 0) {
+        if (args.length == 0) {
             throw new IllegalArgumentException();
-		}
-
-		// Viewing
-		String index = args.length >= 2 ? args[1] : "";
-		if (args[0].toLowerCase().equals("view")) {
-			if (index.length() == 0) {
-				return Optional.of(viewRecent());
-			} else {
-				return Optional.of(viewEntry(index));
-			}
-		}
-
-		// Searching
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < args.length-1; i++) {
-            sb.append(args[i] + " ");
         }
-        sb.append(args[args.length-1]);
-        return Optional.of(searchMAL(sb.toString()));
-	}
 
-	private String viewRecent() {
+        Message response;
+
+        // Viewing
+        String index = args.length >= 2 ? args[1] : "";
+        if (args[0].toLowerCase().equals("view")) {
+            if (index.length() == 0) {
+                response = viewRecent();
+            } else {
+                response = viewEntry(index);
+            }
+        } else {
+            // Searching
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < args.length - 1; i++) {
+                sb.append(args[i] + " ");
+            }
+            sb.append(args[args.length - 1]);
+            response = searchMAL(sb.toString());
+        }
+        return Optional.of(response);
+    }
+
+    private Message viewRecent() {
         if (mangaMap.isEmpty()) {
-			return "There are no recent queries to show!";
-		}
-        StringBuilder result = new StringBuilder();
+            return MessageUtil.frameMessage("There are no recent queries to show!", true);
+        }
+        StringBuilder content = new StringBuilder();
         int i = 0;
         for (Map.Entry<Integer, MALInfo> entry : mangaMap.entrySet()) {
-            result.append("**[" + i + "]** " + entry.getValue().title);
-            if (entry.getValue().english.length() != 0) result.append(" / " + entry.getValue().english);
-            result.append("\n");
+            content.append("**[" + i + "]** " + entry.getValue().title);
+            if (entry.getValue().english.length() != 0) content.append(" / " + entry.getValue().english);
+            content.append("\n");
             i++;
         }
-        return result.toString();
-	}
+        return MessageUtil.frameMessage(content.toString(), true);
+    }
 
-	private String viewEntry(String index) {
-		MALInfo entry;
-        entry = mangaMap.get(Integer.parseInt(index));
-        if (index.matches("^\\d+$") || entry == null) {
-			return "Not a valid index or no recent queries saved!";
-		}
-        return (entry.title
+    private Message viewEntry(String index) {
+        MALInfo entry = mangaMap.get(Integer.parseInt(index));
+
+        if (!index.matches("^\\d+$") || entry == null) {
+            return MessageUtil.frameMessage("Not a valid index or no recent queries saved!", true);
+        }
+        return MessageUtil.frameMessage(entry.title
                 + (entry.english.length() != 0 ? "\n" + entry.english : "")
                 + "**\n**Type:** " + entry.type
                 + " **| Chapters:** " + entry.episodes
                 + " **| Status:** " + entry.status
                 + " **| Score:** " + entry.score
                 + "**\n\n" + entry.synopsis
-                + "\n\n**<http://www.myanimelist.net/manga/" + entry.id + ">**");
-	}
+                + "\n\n**<http://www.myanimelist.net/manga/" + entry.id + ">**", true);
+    }
 
-	private String searchMAL(String query) {
-		// MALCommand/Manga search
-		if (MAL_USER == "" || MAL_PASS == "") {
-			return "MAL login not configured.";
-		}
-
-        if (lastExecution == 0) {
-            lastExecution = System.currentTimeMillis();
-        } else {
+    private Message searchMAL(String query) {
+        // MALCommand/Manga search
+        if (MAL_USER == "" || MAL_PASS == "") {
+            return MessageUtil.frameMessage("MAL login not configured.", true);
+        } else if (lastExecution != 0) {
             long currentExecution = System.currentTimeMillis();
             long time = (currentExecution - lastExecution) / 1000;
             if (time < 5) {
-                return "Please wait 5 seconds to submit another query.";
+                return MessageUtil.frameMessage("Please wait 5 seconds before submitting another query.", true);
             }
             lastExecution = currentExecution;
         }
+
+        StringBuilder content = new StringBuilder();
         try {
+            lastExecution = System.currentTimeMillis();
             String parameters = "q=" + URLEncoder.encode(query, "UTF-8");
-            InputStream response = HTTPUtil.sendAuthGet("https://myanimelist.net/api/manga/search.xml", parameters, MAL_USER, MAL_PASS);
+            InputStream stream = HTTPUtil.sendAuthGet("https://myanimelist.net/api/manga/search.xml", parameters, MAL_USER, MAL_PASS);
 
             String id = "", title = "", english = "", episodes = "", score = "", type = "", status = "", synopsis = "";
 
             // XML parsing
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(response);
+            Document doc = dBuilder.parse(stream);
             doc.getDocumentElement().normalize();
             NodeList nodes = doc.getElementsByTagName("entry");
 
-            StringBuilder result = new StringBuilder();
+            content.append("MAL Anime query result\n\n");
+
             // Reset recent map
             if (nodes.getLength() > 0) mangaMap.clear();
 
@@ -158,10 +162,10 @@ public class MangaSubCommand extends AbstractSubCommand {
                     status = element.getElementsByTagName("status").item(0).getTextContent();
                     synopsis = element.getElementsByTagName("synopsis").item(0).getTextContent();
 
-                    result.append("**[" + i + "]** " + title);
-                    if (english.length() != 0) result.append(" / " + english);
+                    content.append("**[" + i + "]** " + title);
+                    if (english.length() != 0) content.append(" / " + english);
 
-                    result.append("\n");
+                    content.append("\n");
                     if (synopsis.length() > 0) {
                         if (synopsis.length() > 500) {
                             synopsis = synopsis.substring(0, 500) + "...";
@@ -174,10 +178,14 @@ public class MangaSubCommand extends AbstractSubCommand {
                 }
             }
 
-            return "Manga query result\n\n" + result.toString() + "\nList temporarily saved. Write `" + DiscordNano.PREFIX + "mal manga view <index>` to examine an entry.";
+            content.append("\nList temporarily saved. Write `" + DiscordNano.PREFIX + "mal manga view <index>` to examine an entry.");
+
         } catch (Exception e) {
+            content.setLength(0);
+            content.append("I couldn't find an entry fitting that phrase.");
             NanoLogger.error(e.getMessage());
-            return "I couldn't find an entry fitting that phrase.";
         }
+
+        return MessageUtil.frameMessage(content.toString(), true);
 	}
 }
