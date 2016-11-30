@@ -67,6 +67,22 @@ public class NanoGuildLibrary {
         }
     }
 
+    public void remove(String guildID) {
+        if (libraryMap.get(guildID) != null) {
+            Connection conn = NanoDatabase.getConnection();
+            try {
+                // Delete from database
+                conn.createStatement().executeQuery("DELETE FROM NanoGuilds WHERE guild_id = '" + guildID + "'");
+
+                // Remove from map
+                libraryMap.remove(guildID);
+                conn.close();
+            } catch (SQLException e) {
+                NanoLogger.error(e.getMessage());
+            }
+        }
+    }
+
     public NanoGuild get(String guildID) {
         return libraryMap.get(guildID);
     }

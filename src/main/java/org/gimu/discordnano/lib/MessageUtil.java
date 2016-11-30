@@ -66,11 +66,13 @@ public class MessageUtil {
         }
 
         // Requester information
-        String authorAvatar = author.getAvatarUrl();
-        if (authorAvatar == null) {
-            authorAvatar = author.getDefaultAvatarUrl();
+        if (author != null) {
+            String authorAvatar = author.getAvatarUrl();
+            if (authorAvatar == null) {
+                authorAvatar = author.getDefaultAvatarUrl();
+            }
+            eb.setFooter("Requested by " + author.getName() + "#" + author.getDiscriminator(), authorAvatar);
         }
-        eb.setFooter("Requested by " + author.getName() + "#" + author.getDiscriminator(), authorAvatar);
 
         MessageBuilder mb = new MessageBuilder();
         mb.setEmbed(eb.build());

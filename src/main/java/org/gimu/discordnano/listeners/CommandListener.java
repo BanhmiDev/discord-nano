@@ -20,10 +20,14 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.events.ReadyEvent;
+import net.dv8tion.jda.core.events.channel.text.TextChannelDeleteEvent;
+import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.*;
+import org.gimu.discordnano.lib.MessageUtil;
 import org.gimu.discordnano.lib.NanoDatabase;
 import org.gimu.discordnano.lib.NanoGuild;
 import org.gimu.discordnano.lib.NanoLogger;
@@ -43,6 +47,29 @@ public class CommandListener extends ListenerAdapter {
 
     public CommandListener(JDA jda) {
         this.jda = jda;
+    }
+
+    @Override
+    public void onGuildJoin(GuildJoinEvent event) {
+        // Welcome message
+        event.getGuild().getTextChannels().get(0).sendMessage(MessageUtil.frameMessage(null, "Type `!help` if you don't know what you are doing.\nThank you for letting me stay.", true)).queue();
+        // Add to guild library
+        DiscordNano.guildLibrary.add(event.getGuild());
+        NanoLogger.debug("Joined guild for the first time");
+    }
+
+    @Override
+    public void onGuildLeave(GuildLeaveEvent event) {
+        // Remove from guild library
+        DiscordNano.guildLibrary.remove(event.getGuild().getId());
+        NanoLogger.debug("Left guild");
+    }
+
+    @Override
+    public void onTextChannelDelete(TextChannelDeleteEvent event) {
+        // Fallback to first text channel in list
+        Guild guild = event.getGuild();
+        DiscordNano.guildLibrary.setTextchannel(guild.getId(), guild.getTextChannels().get(0).getId());
     }
 
     @Override
