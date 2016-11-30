@@ -16,6 +16,7 @@
 package org.gimu.discordnano.commands.mal;
 
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.User;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractSubCommand;
@@ -56,7 +57,7 @@ public class AnimeSubCommand extends AbstractSubCommand {
         super(description, usage);
     }
 
-    public Optional execute(Message message, String[] args) throws IllegalArgumentException {
+    public Optional execute(User author, Message message, String[] args) throws IllegalArgumentException {
 		if (args.length == 0) {
 			throw new IllegalArgumentException();
 		}
@@ -67,9 +68,9 @@ public class AnimeSubCommand extends AbstractSubCommand {
 		String index = args.length >= 2 ? args[1] : "";
 		if (args[0].toLowerCase().equals("view")) {
 			if (index.length() == 0) {
-                response = viewRecent();
+                response = viewRecent(author);
 			} else {
-                response = viewEntry(index);
+                response = viewEntry(author, index);
 			}
 		} else {
             // Searching
@@ -78,14 +79,14 @@ public class AnimeSubCommand extends AbstractSubCommand {
                 sb.append(args[i] + " ");
             }
             sb.append(args[args.length - 1]);
-            response = searchMAL(sb.toString());
+            response = searchMAL(author, sb.toString());
         }
         return Optional.of(response);
 	}
 
-	private Message viewRecent() {
+	private Message viewRecent(User author) {
         if (animeMap.isEmpty()) {
-			return MessageUtil.frameMessage("There are no recent queries to show!", true);
+			return MessageUtil.frameMessage(author, "There are no recent queries to show!", true);
 		}
         StringBuilder content = new StringBuilder();
         int i = 0;
@@ -95,16 +96,16 @@ public class AnimeSubCommand extends AbstractSubCommand {
             content.append("\n");
             i++;
         }
-        return MessageUtil.frameMessage(content.toString(), true);
+        return MessageUtil.frameMessage(author, content.toString(), true);
 	}
 
-	private Message viewEntry(String index) {
+	private Message viewEntry(User author, String index) {
 		MALInfo entry = animeMap.get(Integer.parseInt(index));
 
         if (!index.matches("^\\d+$") || entry == null) {
-			return MessageUtil.frameMessage("Not a valid index or no recent queries saved!", true);
+			return MessageUtil.frameMessage(author, "Not a valid index or no recent queries saved!", true);
 		}
-        return MessageUtil.frameMessage(entry.title
+        return MessageUtil.frameMessage(author, entry.title
                 + (entry.english.length() != 0 ? "\n" + entry.english : "")
                 + "**\n**Type:** " + entry.type
                 + " **| Episodes:** " + entry.episodes
@@ -114,15 +115,15 @@ public class AnimeSubCommand extends AbstractSubCommand {
                 + "\n\n**<http://www.myanimelist.net/anime/" + entry.id + ">**", true);
 	}
 
-	private Message searchMAL(String query) {
+	private Message searchMAL(User author, String query) {
 		// MALCommand/Anime search
 		if (MAL_USER == "" || MAL_PASS == "") {
-            return MessageUtil.frameMessage("MAL login not configured.", true);
+            return MessageUtil.frameMessage(author, "MAL login not configured.", true);
 		} else if (lastExecution != 0) {
             long currentExecution = System.currentTimeMillis();
             long time = (currentExecution - lastExecution) / 1000;
             if (time < 5) {
-                return MessageUtil.frameMessage("Please wait 5 seconds before submitting another query.", true);
+                return MessageUtil.frameMessage(author, "Please wait 5 seconds before submitting another query.", true);
             }
             lastExecution = currentExecution;
         }
@@ -187,6 +188,6 @@ public class AnimeSubCommand extends AbstractSubCommand {
             NanoLogger.error(e.getMessage());
         }
 
-        return MessageUtil.frameMessage(content.toString(), true);
+        return MessageUtil.frameMessage(author, content.toString(), true);
 	}
 }

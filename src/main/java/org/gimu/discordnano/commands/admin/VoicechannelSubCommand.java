@@ -17,6 +17,7 @@
 package org.gimu.discordnano.commands.admin;
 
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractSubCommand;
@@ -39,7 +40,7 @@ public class VoicechannelSubCommand extends AbstractSubCommand {
         super(description, usage);
     }
 
-    public Optional execute(Message message, String[] args) {
+    public Optional execute(User author, Message message, String[] args) {
         // TODO: introduce permission bound commands
         String content = "Invalid voice channel ID. Right-click on a voice channel to get its ID!";
         NanoGuildLibrary guildLibrary = DiscordNano.guildLibrary; // TODO: Better reference?
@@ -64,7 +65,7 @@ public class VoicechannelSubCommand extends AbstractSubCommand {
             }
         }
 
-        Message response = MessageUtil.frameMessage(content, true);
+        Message response = MessageUtil.frameMessage(author, content, true);
         return Optional.of(response);
     }
 }

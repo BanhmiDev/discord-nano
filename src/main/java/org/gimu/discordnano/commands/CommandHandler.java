@@ -63,7 +63,7 @@ public class CommandHandler {
                 try {
                     args = (sections.length >= 2) ? Arrays.copyOfRange(sections, 2, sections.length) : new String[0]; // Only arguments (excludes sub command alias)
                     //message.getChannel().sendTyping().queue();
-                    response = subCommand.execute(message, args);
+                    response = subCommand.execute(message.getAuthor(), message, args);
                 } catch (IllegalArgumentException e) {
                     NanoLogger.error(e.getMessage());
                     if (!subCommand.getUsage().isEmpty()) message.getChannel().sendMessage("`" + DiscordNano.PREFIX + subCommand.getUsage() + "`").queue();
@@ -72,7 +72,7 @@ public class CommandHandler {
                 try {
                     args = (sections.length >= 1) ? Arrays.copyOfRange(sections, 1, sections.length) : new String[0]; // Only arguments (excludes main command alias)
                     //message.getChannel().sendTyping().queue();
-                    response = mainCommand.execute(message, args);
+                    response = mainCommand.execute(message.getAuthor(), message, args);
                 } catch (IllegalArgumentException e) {
                     NanoLogger.error(e.getMessage());
                     if (!mainCommand.getUsage().isEmpty()) {

@@ -16,6 +16,7 @@
 package org.gimu.discordnano.commands.mal;
 
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.User;
 import org.gimu.discordnano.commands.AbstractSubCommand;
 import org.gimu.discordnano.commands.SubCommand;
 import org.gimu.discordnano.lib.EmbedFieldListBuilder;
@@ -44,7 +45,7 @@ public class UserSubCommand extends AbstractSubCommand {
         super(description, usage);
     }
 
-    public Optional execute(Message message, String[] args) throws IllegalArgumentException {
+    public Optional execute(User author, Message message, String[] args) throws IllegalArgumentException {
         if (args.length == 0) {
             throw new IllegalArgumentException();
         }
@@ -81,7 +82,7 @@ public class UserSubCommand extends AbstractSubCommand {
             NanoLogger.error(e.getMessage());
         }
 
-        Message response = MessageUtil.frameMessage(content, builder.build(), true);
+        Message response = MessageUtil.frameMessage(author, content, builder.build(), true);
         return Optional.of(response);
     }
 }

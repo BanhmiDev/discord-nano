@@ -18,6 +18,7 @@ package org.gimu.discordnano.commands.single;
 
 import net.dv8tion.jda.core.entities.Message;
 
+import net.dv8tion.jda.core.entities.User;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -26,6 +27,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.lib.EmbedFieldListBuilder;
 import org.gimu.discordnano.lib.MessageUtil;
 import org.gimu.discordnano.lib.NanoLogger;
 import org.json.JSONArray;
@@ -43,8 +45,7 @@ import java.util.Optional;
 @MainCommand(
         alias = "ehentai",
         description = "Display random e-hentai entry",
-        usage = "ehentai",
-        isEnabled = false
+        usage = "ehentai"
 )
 public class EHentaiCommand extends AbstractCommand {
 
@@ -52,10 +53,12 @@ public class EHentaiCommand extends AbstractCommand {
         super(description, usage, alias);
     }
 
-    public Optional execute(Message message, String[] args) throws IllegalArgumentException {
+    public Optional execute(User author, Message message, String[] args) throws IllegalArgumentException {
         // GENERATE RANDOM PAGE
+        String content = "";
         String galleryID = "";
         String galleryToken = "";
+        EmbedFieldListBuilder builder = new EmbedFieldListBuilder();
 
         try {
             int random = (int)(Math.random() * ((18250) + 1));
@@ -86,12 +89,12 @@ public class EHentaiCommand extends AbstractCommand {
             InputStream is = response.getEntity().getContent();
             Reader reader = new InputStreamReader(is);
             BufferedReader bufferedReader = new BufferedReader(reader);
-            StringBuilder builder = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             while (true) {
                 try {
                     String line = bufferedReader.readLine();
                     if (line != null) {
-                        builder.append(line);
+                        sb.append(line);
                     } else {
                         break;
                     }
@@ -99,33 +102,33 @@ public class EHentaiCommand extends AbstractCommand {
                     e.printStackTrace();
                 }
             }
-            JSONObject jsonObj = new JSONObject(builder.toString());
+            JSONObject jsonObj = new JSONObject(sb.toString());
             JSONArray array = jsonObj.getJSONArray("gmetadata");
             JSONObject first = array.getJSONObject(0);
 
-            StringBuilder sb = new StringBuilder();
-            sb.append(first.getString("title"));
-            if (first.getString("title_jpn").length() > 0) sb.append("\n" + first.getString("title_jpn"));
-            sb.append("\nCategory: **" + first.getString("category") + "** | ");
-            sb.append("Files: **" + first.getString("filecount") + "** | ");
-            sb.append("Rating: **" + first.getString("rating") + "**\n");
+            content = first.getString("title");
+            if (first.getString("title_jpn").length() > 0) content += "\n" + first.getString("title_jpn");
+            builder.append("Category", first.getString("category"));
+            builder.append("Files", first.getString("filecount"));
+            builder.append("Rating", first.getString("rating"));
 
             JSONArray tags = first.getJSONArray("tags");
+            sb = new StringBuilder();
             if (tags.length() >= 2) {
-                sb.append("Tags: **[");
                 for (int i = 0; i < tags.length() - 1; i++) {
                     sb.append(cleanTag(tags.get(i).toString()) + ", ");
                 }
-                sb.append(cleanTag(tags.get(tags.length() - 1).toString()) + "]**");
+                sb.append(cleanTag(tags.get(tags.length() - 1).toString()) + "");
+                builder.append("Tags", sb.toString());
             }
-            sb.append("\n\n**<http://g.e-hentai.org/g/" + first.getInt("gid") + "/" + first.getString("token") + ">**");
-            sb.append("\n\n" + first.getString("thumb"));
-            return Optional.of(sb.toString());
+            builder.append("Link", "http://g.e-hentai.org/g/" + first.getInt("gid") + "/" + first.getString("token") + "");
+
+            message.getChannel().sendMessage(first.getString("thumb")).queue();
         } catch (Exception e) {
             NanoLogger.error(e.getMessage());
         }
 
-        Message response = MessageUtil.frameMessage("disabled", true);
+        Message response = MessageUtil.frameMessage(author, content, builder.build(), false);
         return Optional.of(response);
     }
 

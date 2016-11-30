@@ -16,6 +16,7 @@
 package org.gimu.discordnano.commands.mal;
 
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.User;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
 
@@ -31,7 +32,7 @@ public class MALCommand extends AbstractCommand {
         super(description, usage, alias);
     }
 
-    public Optional execute(Message message, String[] args) throws IllegalArgumentException {
+    public Optional execute(User author, Message message, String[] args) throws IllegalArgumentException {
         throw new IllegalArgumentException();
     }
 }

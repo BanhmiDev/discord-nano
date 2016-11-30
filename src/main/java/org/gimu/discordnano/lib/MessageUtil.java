@@ -27,19 +27,19 @@ import java.util.List;
 
 public class MessageUtil {
 
-    public static Message frameMessage(String content, boolean inline) {
-        return frameMessage(content, null, null, inline);
+    public static Message frameMessage(User author, String content, boolean inline) {
+        return frameMessage(author, content, null, null, inline);
     }
 
-    public static Message frameMessage(String content, String imageUrl, boolean inline) {
-        return frameMessage(content, null, imageUrl, inline);
+    public static Message frameMessage(User author, String content, String imageUrl, boolean inline) {
+        return frameMessage(author, content, null, imageUrl, inline);
     }
 
-    public static Message frameMessage(String content, List<Pair<String, String>> subContent, boolean inline) {
-        return frameMessage(content, subContent, null, inline);
+    public static Message frameMessage(User author, String content, List<Pair<String, String>> subContent, boolean inline) {
+        return frameMessage(author, content, subContent, null, inline);
     }
 
-    public static Message frameMessage(String content, List<Pair<String, String>> subContent, String imageUrl, boolean inline) {
+    public static Message frameMessage(User author, String content, List<Pair<String, String>> subContent, String imageUrl, boolean inline) {
         User bot = DiscordNano.bot.getSelfUser();
         String avatar = bot.getAvatarUrl();
         if (avatar == null) {
@@ -49,8 +49,7 @@ public class MessageUtil {
         eb.setAuthor(bot.getName(), null, avatar);
         eb.setDescription(content);
         eb.setColor(Color.ORANGE);
-        //eb.setUrl("https://www.gimu.org/discord-nano");
-        eb.setUrl("http://www.google.co.jp");
+        eb.setUrl("https://www.gimu.org/discord-nano");
         /*String thumb = bot.getAvatarUrl();
         if (thumb != null)
             eb.setThumbnail(thumb);*/
@@ -64,8 +63,14 @@ public class MessageUtil {
         if (imageUrl != null) {
             if (!imageUrl.contains("https")) imageUrl = imageUrl.replaceAll("http", "https");
             eb.setImage(imageUrl);
-            eb.setFooter(imageUrl, null);
         }
+
+        // Requester information
+        String authorAvatar = author.getAvatarUrl();
+        if (authorAvatar == null) {
+            authorAvatar = author.getDefaultAvatarUrl();
+        }
+        eb.setFooter("Requested by " + author.getName() + "#" + author.getDiscriminator(), authorAvatar);
 
         MessageBuilder mb = new MessageBuilder();
         mb.setEmbed(eb.build());

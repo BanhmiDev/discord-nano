@@ -17,6 +17,7 @@
 package org.gimu.discordnano.commands.music;
 
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.User;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractSubCommand;
 import org.gimu.discordnano.commands.SubCommand;
@@ -39,7 +40,7 @@ public class ListSubCommand extends AbstractSubCommand {
         super(description, usage);
     }
 
-    public Optional execute(Message message, String[] args) throws IllegalArgumentException {
+    public Optional execute(User author, Message message, String[] args) throws IllegalArgumentException {
         LinkedHashMap<String, String> musicLibraryMap = DiscordNano.musicLibrary.getLibraryMap();
 
         StringBuilder content = new StringBuilder("The music library has " + musicLibraryMap.size() + " entries.\n\n");
@@ -60,7 +61,7 @@ public class ListSubCommand extends AbstractSubCommand {
             content.append(HastebinUtil.post(body.deleteCharAt(body.length()-1).toString()));
         }
 
-        Message response = MessageUtil.frameMessage("disabled", true);
+        Message response = MessageUtil.frameMessage(author, "disabled", true);
         return Optional.of(response);
     }
 }

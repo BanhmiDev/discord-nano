@@ -17,6 +17,7 @@
 package org.gimu.discordnano.commands.single;
 
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.User;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.EmbedFieldListBuilder;
@@ -39,7 +40,7 @@ public class XkcdCommand extends AbstractCommand {
         super(description, usage, alias);
     }
 
-    public Optional execute(Message message, String[] args) {
+    public Optional execute(User author, Message message, String[] args) {
         EmbedFieldListBuilder builder = new EmbedFieldListBuilder();
         String content = "Displaying xkcd comic";
         String imageUrl = null;
@@ -86,7 +87,7 @@ public class XkcdCommand extends AbstractCommand {
             }
         }
 
-        Message response = MessageUtil.frameMessage(content, builder.build(), imageUrl, true);
+        Message response = MessageUtil.frameMessage(author, content, builder.build(), imageUrl, true);
         return Optional.of(response);
     }
 }

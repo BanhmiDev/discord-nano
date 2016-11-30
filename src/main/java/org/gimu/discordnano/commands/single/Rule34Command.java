@@ -17,6 +17,7 @@
 package org.gimu.discordnano.commands.single;
 
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.User;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.EmbedFieldListBuilder;
@@ -44,7 +45,7 @@ public class Rule34Command extends AbstractCommand {
         super(description, usage, alias);
     }
 
-    public Optional execute(Message message, String[] args) throws IllegalArgumentException {
+    public Optional execute(User author, Message message, String[] args) throws IllegalArgumentException {
         String content = "Displaying image from rule34.xxx";
         String imageUrl = null;
 
@@ -87,7 +88,7 @@ public class Rule34Command extends AbstractCommand {
             NanoLogger.error(e.getMessage());
         }
 
-        Message response = MessageUtil.frameMessage(content, imageUrl, true);
+        Message response = MessageUtil.frameMessage(author, content, imageUrl, true);
         return Optional.of(response);
     }
 }

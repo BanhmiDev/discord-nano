@@ -17,6 +17,7 @@
 package org.gimu.discordnano.commands.single;
 
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.User;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
@@ -39,7 +40,7 @@ public class AboutCommand extends AbstractCommand {
         super(description, usage, alias);
     }
 
-    public Optional execute(Message message, String[] args) throws IllegalArgumentException {
+    public Optional execute(User author, Message message, String[] args) {
         OperatingSystemMXBean bean = (com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
         EmbedFieldListBuilder builder = new EmbedFieldListBuilder();
         String content = "About me";
@@ -50,7 +51,7 @@ public class AboutCommand extends AbstractCommand {
         builder.append("Guilds connected", Integer.toString(DiscordNano.guildLibrary.getLibraryMap().size()) + " total guilds");
         builder.append("Creator", "Gimu#8616");
 
-        Message response = MessageUtil.frameMessage(content, builder.build(), true);
+        Message response = MessageUtil.frameMessage(author, content, builder.build(), true);
         return Optional.of(response);
     }
 }

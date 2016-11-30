@@ -17,6 +17,7 @@
 package org.gimu.discordnano.commands.music;
 
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.User;
 import org.gimu.discordnano.commands.AbstractSubCommand;
 import org.gimu.discordnano.commands.SubCommand;
 import org.gimu.discordnano.lib.MessageUtil;
@@ -35,7 +36,7 @@ public class VolumeSubCommand extends AbstractSubCommand {
         super(description, usage);
     }
 
-    public Optional execute(Message message, String[] args) throws IllegalArgumentException {
+    public Optional execute(User author, Message message, String[] args) throws IllegalArgumentException {
         /*IAudioManager manager = message.getGuild().getAudioManager();
         NanoPlayer player;
         if (manager.getAudioProvider() instanceof DefaultProvider) {
@@ -58,7 +59,7 @@ public class VolumeSubCommand extends AbstractSubCommand {
             }
         }*/
 
-        Message response = MessageUtil.frameMessage("disabled", true);
+        Message response = MessageUtil.frameMessage(author, "disabled", true);
         return Optional.of(response);
     }
 }

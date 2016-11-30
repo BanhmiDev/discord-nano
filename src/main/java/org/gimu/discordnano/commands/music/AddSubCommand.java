@@ -17,6 +17,7 @@
 package org.gimu.discordnano.commands.music;
 
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.player.source.AudioInfo;
 import net.dv8tion.jda.player.source.AudioSource;
 import net.dv8tion.jda.player.source.RemoteSource;
@@ -41,7 +42,7 @@ public class AddSubCommand extends AbstractSubCommand {
         super(description, usage);
     }
 
-    public Optional execute(Message message, String[] args) throws IllegalArgumentException {
+    public Optional execute(User author, Message message, String[] args) throws IllegalArgumentException {
         /*
         if (args.length == 0) {
             throw new IllegalArgumentException();
@@ -65,7 +66,7 @@ public class AddSubCommand extends AbstractSubCommand {
             }
         }*/
 
-        Message response = MessageUtil.frameMessage("disabled", true);
+        Message response = MessageUtil.frameMessage(author, "disabled", true);
         return Optional.of(response);
     }
 }

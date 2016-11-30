@@ -20,6 +20,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.User;
 import org.apache.commons.lang.StringUtils;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractCommand;
@@ -45,7 +46,7 @@ public class GamelookupCommand extends AbstractCommand {
         super(description, usage, alias);
     }
 
-    public Optional execute(Message message, String[] args) throws IllegalArgumentException {
+    public Optional execute(User author, Message message, String[] args) throws IllegalArgumentException {
         if (args.length == 0) {
            throw new IllegalArgumentException();
         }
@@ -83,7 +84,7 @@ public class GamelookupCommand extends AbstractCommand {
             NanoLogger.error(e.getMessage());
         }
 
-        Message response = MessageUtil.frameMessage(content, builder.build(), imageUrl, true);
+        Message response = MessageUtil.frameMessage(author, content, builder.build(), imageUrl, true);
         return Optional.of(response);
     }
 }

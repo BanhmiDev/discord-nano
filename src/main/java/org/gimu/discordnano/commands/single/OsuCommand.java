@@ -16,6 +16,7 @@
 package org.gimu.discordnano.commands.single;
 
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.User;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
@@ -42,7 +43,7 @@ public class OsuCommand extends AbstractCommand {
         super(description, usage, alias);
     }
 
-    public Optional execute(Message message, String[] args) throws IllegalArgumentException {
+    public Optional execute(User author, Message message, String[] args) throws IllegalArgumentException {
         if (args.length == 0) {
             throw new IllegalArgumentException();
         }
@@ -75,7 +76,7 @@ public class OsuCommand extends AbstractCommand {
             return Optional.of("osu! Profile not found.");
         }
 
-        Message response = MessageUtil.frameMessage(content, builder.build(), true);
+        Message response = MessageUtil.frameMessage(author, content, builder.build(), true);
         return Optional.of(response);
     }
 }

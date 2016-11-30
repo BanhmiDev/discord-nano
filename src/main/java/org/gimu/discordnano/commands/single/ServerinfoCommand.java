@@ -19,6 +19,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
 
+import net.dv8tion.jda.core.entities.User;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.EmbedFieldListBuilder;
@@ -38,7 +39,7 @@ public class ServerinfoCommand extends AbstractCommand {
         super(description, usage, alias);
     }
 
-    public Optional execute(Message message, String[] args) {
+    public Optional execute(User author, Message message, String[] args) {
         Guild guild = message.getGuild();
 
         EmbedFieldListBuilder builder = new EmbedFieldListBuilder();
@@ -57,7 +58,7 @@ public class ServerinfoCommand extends AbstractCommand {
         builder.append("Owner", guild.getOwner().getEffectiveName());
         builder.append("Region", guild.getRegion().getName());
 
-        Message response = MessageUtil.frameMessage("Displaying server information", builder.build(), true);
+        Message response = MessageUtil.frameMessage(author, "Displaying server information", builder.build(), true);
         return Optional.of(response);
     }
 }

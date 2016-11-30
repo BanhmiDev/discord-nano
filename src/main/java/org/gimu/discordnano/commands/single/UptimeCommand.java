@@ -17,6 +17,7 @@
 package org.gimu.discordnano.commands.single;
 
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.User;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
@@ -36,7 +37,7 @@ public class UptimeCommand extends AbstractCommand {
         super(description, usage, alias);
     }
 
-    public Optional execute(Message message, String[] args) {
+    public Optional execute(User author, Message message, String[] args) {
         long duration = (System.currentTimeMillis() - DiscordNano.START_TIME) / 1000;
         long days = TimeUnit.SECONDS.toDays(duration);
         duration -= TimeUnit.DAYS.toSeconds(days);
@@ -63,7 +64,7 @@ public class UptimeCommand extends AbstractCommand {
             sb.append(seconds + " seconds(s)");
         }
 
-        Message response = MessageUtil.frameMessage("Uptime: " + sb.toString(), true);
+        Message response = MessageUtil.frameMessage(author, "Uptime: " + sb.toString(), true);
         return Optional.of(response);
     }
 }

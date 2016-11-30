@@ -17,6 +17,7 @@
 package org.gimu.discordnano.commands.single;
 
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.User;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.MessageUtil;
@@ -34,7 +35,7 @@ public class FlipCommand extends AbstractCommand {
         super(description, usage, alias);
     }
 
-    public Optional execute(Message message, String[] args) throws IllegalArgumentException {
+    public Optional execute(User author, Message message, String[] args) {
         String content;
         double random = Math.random();
         if (random < 0.5) {
@@ -43,7 +44,7 @@ public class FlipCommand extends AbstractCommand {
             content = "Heads!";
         }
 
-        Message response = MessageUtil.frameMessage(content, true);
+        Message response = MessageUtil.frameMessage(author, content, true);
         return Optional.of(response);
     }
 }

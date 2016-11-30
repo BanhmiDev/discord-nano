@@ -17,6 +17,7 @@
 package org.gimu.discordnano.commands.single;
 
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.User;
 import org.apache.commons.lang.StringUtils;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
@@ -40,7 +41,7 @@ public class MathCommand extends AbstractCommand {
         super(description, usage, alias);
     }
 
-    public Optional execute(Message message, String[] args) throws IllegalArgumentException {
+    public Optional execute(User author, Message message, String[] args) throws IllegalArgumentException {
         if (args.length == 0) {
             throw new IllegalArgumentException();
         }
@@ -55,7 +56,7 @@ public class MathCommand extends AbstractCommand {
             content = "I'm too stupid for that";
             NanoLogger.error(e.getMessage());
         }
-        Message response = MessageUtil.frameMessage(content, true);
+        Message response = MessageUtil.frameMessage(author, content, true);
         return Optional.of(response);
     }
 }

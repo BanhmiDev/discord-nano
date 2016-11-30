@@ -17,6 +17,7 @@
 package org.gimu.discordnano.commands.single;
 
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.User;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.MessageUtil;
@@ -34,9 +35,9 @@ public class InviteCommand extends AbstractCommand {
         super(description, usage, alias);
     }
 
-    public Optional execute(Message message, String[] args) throws IllegalArgumentException {
+    public Optional execute(User author, Message message, String[] args) {
         String content = "Invite me to your guild: [invite](https://discordapp.com/oauth2/authorize?client_id=252815607416881152&scope=bot&permissions=0)";
-        Message response = MessageUtil.frameMessage(content, true);
+        Message response = MessageUtil.frameMessage(author, content, true);
         return Optional.of(response);
     }
 }

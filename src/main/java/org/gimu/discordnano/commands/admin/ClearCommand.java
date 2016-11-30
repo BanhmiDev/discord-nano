@@ -17,8 +17,7 @@
 package org.gimu.discordnano.commands.admin;
 
 import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.exceptions.RateLimitedException;
+import net.dv8tion.jda.core.entities.User;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
 
@@ -35,13 +34,8 @@ public class ClearCommand extends AbstractCommand {
 		super(description, usage, alias);
 	}
 
-	public Optional execute(Message message, String[] args) throws IllegalArgumentException {
+	public Optional execute(User author, Message message, String[] args) {
 		// TODO: introduce permission bound commands
-		TextChannel channel = (TextChannel)message.getChannel();
-        while (channel.getHistory().retrievePast(100) != null) {
-            //channel.deleteMessages(channel.getHistory().retrieveFuture(100).block());
-        }
-
 		message.deleteMessage();
 
 		return Optional.empty();

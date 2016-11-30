@@ -17,6 +17,7 @@
 package org.gimu.discordnano.commands.single;
 
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.User;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.CommandHandler;
@@ -39,7 +40,7 @@ public class HelpCommand extends AbstractCommand {
         super(description, usage, alias);
     }
 
-    public Optional execute(Message message, String[] args) throws IllegalArgumentException {
+    public Optional execute(User author, Message message, String[] args) {
         EmbedFieldListBuilder builder = new EmbedFieldListBuilder();
 
         StringBuilder sb = new StringBuilder();
@@ -51,7 +52,7 @@ public class HelpCommand extends AbstractCommand {
         });*/
 
         //Check your private messages (ﾉ´ヮ´)ﾉ*:･ﾟ✧\n
-        Message response = MessageUtil.frameMessage("Command prefix is `" + DiscordNano.PREFIX + "`", builder.build(), true);
+        Message response = MessageUtil.frameMessage(author, "Command prefix is `" + DiscordNano.PREFIX + "`", builder.build(), true);
         return Optional.of(response);
     }
 }
