@@ -56,7 +56,7 @@ public class MathCommand extends AbstractCommand {
             content = "I'm too stupid for that";
             NanoLogger.error(e.getMessage());
         }
-        Message response = MessageUtil.frameMessage(author, content, true);
+        Message response = MessageUtil.buildFramedMessage(author, content, true);
         return Optional.of(response);
     }
 }

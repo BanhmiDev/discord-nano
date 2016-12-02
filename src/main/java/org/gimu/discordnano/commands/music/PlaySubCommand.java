@@ -125,7 +125,7 @@ public class PlaySubCommand extends AbstractSubCommand {
         }
 
         return Optional.of(response);*/
-        Message response = MessageUtil.frameMessage(author, "disabled", true);
+        Message response = MessageUtil.buildFramedMessage(author, "disabled", true);
         return Optional.of(response);
     }
 }

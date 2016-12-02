@@ -109,7 +109,7 @@ public class MusicCommand extends AbstractCommand {
                 break;
         }*/
 
-        Message response = MessageUtil.frameMessage(author, "disabled", true);
+        Message response = MessageUtil.buildFramedMessage(author, "disabled", true);
         return Optional.of(response);
     }
 }

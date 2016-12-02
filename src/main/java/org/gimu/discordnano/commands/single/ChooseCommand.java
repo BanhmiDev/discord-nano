@@ -19,15 +19,10 @@ package org.gimu.discordnano.commands.single;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
-import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
-import org.gimu.discordnano.lib.EmbedFieldListBuilder;
 import org.gimu.discordnano.lib.MessageUtil;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.OperatingSystemMXBean;
-import java.text.NumberFormat;
 import java.util.Optional;
 
 @MainCommand(
@@ -69,7 +64,7 @@ public class ChooseCommand extends AbstractCommand {
                 content = result + "I'll go with **" + choices[choose] + "**.";
             }
         }
-        MessageBuilder response = new MessageBuilder().appendString(content);
-        return Optional.of(response.build());
+
+        return Optional.of(MessageUtil.buildMessage(content));
     }
 }

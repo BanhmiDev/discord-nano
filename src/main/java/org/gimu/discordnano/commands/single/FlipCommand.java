@@ -44,7 +44,6 @@ public class FlipCommand extends AbstractCommand {
             content = "Heads!";
         }
 
-        Message response = MessageUtil.frameMessage(author, content, true);
-        return Optional.of(response);
+        return Optional.of(MessageUtil.buildMessage(content));
     }
 }

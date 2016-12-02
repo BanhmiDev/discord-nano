@@ -128,7 +128,7 @@ public class EHentaiCommand extends AbstractCommand {
             NanoLogger.error(e.getMessage());
         }
 
-        Message response = MessageUtil.frameMessage(author, content, builder.build(), false);
+        Message response = MessageUtil.buildFramedMessage(author, content, builder.build(), false);
         return Optional.of(response);
     }
 

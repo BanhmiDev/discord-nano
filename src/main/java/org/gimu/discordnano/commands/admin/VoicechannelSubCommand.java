@@ -65,7 +65,7 @@ public class VoicechannelSubCommand extends AbstractSubCommand {
             }
         }
 
-        Message response = MessageUtil.frameMessage(author, content, true);
+        Message response = MessageUtil.buildFramedMessage(author, content, true);
         return Optional.of(response);
     }
 }

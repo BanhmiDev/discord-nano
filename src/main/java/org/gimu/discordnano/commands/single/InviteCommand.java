@@ -37,7 +37,7 @@ public class InviteCommand extends AbstractCommand {
 
     public Optional execute(User author, Message message, String[] args) {
         String content = "Invite me to your guild: [invite](https://discordapp.com/oauth2/authorize?client_id=252815607416881152&scope=bot&permissions=0)";
-        Message response = MessageUtil.frameMessage(author, content, true);
+        Message response = MessageUtil.buildFramedMessage(author, content, true);
         return Optional.of(response);
     }
 }

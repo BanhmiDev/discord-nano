@@ -51,7 +51,7 @@ public class AboutCommand extends AbstractCommand {
         builder.append("Guilds connected", Integer.toString(DiscordNano.guildLibrary.getLibraryMap().size()) + " total guilds");
         builder.append("Creator", "Gimu#8616");
 
-        Message response = MessageUtil.frameMessage(author, content, builder.build(), true);
+        Message response = MessageUtil.buildFramedMessage(author, content, builder.build(), true);
         return Optional.of(response);
     }
 }

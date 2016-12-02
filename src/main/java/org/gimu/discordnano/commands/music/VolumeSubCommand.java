@@ -59,7 +59,7 @@ public class VolumeSubCommand extends AbstractSubCommand {
             }
         }*/
 
-        Message response = MessageUtil.frameMessage(author, "disabled", true);
+        Message response = MessageUtil.buildFramedMessage(author, "disabled", true);
         return Optional.of(response);
     }
 }

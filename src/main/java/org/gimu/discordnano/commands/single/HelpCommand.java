@@ -52,7 +52,7 @@ public class HelpCommand extends AbstractCommand {
         });*/
 
         //Check your private messages (ﾉ´ヮ´)ﾉ*:･ﾟ✧\n
-        Message response = MessageUtil.frameMessage(author, "Command prefix is `" + DiscordNano.PREFIX + "`", builder.build(), true);
+        Message response = MessageUtil.buildFramedMessage(author, "Command prefix is `" + DiscordNano.PREFIX + "`", builder.build(), true);
         return Optional.of(response);
     }
 }

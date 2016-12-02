@@ -16,8 +16,9 @@
 package org.gimu.discordnano.commands;
 
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.User;
 import org.gimu.discordnano.DiscordNano;
-import org.gimu.discordnano.lib.NanoLogger;
+import org.gimu.discordnano.lib.NanoPermission;
 
 import java.util.*;
 
@@ -43,14 +44,10 @@ public class CommandHandler {
         return false;
     }
 
-    public void parseMessage(Message message) {
-        String[] args;
-        String messageRaw = message.getContent();
-        String[] sections = messageRaw.split(" "); // Split message by whitespace
+    public void parseMessage(Message message) throws IllegalArgumentException {
+        String[] sections = message.getContent().split(" "); // Split message by whitespace
         String commandString = sections[0].replace(DiscordNano.PREFIX, ""); // Main command
         String subcommandString = (sections.length >= 2) ? sections[1] : ""; // Sub command
-
-        Optional<Message> response = null;
 
         // Main command parsing
         AbstractCommand mainCommand = mainCommandMap.get(commandString.toLowerCase());
@@ -61,20 +58,14 @@ public class CommandHandler {
 
             if (subCommand != null) {
                 try {
-                    args = (sections.length >= 2) ? Arrays.copyOfRange(sections, 2, sections.length) : new String[0]; // Only arguments (excludes sub command alias)
-                    //message.getChannel().sendTyping().queue();
-                    response = subCommand.execute(message.getAuthor(), message, args);
+                    parseSubCommand(subCommand, message, sections);
                 } catch (IllegalArgumentException e) {
-                    NanoLogger.error(e.getMessage());
                     if (!subCommand.getUsage().isEmpty()) message.getChannel().sendMessage("`" + DiscordNano.PREFIX + subCommand.getUsage() + "`").queue();
                 }
             } else {
                 try {
-                    args = (sections.length >= 1) ? Arrays.copyOfRange(sections, 1, sections.length) : new String[0]; // Only arguments (excludes main command alias)
-                    //message.getChannel().sendTyping().queue();
-                    response = mainCommand.execute(message.getAuthor(), message, args);
+                    parseMainCommand(mainCommand, message, sections);
                 } catch (IllegalArgumentException e) {
-                    NanoLogger.error(e.getMessage());
                     if (!mainCommand.getUsage().isEmpty()) {
                         message.getChannel().sendMessage("`" + DiscordNano.PREFIX + mainCommand.getUsage() + "`").queue();
                     } else {
@@ -87,7 +78,43 @@ public class CommandHandler {
             }
         }
 
+    }
+
+    private void parseMainCommand(AbstractCommand mainCommand, Message message, String[] sections) throws IllegalArgumentException {
+        String[] args = (sections.length >= 1) ? Arrays.copyOfRange(sections, 1, sections.length) : new String[0]; // Only arguments (excludes main command alias)
+        NanoPermission permission = mainCommand.getPermission();
+        User author = message.getAuthor();
+        Optional<Message> response = null;
+
+        if (permission == NanoPermission.BOT_OWNER) {
+            // Bot owner specific main command
+            if (author.getId().equals(DiscordNano.BOT_OWNER)) {
+                response = mainCommand.execute(author, message, args);
+            } else {
+                message.addReaction("⛔").queue();
+            }
+        } else if (permission == NanoPermission.GUILD_OWNER) {
+            // Guild owner specific main command
+            if (author.getId().equals(DiscordNano.BOT_OWNER) || author.getId().equals(message.getGuild().getOwner().getUser().getId())) {
+                response = mainCommand.execute(author, message, args);
+            } else {
+                message.addReaction("⛔").queue();
+            }
+        } else {
+            response = mainCommand.execute(author, message, args);
+        }
+
         if (response != null && response.isPresent()) {
+            Message responseMessage = response.get();
+            message.getChannel().sendMessage(responseMessage).queue();
+        }
+    }
+
+    private void parseSubCommand(AbstractSubCommand subCommand, Message message, String[] sections) throws IllegalArgumentException {
+        String[] args = (sections.length >= 2) ? Arrays.copyOfRange(sections, 2, sections.length) : new String[0]; // Only arguments (excludes sub command alias)
+        Optional<Message> response = subCommand.execute(message.getAuthor(), message, args);
+
+        if (response.isPresent()) {
             Message responseMessage = response.get();
             message.getChannel().sendMessage(responseMessage).queue();
         }

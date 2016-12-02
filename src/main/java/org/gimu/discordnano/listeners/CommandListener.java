@@ -52,7 +52,7 @@ public class CommandListener extends ListenerAdapter {
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
         // Welcome message
-        event.getGuild().getTextChannels().get(0).sendMessage(MessageUtil.frameMessage(null, "Type `!help` if you don't know what you are doing.\nThank you for letting me stay.", true)).queue();
+        event.getGuild().getTextChannels().get(0).sendMessage(MessageUtil.buildFramedMessage(null, "Type `!help` if you don't know what you are doing.\nThank you for letting me stay.", true)).queue();
         // Add to guild library
         DiscordNano.guildLibrary.add(event.getGuild());
         NanoLogger.debug("Joined guild for the first time");
@@ -146,7 +146,6 @@ public class CommandListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
-        MessageChannel channel = event.getMessage().getChannel();
         Message message = event.getMessage();
 
         NanoGuild nanoGuild = DiscordNano.guildLibrary.get(message.getGuild().getId());

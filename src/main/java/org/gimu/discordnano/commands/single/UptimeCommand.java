@@ -50,7 +50,7 @@ public class UptimeCommand extends AbstractCommand {
 
         long seconds = TimeUnit.SECONDS.toSeconds(duration);
 
-        StringBuilder sb = new StringBuilder( );
+        StringBuilder sb = new StringBuilder("Uptime: ");
         if (days != 0) {
             sb.append(days + " day(s) ");
         }
@@ -64,7 +64,6 @@ public class UptimeCommand extends AbstractCommand {
             sb.append(seconds + " seconds(s)");
         }
 
-        Message response = MessageUtil.frameMessage(author, "Uptime: " + sb.toString(), true);
-        return Optional.of(response);
+        return Optional.of(MessageUtil.buildMessage(sb.toString()));
     }
 }

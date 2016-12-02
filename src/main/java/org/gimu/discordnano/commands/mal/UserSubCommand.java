@@ -82,7 +82,7 @@ public class UserSubCommand extends AbstractSubCommand {
             NanoLogger.error(e.getMessage());
         }
 
-        Message response = MessageUtil.frameMessage(author, content, builder.build(), true);
+        Message response = MessageUtil.buildFramedMessage(author, content, builder.build(), true);
         return Optional.of(response);
     }
 }

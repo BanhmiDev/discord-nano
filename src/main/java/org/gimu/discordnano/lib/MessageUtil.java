@@ -27,19 +27,25 @@ import java.util.List;
 
 public class MessageUtil {
 
-    public static Message frameMessage(User author, String content, boolean inline) {
-        return frameMessage(author, content, null, null, inline);
+    public static Message buildMessage(String content) {
+        MessageBuilder mb = new MessageBuilder();
+        mb.appendString(content);
+        return mb.build();
     }
 
-    public static Message frameMessage(User author, String content, String imageUrl, boolean inline) {
-        return frameMessage(author, content, null, imageUrl, inline);
+    public static Message buildFramedMessage(User author, String content, boolean inline) {
+        return buildFramedMessage(author, content, null, null, inline);
     }
 
-    public static Message frameMessage(User author, String content, List<Pair<String, String>> subContent, boolean inline) {
-        return frameMessage(author, content, subContent, null, inline);
+    public static Message buildFramedMessage(User author, String content, String imageUrl, boolean inline) {
+        return buildFramedMessage(author, content, null, imageUrl, inline);
     }
 
-    public static Message frameMessage(User author, String content, List<Pair<String, String>> subContent, String imageUrl, boolean inline) {
+    public static Message buildFramedMessage(User author, String content, List<Pair<String, String>> subContent, boolean inline) {
+        return buildFramedMessage(author, content, subContent, null, inline);
+    }
+
+    public static Message buildFramedMessage(User author, String content, List<Pair<String, String>> subContent, String imageUrl, boolean inline) {
         User bot = DiscordNano.bot.getSelfUser();
         String avatar = bot.getAvatarUrl();
         if (avatar == null) {

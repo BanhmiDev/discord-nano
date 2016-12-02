@@ -15,6 +15,8 @@
  */
 package org.gimu.discordnano.commands;
 
+import org.gimu.discordnano.lib.NanoPermission;
+
 import java.util.*;
 
 public abstract class AbstractCommand implements CommandExecutor {
@@ -22,6 +24,7 @@ public abstract class AbstractCommand implements CommandExecutor {
     private String description;
     private String usage;
     private String alias;
+    private NanoPermission permission;
     private HashMap<String, AbstractSubCommand> subCommandMap = new HashMap<String, AbstractSubCommand>();
 
     public AbstractCommand(String description, String usage, String alias) {
@@ -56,5 +59,13 @@ public abstract class AbstractCommand implements CommandExecutor {
 
     public Map<String, AbstractSubCommand> getSubCommandMap() {
         return subCommandMap;
+    }
+
+    public NanoPermission getPermission() {
+        return permission;
+    }
+
+    public void setPermission(NanoPermission permission) {
+        this.permission = permission;
     }
 }

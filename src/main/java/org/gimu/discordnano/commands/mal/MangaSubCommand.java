@@ -85,7 +85,7 @@ public class MangaSubCommand extends AbstractSubCommand {
 
     private Message viewRecent(User author) {
         if (mangaMap.isEmpty()) {
-            return MessageUtil.frameMessage(author, "There are no recent queries to show!", true);
+            return MessageUtil.buildFramedMessage(author, "There are no recent queries to show!", true);
         }
         StringBuilder content = new StringBuilder();
         int i = 0;
@@ -95,16 +95,16 @@ public class MangaSubCommand extends AbstractSubCommand {
             content.append("\n");
             i++;
         }
-        return MessageUtil.frameMessage(author, content.toString(), true);
+        return MessageUtil.buildFramedMessage(author, content.toString(), true);
     }
 
     private Message viewEntry(User author, String index) {
         MALInfo entry = mangaMap.get(Integer.parseInt(index));
 
         if (!index.matches("^\\d+$") || entry == null) {
-            return MessageUtil.frameMessage(author, "Not a valid index or no recent queries saved!", true);
+            return MessageUtil.buildFramedMessage(author, "Not a valid index or no recent queries saved!", true);
         }
-        return MessageUtil.frameMessage(author, entry.title
+        return MessageUtil.buildFramedMessage(author, entry.title
                 + (entry.english.length() != 0 ? "\n" + entry.english : "")
                 + "**\n**Type:** " + entry.type
                 + " **| Chapters:** " + entry.episodes
@@ -117,12 +117,12 @@ public class MangaSubCommand extends AbstractSubCommand {
     private Message searchMAL(User author, String query) {
         // MALCommand/Manga search
         if (MAL_USER == "" || MAL_PASS == "") {
-            return MessageUtil.frameMessage(author, "MAL login not configured.", true);
+            return MessageUtil.buildFramedMessage(author, "MAL login not configured.", true);
         } else if (lastExecution != 0) {
             long currentExecution = System.currentTimeMillis();
             long time = (currentExecution - lastExecution) / 1000;
             if (time < 5) {
-                return MessageUtil.frameMessage(author, "Please wait 5 seconds before submitting another query.", true);
+                return MessageUtil.buildFramedMessage(author, "Please wait 5 seconds before submitting another query.", true);
             }
             lastExecution = currentExecution;
         }
@@ -187,6 +187,6 @@ public class MangaSubCommand extends AbstractSubCommand {
             NanoLogger.error(e.getMessage());
         }
 
-        return MessageUtil.frameMessage(author, content.toString(), true);
+        return MessageUtil.buildFramedMessage(author, content.toString(), true);
 	}
 }

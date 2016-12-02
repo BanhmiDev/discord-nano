@@ -76,7 +76,7 @@ public class OsuCommand extends AbstractCommand {
             return Optional.of("osu! Profile not found.");
         }
 
-        Message response = MessageUtil.frameMessage(author, content, builder.build(), true);
+        Message response = MessageUtil.buildFramedMessage(author, content, builder.build(), true);
         return Optional.of(response);
     }
 }

@@ -21,6 +21,7 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.lib.MessageUtil;
 
 import java.util.Optional;
 import java.util.Random;
@@ -48,7 +49,7 @@ public class DecideCommand extends AbstractCommand {
         } else {
             content = "No.";
         }
-        MessageBuilder response = new MessageBuilder().appendString(content);
-        return Optional.of(response.build());
+
+        return Optional.of(MessageUtil.buildMessage(content));
     }
 }

@@ -61,7 +61,7 @@ public class ListSubCommand extends AbstractSubCommand {
             content.append(HastebinUtil.post(body.deleteCharAt(body.length()-1).toString()));
         }
 
-        Message response = MessageUtil.frameMessage(author, "disabled", true);
+        Message response = MessageUtil.buildFramedMessage(author, "disabled", true);
         return Optional.of(response);
     }
 }

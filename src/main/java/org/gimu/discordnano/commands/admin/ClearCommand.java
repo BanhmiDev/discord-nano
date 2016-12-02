@@ -16,6 +16,7 @@
 
 package org.gimu.discordnano.commands.admin;
 
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
 import org.gimu.discordnano.commands.AbstractCommand;
@@ -36,7 +37,11 @@ public class ClearCommand extends AbstractCommand {
 
 	public Optional execute(User author, Message message, String[] args) {
 		// TODO: introduce permission bound commands
-		message.deleteMessage();
+		if (!message.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE, Permission.MESSAGE_READ)) {
+			message.getChannel().sendMessage("No permission").queue();
+		}
+
+		message.deleteMessage().queue();
 
 		return Optional.empty();
 	}

@@ -23,6 +23,7 @@ import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.MessageUtil;
 import org.gimu.discordnano.lib.NanoLogger;
+import org.gimu.discordnano.lib.NanoPermission;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -31,21 +32,16 @@ import java.util.Optional;
 @MainCommand(
         alias = "eval",
         description = "Eval",
-        usage = "eval",
-        isEnabled = false
+        usage = "eval"
 )
 public class EvalCommand extends AbstractCommand {
 
     public EvalCommand(String description, String usage, String alias) {
         super(description, usage, alias);
+        this.setPermission(NanoPermission.BOT_OWNER);
     }
 
     public Optional execute(User author, Message message, String[] args) {
-        if (!author.getId().equals(DiscordNano.BOT_OWNER) || args.length == 0) {
-            message.addReaction("⛔").queue();
-            return Optional.empty();
-        }
-
         String input = String.join(" ", args);
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
         engine.put("input", input);
@@ -71,7 +67,7 @@ public class EvalCommand extends AbstractCommand {
             if (value.length() >= 2000) { // Too long
                 NanoLogger.debug(value);
             } else {
-                return Optional.of(MessageUtil.frameMessage(author, value, true));
+                return Optional.of(MessageUtil.buildFramedMessage(author, value, true));
             }
             return Optional.empty();
         }

@@ -88,7 +88,7 @@ public class Rule34Command extends AbstractCommand {
             NanoLogger.error(e.getMessage());
         }
 
-        Message response = MessageUtil.frameMessage(author, content, imageUrl, true);
+        Message response = MessageUtil.buildFramedMessage(author, content, imageUrl, true);
         return Optional.of(response);
     }
 }

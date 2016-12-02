@@ -58,7 +58,7 @@ public class ServerinfoCommand extends AbstractCommand {
         builder.append("Owner", guild.getOwner().getEffectiveName());
         builder.append("Region", guild.getRegion().getName());
 
-        Message response = MessageUtil.frameMessage(author, "Displaying server information", builder.build(), true);
+        Message response = MessageUtil.buildFramedMessage(author, "Displaying server information", builder.build(), true);
         return Optional.of(response);
     }
 }

@@ -87,7 +87,7 @@ public class XkcdCommand extends AbstractCommand {
             }
         }
 
-        Message response = MessageUtil.frameMessage(author, content, builder.build(), imageUrl, true);
+        Message response = MessageUtil.buildFramedMessage(author, content, builder.build(), imageUrl, true);
         return Optional.of(response);
     }
 }

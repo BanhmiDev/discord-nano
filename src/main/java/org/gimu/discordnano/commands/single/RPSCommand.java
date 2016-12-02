@@ -50,7 +50,6 @@ public class RPSCommand extends AbstractCommand {
             }
         }
 
-        Message response = MessageUtil.frameMessage(author, content, true);
-        return Optional.of(response);
+        return Optional.of(MessageUtil.buildMessage(content));
     }
 }

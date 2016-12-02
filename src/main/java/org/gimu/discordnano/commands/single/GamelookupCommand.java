@@ -84,7 +84,7 @@ public class GamelookupCommand extends AbstractCommand {
             NanoLogger.error(e.getMessage());
         }
 
-        Message response = MessageUtil.frameMessage(author, content, builder.build(), imageUrl, true);
+        Message response = MessageUtil.buildFramedMessage(author, content, builder.build(), imageUrl, true);
         return Optional.of(response);
     }
 }
