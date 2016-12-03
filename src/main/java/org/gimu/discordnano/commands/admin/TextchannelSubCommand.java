@@ -41,7 +41,6 @@ public class TextchannelSubCommand extends AbstractSubCommand {
     }
 
     public Optional execute(User author, Message message, String[] args) {
-        // TODO: introduce permission bound commands
         String content = "Invalid voice channel ID. Right-click on a voice channel to get its ID!";
         NanoGuildLibrary guildLibrary = DiscordNano.guildLibrary; // TODO: Better reference?
         NanoGuild currentGuild = guildLibrary.get(message.getGuild().getId()); // The nano guild

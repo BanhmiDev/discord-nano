@@ -20,6 +20,7 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.lib.NanoPermission;
 
 import java.util.Optional;
 
@@ -31,10 +32,10 @@ public class ModCommand extends AbstractCommand {
 
     public ModCommand(String description, String usage, String alias) {
         super(description, usage, alias);
+        this.setPermission(NanoPermission.GUILD_OWNER);
     }
 
     public Optional execute(User author, Message message, String[] args) throws IllegalArgumentException {
-        // TODO: introduce permission bound commands
         throw new IllegalArgumentException();
     }
 }
