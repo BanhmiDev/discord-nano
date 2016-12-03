@@ -16,11 +16,13 @@
 
 package org.gimu.discordnano.commands.admin;
 
+import net.dv8tion.jda.core.MessageHistory;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;
+import org.gimu.discordnano.lib.NanoPermission;
 
 import java.util.Optional;
 
@@ -33,15 +35,19 @@ public class ClearCommand extends AbstractCommand {
 
 	public ClearCommand(String description, String usage, String alias) {
 		super(description, usage, alias);
+		this.setPermission(NanoPermission.GUILD_OWNER);
 	}
 
 	public Optional execute(User author, Message message, String[] args) {
-		// TODO: introduce permission bound commands
 		if (!message.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE, Permission.MESSAGE_READ)) {
-			message.getChannel().sendMessage("No permission").queue();
+			message.getChannel().sendMessage("I'm not allowed to manage messages.").queue();
 		}
 
-		message.deleteMessage().queue();
+		MessageHistory history = message.getChannel().getHistory();
+        history.retrievePast(100).queue();
+        history.retrievePast(100).queue(list -> {
+			message.getTextChannel().deleteMessages(list).queue();
+        });
 
 		return Optional.empty();
 	}
