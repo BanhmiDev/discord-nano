@@ -17,11 +17,12 @@ package org.gimu.discordnano.commands;
 
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.exceptions.RateLimitedException;
 
 import java.util.Optional;
 
 @FunctionalInterface
 public interface CommandExecutor {
-    Optional<Message> execute(User author, Message message, String[] args) throws IllegalArgumentException;
+    Optional<Message> execute(User author, Message message, String[] args) throws IllegalArgumentException, RateLimitedException;
 }
 

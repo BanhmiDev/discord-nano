@@ -17,6 +17,7 @@ package org.gimu.discordnano.commands;
 
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.exceptions.RateLimitedException;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.lib.NanoPermission;
 
@@ -61,6 +62,8 @@ public class CommandHandler {
                     parseSubCommand(subCommand, message, sections);
                 } catch (IllegalArgumentException e) {
                     if (!subCommand.getUsage().isEmpty()) message.getChannel().sendMessage("`" + DiscordNano.PREFIX + subCommand.getUsage() + "`").queue();
+                } catch (RateLimitedException e) {
+                    message.getChannel().sendMessage("Rate limit exceeded, try again later.");
                 }
             } else {
                 try {
@@ -74,13 +77,15 @@ public class CommandHandler {
                         mainCommand.getSubCommandMap().entrySet().stream().filter(entry -> !entry.getValue().getUsage().isEmpty()).forEach(entry -> sb.append("`" + DiscordNano.PREFIX + entry.getValue().getUsage() + "`\n"));
                         message.getChannel().sendMessage(sb.toString()).queue();
                     }
+                } catch (RateLimitedException e) {
+                    message.getChannel().sendMessage("Rate limit exceeded, try again later.");
                 }
             }
         }
 
     }
 
-    private void parseMainCommand(AbstractCommand mainCommand, Message message, String[] sections) throws IllegalArgumentException {
+    private void parseMainCommand(AbstractCommand mainCommand, Message message, String[] sections) throws IllegalArgumentException, RateLimitedException {
         String[] args = (sections.length >= 1) ? Arrays.copyOfRange(sections, 1, sections.length) : new String[0]; // Only arguments (excludes main command alias)
         NanoPermission permission = mainCommand.getPermission();
         User author = message.getAuthor();
@@ -110,7 +115,7 @@ public class CommandHandler {
         }
     }
 
-    private void parseSubCommand(AbstractSubCommand subCommand, Message message, String[] sections) throws IllegalArgumentException {
+    private void parseSubCommand(AbstractSubCommand subCommand, Message message, String[] sections) throws IllegalArgumentException, RateLimitedException {
         String[] args = (sections.length >= 2) ? Arrays.copyOfRange(sections, 2, sections.length) : new String[0]; // Only arguments (excludes sub command alias)
         Optional<Message> response = subCommand.execute(message.getAuthor(), message, args);
 
