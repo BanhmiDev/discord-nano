@@ -24,6 +24,7 @@ import org.gimu.discordnano.commands.CommandHandler;
 import org.gimu.discordnano.commands.MainCommand;
 import org.gimu.discordnano.lib.EmbedFieldListBuilder;
 import org.gimu.discordnano.lib.MessageUtil;
+import org.gimu.discordnano.lib.NanoPermission;
 
 import java.util.Map;
 import java.util.Optional;
@@ -43,9 +44,23 @@ public class HelpCommand extends AbstractCommand {
     public Optional execute(User author, Message message, String[] args) {
         EmbedFieldListBuilder builder = new EmbedFieldListBuilder();
 
-        StringBuilder sb = new StringBuilder();
-        CommandHandler.mainCommandMap.entrySet().stream().filter(entry -> entry.getValue().getAlias() != null).forEach(entry -> sb.append("`" + entry.getValue().getAlias() + "` "));
-        builder.append("Enabled commands", sb.toString());
+        StringBuilder botOwnerCommands = new StringBuilder();
+        StringBuilder guildOwnerCommands = new StringBuilder();
+        StringBuilder defaultUserCommands = new StringBuilder();
+
+        CommandHandler.mainCommandMap.entrySet().stream().filter(entry -> entry.getValue().getAlias() != null).forEach(entry -> {
+            NanoPermission permission = entry.getValue().getPermission();
+            if (permission == NanoPermission.BOT_OWNER) {
+                botOwnerCommands.append("`" + entry.getValue().getAlias() + "` ");
+            } else if (permission == NanoPermission.GUILD_OWNER) {
+                guildOwnerCommands.append("`" + entry.getValue().getAlias() + "` ");
+            } else {
+                defaultUserCommands.append("`" + entry.getValue().getAlias() + "` ");
+            }
+        });
+        builder.append("Developer commands", botOwnerCommands.toString());
+        builder.append("Guild owner commands", guildOwnerCommands.toString());
+        builder.append("Default user commands", defaultUserCommands.toString());
 
         /*message.getAuthor().openPrivateChannel().queue(success -> {
             success.sendMessage("Visit https://www.gimu.org/discord-nano for a list of commands!").queue();
