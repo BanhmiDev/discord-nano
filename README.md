@@ -1,7 +1,7 @@
 Discord Nano
 ============
 
-[![Build Status](http://ci.gimu.org/job/discord-nano/1/badge/icon)](http://ci.gimu.org/job/discord-nano/) [![license](https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square)](https://github.com/Gimu/discord-nano/blob/master/LICENSE)
+[![Build Status](http://ci.gimu.org/job/discord-nano/badge/icon?style=flat)](http://ci.gimu.org/job/discord-nano/) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 Modular discord bot using [JDA](https://github.com/DV8FromTheWorld/JDA).                              
 This bot is currently in heavy development, meaning that global restarts aren't that rare.
