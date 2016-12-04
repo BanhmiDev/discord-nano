@@ -52,7 +52,7 @@ public class CommandListener extends ListenerAdapter {
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
         // Welcome message
-        event.getGuild().getTextChannels().get(0).sendMessage(MessageUtil.buildFramedMessage(null, "Type `!help` if you don't know what you are doing.\nThank you for letting me stay.", true)).queue();
+        event.getGuild().getTextChannels().get(0).sendMessage(MessageUtil.buildFramedMessage(null, "Type `!help` if you don't know what you are doing.\nUse `!mod textchannel <id>` if you don't want me in this text channel.\nThank you for letting me stay.", true)).queue();
         // Add to guild library
         DiscordNano.guildLibrary.add(event.getGuild());
         NanoLogger.debug("Joined guild for the first time");
