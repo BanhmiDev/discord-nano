@@ -16,9 +16,7 @@
 
 package org.gimu.discordnano.lib;
 
-import net.dv8tion.jda.player.AbstractMusicPlayer;
-
-public class NanoPlayer extends AbstractMusicPlayer {
+public class NanoPlayer {
     // TODO: JDA 3.0
 }
 

@@ -17,7 +17,6 @@ package org.gimu.discordnano.commands.music;
 
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.player.source.AudioSource;
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.MainCommand;

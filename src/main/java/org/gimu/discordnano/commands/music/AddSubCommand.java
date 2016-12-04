@@ -18,15 +18,10 @@ package org.gimu.discordnano.commands.music;
 
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.player.source.AudioInfo;
-import net.dv8tion.jda.player.source.AudioSource;
-import net.dv8tion.jda.player.source.RemoteSource;
 
-import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractSubCommand;
 import org.gimu.discordnano.commands.SubCommand;
 import org.gimu.discordnano.lib.MessageUtil;
-import org.gimu.discordnano.lib.NanoPlayer;
 
 import java.util.Optional;
 

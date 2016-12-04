@@ -17,7 +17,6 @@ package org.gimu.discordnano.commands.music;
 
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.player.Playlist;
 
 import org.gimu.discordnano.DiscordNano;
 import org.gimu.discordnano.commands.AbstractSubCommand;
@@ -39,8 +38,8 @@ public class PlaySubCommand extends AbstractSubCommand {
         super(description, usage);
     }
 
-    private void playSource(Message message, Playlist playlist) {
-        /*List<AudioSource> sources = new LinkedList(playlist.getSources());
+    /*private void playSource(Message message, Playlist playlist) {
+        List<AudioSource> sources = new LinkedList(playlist.getSources());
         IAudioManager manager = message.getGuild().getAudioManager();
         NanoPlayer player;
         if (manager.getAudioProvider() instanceof DefaultProvider) {
@@ -90,8 +89,8 @@ public class PlaySubCommand extends AbstractSubCommand {
                 message.getChannel().sendMessage("There was an error while loading the provided URL.");
                 NanoLogger.error("Playback error\n" + info.getError());
             }
-        }*/
-    }
+        }
+    }*/
 
     public Optional execute(User author, Message message, String[] args) throws IllegalArgumentException {
         /*if (args.length == 0) {

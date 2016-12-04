@@ -16,8 +16,6 @@
 
 package org.gimu.discordnano.lib;
 
-import net.dv8tion.jda.player.source.AudioSource;
-import net.dv8tion.jda.player.source.RemoteSource;
 import org.apache.commons.lang.math.NumberUtils;
 
 import java.sql.*;
@@ -29,7 +27,7 @@ public class MusicLibrary {
 
     public boolean add(String musicSource) {
         // Don't allow duplicate URLs
-        boolean isDuplicate = false;
+        /*boolean isDuplicate = false;
         for (Map.Entry<String, String> entry : libraryMap.entrySet()) {
             if (entry.getValue().equals(musicSource)) {
                 isDuplicate = true;
@@ -60,7 +58,7 @@ public class MusicLibrary {
             conn.close();
         } catch (SQLException e) {
             NanoLogger.error(e.getMessage());
-        }
+        }*/
 
         return true;
     }
