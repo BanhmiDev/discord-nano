@@ -17,16 +17,15 @@ package org.gimu.discordnano.util;
 
 import org.apache.commons.codec.binary.Base64;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 
 public class HTTPUtil {
 
 	private static final String USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36";
 
-	public static InputStream sendAuthGet(String target, String parameters, String username, String password) throws Exception {
+	public static InputStream sendAuthGet(String target, String parameters, String username, String password) throws IOException {
 		URL url = new URL(target + "?" + parameters);
 		URLConnection uc = url.openConnection();
 		uc.setRequestProperty("User-Agent", USER_AGENT);
@@ -37,11 +36,11 @@ public class HTTPUtil {
 		return uc.getInputStream();
 	}
 
-	public static InputStream sendGet(String url) throws Exception {
+	public static InputStream sendGet(String url) throws IOException {
 		return sendGet(url, "");
 	}
 
-	public static InputStream sendGet(String url, String parameters) throws Exception {
+	public static InputStream sendGet(String url, String parameters) throws IOException {
 		URL object = new URL(url + "?" + parameters);
 		HttpURLConnection connection = (HttpURLConnection)object.openConnection();
 		connection.setRequestMethod("GET");
@@ -49,11 +48,11 @@ public class HTTPUtil {
 		return connection.getInputStream();
 	}
 
-	public static InputStream sendPost(String url) throws Exception {
+	public static InputStream sendPost(String url) throws IOException {
 		return sendPost(url, "");
 	}
 
-	public static InputStream sendPost(String url, String parameters) throws Exception {
+	public static InputStream sendPost(String url, String parameters) throws IOException {
 		URL object = new URL(url);
 		HttpURLConnection connection = (HttpURLConnection)object.openConnection();
 		connection.setRequestMethod("POST");
