@@ -13,15 +13,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.commands.mal;
+package org.gimu.discordnano.commands.anime;
 
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.gimu.discordnano.DiscordNano;
+import org.gimu.discordnano.commands.AbstractCommand;
 import org.gimu.discordnano.commands.AbstractSubCommand;
 import org.gimu.discordnano.commands.SubCommand;
-import org.gimu.discordnano.lib.EmbedFieldListBuilder;
 import org.gimu.discordnano.lib.MessageUtil;
 import org.gimu.discordnano.lib.NanoLogger;
 import org.gimu.discordnano.util.HTTPUtil;
@@ -40,12 +40,11 @@ import java.util.Map;
 import java.util.Optional;
 
 @SubCommand(
-        mainCommandAlias = "mal",
         alias = {"anime"},
         description = "",
-        usage = "mal anime (<query> | view [index])"
+        usage = "anime (<query> | view [index])"
 )
-public class AnimeSubCommand extends AbstractSubCommand {
+public class AnimeCommand extends AbstractCommand {
 
 	private static long lastExecution = 0L;
 	private static final String MAL_USER = DiscordNano.config.getString("mal_user");
@@ -53,7 +52,7 @@ public class AnimeSubCommand extends AbstractSubCommand {
 
 	private static HashMap<Integer, MALInfo> animeMap = new HashMap<>();
 
-    public AnimeSubCommand(String description, String usage) {
+    public AnimeCommand(String description, String usage) {
         super(description, usage);
     }
 
@@ -180,7 +179,7 @@ public class AnimeSubCommand extends AbstractSubCommand {
                 }
             }
 
-            content.append("\nList temporarily saved. Write `" + DiscordNano.PREFIX + "mal anime view <index>` to examine an entry.");
+            content.append("\nList temporarily saved. Write `" + DiscordNano.PREFIX + "anime anime view <index>` to examine an entry.");
 
         } catch (Exception e) {
             content.setLength(0);

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.gimu.discordnano.commands.mal;
+package org.gimu.discordnano.commands.anime;
 
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
@@ -39,10 +39,10 @@ import java.util.Map;
 import java.util.Optional;
 
 @SubCommand(
-        mainCommandAlias = "mal",
+        mainCommandAlias = "anime",
         alias = {"manga"},
         description = "",
-        usage = "mal manga (<query> | view [index])"
+        usage = "anime manga (<query> | view [index])"
 )
 public class MangaSubCommand extends AbstractSubCommand {
 
@@ -179,7 +179,7 @@ public class MangaSubCommand extends AbstractSubCommand {
                 }
             }
 
-            content.append("\nList temporarily saved. Write `" + DiscordNano.PREFIX + "mal manga view <index>` to examine an entry.");
+            content.append("\nList temporarily saved. Write `" + DiscordNano.PREFIX + "anime manga view <index>` to examine an entry.");
 
         } catch (Exception e) {
             content.setLength(0);

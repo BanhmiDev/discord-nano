@@ -29,13 +29,13 @@ import java.util.LinkedList;
 import java.util.Optional;
 
 @MainCommand(
-        alias = "serverinfo",
+        alias = "server",
         description = "Get server information",
-        usage = "serverinfo"
+        usage = "server"
 )
-public class ServerinfoCommand extends AbstractCommand {
+public class ServerCommand extends AbstractCommand {
 
-    public ServerinfoCommand(String description, String usage, String alias) {
+    public ServerCommand(String description, String usage, String alias) {
         super(description, usage, alias);
     }
 
